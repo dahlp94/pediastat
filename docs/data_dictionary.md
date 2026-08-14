@@ -1,12 +1,12 @@
 # Data Dictionary
 
 This dictionary records fields verified in the Stage 1 TARGET-AML source
-audit and ingested in Stage 2. It is **not** the final analytics data
-dictionary. Availability counts are release-specific.
+audit, ingested in Stage 2, and used to lock the Stage 3 analysis
+population and OS endpoint.
 
-Stage 2 source-precedence recommendations are documented in
-`docs/target_aml_reconciliation_report.md` section 15. They are not
-implemented as a merged patient table.
+Stage 3 source-precedence rules are in
+`docs/baseline_covariate_source_rules.md`. The locked cohort is
+`analytics.primary_os_cohort`.
 
 Missingness classes in staging: structurally_missing, not_reported,
 unknown, not_applicable, sentinel, observed. Unknown/Not Reported vital
@@ -116,3 +116,37 @@ Recommended GDC fields for later analytics (not created): **PROPOSED**
 `age_at_diagnosis_days` ← `diagnoses.age_at_diagnosis`; **PROPOSED**
 `sex_at_birth` ← `demographic.sex_at_birth`. OS time has no proposed
 canonical name because the source is unresolved.
+
+---
+
+## C. Stage 3 analytics fields (locked population and endpoint)
+
+Implemented in `analytics.primary_os_cohort` and related tables. Definitions
+below supersede the unresolved OS-time note in section A for the primary
+endpoint only. Supplement OS remains QA.
+
+Time origin: initial pathologic diagnosis, verified from GDC/caDSR
+definitions (CDE 3008273, 6154724, 3225640) and extract metadata
+(`index_date` = Diagnosis; `days_to_diagnosis` = 0 when populated).
+
+| Variable | Source Field | Table | Type | Definition | Units / Levels | Analysis Role |
+| --- | --- | --- | --- | --- | --- | --- |
+| Analysis person | canonical TARGET USI | `patient_identity_crosswalk` | text | `TARGET-20/21-XXXXXX` when identity is unambiguous | TARGET USI | Identifier |
+| GDC case | `case_id` | `patient_identity_crosswalk` | text | Original GDC case UUID | UUID | Identifier |
+| OS event | `demographic.vital_status` | `primary_os_cohort` | 0/1 | Dead=1, Alive=0 | 0, 1 | Primary endpoint |
+| OS time | `days_to_death` or `days_to_last_follow_up` | `primary_os_cohort` | numeric | Status-dependent GDC time from diagnosis | days | Primary endpoint |
+| Age at diagnosis | `diagnoses.age_at_diagnosis` | `primary_os_cohort` | numeric | Age at diagnosis | days / years | Eligibility and CORE covariate |
+| Sex at birth | `demographic.sex_at_birth` | baseline reconciled | text | Sex at birth | male/female/unknown | CORE covariate |
+| WBC | `WBC at Diagnosis` | baseline reconciled | numeric | Peripheral WBC | x10^3/mcL | CORE covariate |
+| Risk group | `Risk group` | baseline reconciled | text | AML risk group | High/Low/Standard | CORE covariate |
+| FLT3/ITD | `FLT3/ITD positive?` | baseline reconciled | text | ITD indicator | Yes/No/Unknown | CORE covariate |
+| NPM | `NPM mutation` | baseline reconciled | text | NPM mutation | source coding | CORE covariate |
+| CEBPA | `CEBPA mutation` | baseline reconciled | text | CEBPA mutation | source coding | CORE covariate |
+| FAB | `FAB Category` | baseline reconciled | text | FAB morphology | M0–M7 | SECONDARY |
+| CNS disease | `CNS disease` | baseline reconciled | text | CNS involvement | source coding | SECONDARY |
+| Cytogenetic flags | lesion columns | baseline reconciled | text | t(8;21), inv(16), MLL, monosomy 7 | Yes/No/Unknown | SECONDARY |
+| Primary cytogenetic code | `Primary Cytogenetic Code` | baseline reconciled | text | Summary cytogenetic code | source coding | NEEDS REVIEW |
+
+Unknown/Not Reported vital status is not an analytics event code. Missing
+baseline covariates are retained with provenance and do not remove a person
+from `primary_os_cohort`.
