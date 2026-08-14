@@ -54,8 +54,15 @@ artifacts/**/*.tsv
 artifacts/**/*.txt.gz
 data/interim/*
 !data/interim/.gitkeep
+!data/interim/stage4/
+!data/interim/stage4/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+
+# Person-level Stage 4 extracts (never commit)
+data/interim/stage4/*.csv
+data/interim/stage4/*.rds
+artifacts/descriptive/**/*.rds
 
 # Local YAML settings (keep the committed example)
 config/settings.yaml
@@ -65,6 +72,7 @@ config/settings.yaml
 .RData
 .Rproj.user/
 *.Rproj
+Rplots.pdf
 
 # Quarto / report artifacts
 reports/**/*.html
@@ -72,3 +80,5 @@ reports/**/*.pdf
 reports/**/*_files/
 /_freeze/
 *.quarto_ipynb
+
+data/interim/stage4/

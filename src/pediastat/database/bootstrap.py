@@ -12,7 +12,7 @@ from pediastat.config import PROJECT_ROOT, Settings
 from pediastat.database.engine import SQL_FILES, apply_sql_file, create_db_engine
 
 DEFAULT_DATA_DIR = PROJECT_ROOT / ".pgdata"
-DEFAULT_PORT = 5433
+DEFAULT_PORT = 5432
 DEFAULT_USER = "pediastat"
 DEFAULT_DB = "pediastat"
 

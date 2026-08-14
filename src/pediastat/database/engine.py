@@ -17,6 +17,7 @@ SQL_FILES = (
     "05_create_supplement_raw_tables.sql",
     "06_create_staging_tables.sql",
     "07_create_analytics_tables.sql",
+    "08_create_stage4_extract_view.sql",
 )
 
 
