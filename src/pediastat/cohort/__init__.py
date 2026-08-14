@@ -1,6 +1,5 @@
-"""Analysis-cohort construction.
+"""Analysis-cohort construction for Stage 3.
 
-Inclusion and exclusion criteria will be finalized in the statistical
-analysis plan after the source data are inspected. Exclusions from the
-analytical cohort must be documented.
+Identity mapping, OS endpoint derivation, eligibility, and source-reconciled
+baseline concepts. No survival models are fit here.
 """

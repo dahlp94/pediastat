@@ -16,6 +16,7 @@ SQL_FILES = (
     "04_create_gdc_raw_tables.sql",
     "05_create_supplement_raw_tables.sql",
     "06_create_staging_tables.sql",
+    "07_create_analytics_tables.sql",
 )
 
 

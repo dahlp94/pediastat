@@ -2,7 +2,7 @@ PYTHON ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 PYTEST ?= $(if $(wildcard .venv/bin/pytest),.venv/bin/pytest,pytest)
 RUFF ?= $(if $(wildcard .venv/bin/ruff),.venv/bin/ruff,ruff)
 
-.PHONY: test lint check audit db-bootstrap ingest-gdc ingest-supplements reconcile ingest
+.PHONY: test lint check audit db-bootstrap ingest-gdc ingest-supplements reconcile ingest cohort
 
 test:
 	$(PYTEST)
@@ -27,5 +27,8 @@ ingest-supplements:
 
 reconcile:
 	$(PYTHON) scripts/run_source_reconciliation.py --local-cluster
+
+cohort:
+	$(PYTHON) scripts/build_primary_cohort.py --local-cluster
 
 ingest: ingest-gdc ingest-supplements reconcile
