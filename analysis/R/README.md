@@ -41,6 +41,35 @@ planning artifacts. They do not call `coxph()` or `mice()`.
 make model-plan
 ```
 
+## Stage 6 scripts
+
+```text
+20_prepare_inferential_data.R
+21_mi_specification.R
+22_run_multiple_imputation.R
+23_fit_cox_models.R
+25_nonlinear_sensitivity.R
+26_ph_diagnostics.R
+27_influence_diagnostics.R
+28_stratified_km.R
+29_generate_model_outputs.R
+30_render_stage6_report.R
+run_stage6.R
+tests/test_stage6.R
+```
+
+These scripts reuse Stage 5 coding and preflight. They do not rebuild
+cohort eligibility. Complete-case sensitivity uses the same formulas as
+the multiply imputed fits (`23_fit_cox_models.R`).
+
+```bash
+make inference
+```
+
+Person-level imputations, residuals, and dfbeta files under
+`data/interim/stage6/` are gitignored. Aggregate tables and figures are
+written to `artifacts/inference/`.
+
 ## Environment
 
 Run from the repository root:
@@ -65,7 +94,7 @@ conda activate pediastat-r
 ```
 
 Packages: DBI, RPostgres, dplyr, tidyr, ggplot2, survival, gtsummary, gt,
-broom, here, scales, yaml, jsonlite, testthat, renv.
+broom, here, scales, yaml, jsonlite, testthat, renv, mice, nnet.
 
-`mice` is specified for Stage 6 multiple imputation and is not called in
-Stage 4 or Stage 5. Add `r-mice` to this environment before Stage 6.
+`mice` is used in Stage 6 multiple imputation. It is not called in
+Stage 4 or Stage 5.

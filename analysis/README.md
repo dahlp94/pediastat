@@ -7,4 +7,4 @@ Current scripts live under `analysis/R/`. See `analysis/R/README.md`.
 
 Stage 4: descriptive Table 1, missingness, overall KM, reverse KM.  
 Stage 5: inferential coding and preflight (no Cox fit, no `mice()`).  
-Stage 6 will execute the frozen Cox + MI plan.
+Stage 6: execute the frozen Cox + MI plan (`make inference`).

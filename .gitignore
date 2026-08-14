@@ -64,6 +64,13 @@ data/interim/stage4/
 # Stage 5 contains person-level / generated intermediate data only
 data/interim/stage5/
 
+# Stage 6 contains person-level imputations, residuals, and model matrices
+data/interim/stage6/
+artifacts/inference/**/*.rds
+artifacts/inference/**/*patient*
+artifacts/inference/**/*dfbeta*
+artifacts/inference/**/*residual*.csv
+
 # Processed datasets
 data/processed/*
 !data/processed/.gitkeep

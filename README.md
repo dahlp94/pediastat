@@ -99,14 +99,21 @@ The statistical analysis plan in `docs/statistical_analysis_plan.md` will be com
 
 ## Project Status
 
-Stage 5 — inferential model, coding, missing-data strategy, and diagnostics
-plan frozen. No Cox model has been fit.
+Stage 6 — frozen Stage 5 Cox models and multiple imputation have been
+executed. The primary cohort remains N = 1978 (695 deaths; 1283
+censored). Models were not redesigned from the observed associations.
 
-The Stage 3 primary OS cohort remains frozen (N = 1978; 695 deaths; 1283
-censored). Stage 4 descriptive results remain the overall KM and reverse-KM
-summaries. Stage 5 specifies the primary clinical Cox model and a separate
-secondary molecular/cytogenetic model, plus MI and diagnostic rules.
-Stage 6 will execute that plan.
+## Stage 6 commands
+
+```bash
+make inference
+```
+
+This loads the locked PostgreSQL cohort, runs the frozen MICE
+specification, fits and pools the primary and secondary Cox models,
+writes aggregate artifacts under `artifacts/inference/`, and renders
+`reports/stage6_inferential_analysis.qmd` when Quarto is available.
+Person-level imputations under `data/interim/stage6/` are gitignored.
 
 ## Stage 5 commands
 
