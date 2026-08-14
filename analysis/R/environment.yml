@@ -18,4 +18,6 @@ dependencies:
   - r-jsonlite
   - r-testthat
   - r-renv
+  - r-mice
+  - r-nnet
   - quarto
