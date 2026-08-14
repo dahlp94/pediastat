@@ -1,0 +1,19 @@
+# Example non-secret project settings.
+# Copy to config/settings.yaml for local overrides if needed.
+# Database passwords and other secrets belong in environment variables
+# or a gitignored .env file, not in YAML.
+
+project:
+  name: pediastat
+  data_dir: data
+
+database:
+  host: localhost
+  port: 5432
+  name: pediastat
+  user: pediastat
+
+schemas:
+  raw: raw
+  staging: staging
+  analytics: analytics

@@ -1,0 +1,103 @@
+# PediaStat
+
+PediaStat is an applied biostatistics portfolio project that demonstrates a collaborative biostatistician workflow for pediatric oncology data. The project will analyze pediatric acute myeloid leukemia (AML) clinical data, likely from the NCI TARGET-AML program, with emphasis on study definitions, data QA/QC, a written analysis plan, and investigator-facing reporting. The eventual scientific objective is to evaluate associations between baseline patient/disease characteristics and overall survival among pediatric AML patients while explicitly addressing censoring, missing data, statistical assumptions, and uncertainty.
+
+## Scientific Question
+
+Among children and adolescents with acute myeloid leukemia, which baseline patient and disease characteristics are associated with overall survival, and how robust are those associations to missing-data and modeling assumptions?
+
+This is an observational association question. Causal effects will not be claimed from the planned analysis.
+
+## Project Goals
+
+- State the scientific question, cohort, and endpoints before modeling.
+- Keep raw clinical data immutable after ingestion and record transformations from raw to staging to analytics.
+- Perform clinical data QA/QC, including explicit handling of missingness.
+- Estimate associations with overall survival using standard, interpretable survival methods.
+- Quantify uncertainty and assess robustness through missing-data and sensitivity analyses.
+- Communicate findings in an investigator-facing statistical report.
+
+## Planned Statistical Workflow
+
+```text
+Scientific Question
+        ↓
+Statistical Analysis Plan
+        ↓
+Raw Clinical Data
+        ↓
+Data QA/QC
+        ↓
+Analysis Cohort
+        ↓
+Descriptive Statistics
+        ↓
+Survival Analysis
+        ↓
+Missing-Data Analysis
+        ↓
+Sensitivity Analysis
+        ↓
+Power / Sample-Size Analysis
+        ↓
+Investigator-Facing Report
+```
+
+## Technology Stack
+
+| Layer | Tool | Role |
+| --- | --- | --- |
+| Ingestion, validation, data utilities | Python 3.12+ | Load source files, validate raw data, write to PostgreSQL |
+| Data storage | PostgreSQL | Separate `raw`, `staging`, and `analytics` schemas |
+| Statistical analysis | R | Descriptive statistics, survival models, missing-data and sensitivity analyses |
+| Investigator-facing report | Quarto | Cohort definition, tables, figures, interpretation, and limitations |
+
+Predictive machine-learning models, dashboards, and cloud deployment are outside the initial scope.
+
+## Repository Structure
+
+```text
+pediastat/
+├── README.md
+├── pyproject.toml
+├── .gitignore
+├── .env.example
+├── Makefile
+├── config/                  # Non-secret project settings examples
+├── data/                    # raw / interim / processed (not committed)
+├── docs/                    # SAP template, data dictionary, decision log
+├── sql/                     # Schema and ingestion metadata DDL
+├── src/pediastat/           # Python package
+├── scripts/                 # Environment and reproducibility checks
+├── analysis/                # Future R analysis scripts
+├── reports/                 # Future Quarto reports
+└── tests/                   # Automated tests for infrastructure
+```
+
+## Reproducibility
+
+1. Create a Python 3.12+ virtual environment and install the package with development tools:
+
+   ```bash
+   python3.12 -m venv .venv
+   source .venv/bin/activate
+   pip install -e ".[dev]"
+   ```
+
+2. Copy `.env.example` to `.env` and replace placeholder credentials. Do not commit `.env`.
+
+3. Confirm the local environment:
+
+   ```bash
+   make check
+   ```
+
+PostgreSQL is required only when data are ingested. Stage 0 checks do not require a running database. Source data are not included in this repository; downloaded clinical files belong under `data/raw/` and are gitignored.
+
+The statistical analysis plan in `docs/statistical_analysis_plan.md` will be completed before primary modeling. Analysis choices should follow that plan rather than being selected after inspecting favorable results.
+
+## Project Status
+
+Stage 0 — repository and reproducibility setup.
+
+No clinical data have been downloaded or ingested. No analysis cohort, descriptive tables, survival models, missing-data procedures, or investigator-facing results have been implemented.
