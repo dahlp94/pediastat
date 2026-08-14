@@ -1,0 +1,5 @@
+"predictor","test","complete_case_statistic","complete_case_df","complete_case_p","mi_median_statistic","mi_median_p","knots","reference","replaces_primary"
+"age","nonlinearity",0.013558181975216,1,0.907304147366319,0.0283386457148375,0.866316583231065,"1.1417; 9.4839; 16.5656","9.4839 years (median)",FALSE
+"age","overall_spline",13.5074628351396,2,0.00116651872123058,10.6236924738692,0.00493431108704029,"1.1417; 9.4839; 16.5656","9.4839 years (median)",FALSE
+"log2_wbc","nonlinearity",0.252833161748794,1,0.615087188549456,0.014287394395436,0.904856565784443,"3.87; 26.7; 192.69","26.70 x10^3/mcL (median)",FALSE
+"log2_wbc","overall_spline",14.5067548371064,2,0.000707779878593495,20.1392023429031,4.23498401743228e-05,"3.87; 26.7; 192.69","26.70 x10^3/mcL (median)",FALSE

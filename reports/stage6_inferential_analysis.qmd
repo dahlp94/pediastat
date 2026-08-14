@@ -1,0 +1,336 @@
+---
+title: "PediaStat — Inferential Survival Analysis"
+subtitle: "Stage 6: execution of the frozen Cox and multiple-imputation plan"
+author: "PediaStat"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-title: Contents
+    embed-resources: true
+    theme: cosmo
+    html-math-method: katex
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(jsonlite)
+
+root <- here::here()
+inf <- file.path(root, "artifacts", "inference")
+fig <- file.path(inf, "figures")
+phdir <- file.path(inf, "ph")
+midir <- file.path(inf, "mi")
+
+read_inf <- function(name, sub = NULL) {
+  base <- if (is.null(sub)) inf else file.path(inf, sub)
+  utils::read.csv(file.path(base, name), check.names = FALSE, stringsAsFactors = FALSE)
+}
+
+fmt <- function(x, digits = 2) formatC(as.numeric(x), digits = digits, format = "f")
+fmt_p <- function(p) {
+  p <- as.numeric(p)
+  ifelse(p < 0.001, "<0.001", formatC(p, digits = 3, format = "g"))
+}
+
+hr_line <- function(row) {
+  sprintf(
+    "adjusted HR %s (95%% CI %s–%s; nominal p = %s)",
+    fmt(row$hr), fmt(row$hr_lcl), fmt(row$hr_ucl), fmt_p(row$p_value)
+  )
+}
+
+interpret <- function(row, adjustment) {
+  direction <- if (as.numeric(row$hr) >= 1) "higher" else "lower"
+  interval_note <- if (as.numeric(row$hr_lcl) < 1 && as.numeric(row$hr_ucl) > 1) {
+    "The confidence interval was compatible with both a higher and a lower hazard, so the estimate was imprecise."
+  } else {
+    sprintf("The confidence interval was compatible with a %s hazard of death.", direction)
+  }
+  sprintf(
+    "After adjustment for %s, %s was associated with a %s hazard of death (%s). %s This is a prognostic association, not a causal effect.",
+    adjustment,
+    row$predictor_label,
+    direction,
+    hr_line(row),
+    interval_note
+  )
+}
+
+primary <- read_inf("primary_cox_mi.csv")
+secondary <- read_inf("secondary_cox_mi.csv")
+primary_cc <- read_inf("primary_cox_complete_case.csv")
+secondary_cc <- read_inf("secondary_cox_complete_case.csv")
+cmp <- read_inf("mi_vs_complete_case.csv")
+nl <- read_inf("nonlinear_sensitivity_summary.csv")
+phs <- read_inf("ph_diagnostics_summary.csv")
+fit <- read_inf("model_fit_summary.csv")
+meta <- fromJSON(file.path(inf, "model_metadata.json"))
+notes <- fromJSON(file.path(inf, "analysis_notes.json"))
+session <- fromJSON(file.path(inf, "r_session_info.json"))
+followup <- fromJSON(file.path(root, "artifacts", "descriptive", "followup_summary.json"))
+km_os <- fromJSON(file.path(root, "artifacts", "descriptive", "overall_survival_summary.json"))
+deviations <- paste(readLines(file.path(root, "docs", "stage6_sap_deviations.md"), warn = FALSE), collapse = "\n")
+row_of <- function(tbl, term) tbl[tbl$term == term, ][1, ]
+fitv <- function(item) fit$value[fit$item == item]
+```
+
+# Executive summary
+
+- **Population.** Frozen primary TARGET-AML overall-survival cohort: **`r meta$cohort_n` analysis persons** younger than 18 years at diagnosis (**`r meta$deaths` deaths**, **`r meta$censored` censored**). Median potential follow-up by reverse Kaplan–Meier was `r sprintf("%.2f", followup$median_followup_years)` years.
+- **Primary prognostic variables.** Protocol risk group and log2 white-blood-cell count (WBC), with age and sex as adjustment variables.
+- **Strongest / most precisely estimated primary associations.** High vs Low risk: `r hr_line(row_of(primary, "risk_group_stdHigh"))`. WBC per doubling: `r hr_line(row_of(primary, "log2_wbc"))`.
+- **Complete-case robustness.** The same formulas were fit on complete cases (primary N = `r primary_cc$n[1]`; secondary N = `r secondary_cc$n[1]`). Direction and magnitude are compared below; complete case is sensitivity, not the primary analysis.
+- **Proportional hazards.** Diagnostics used scaled Schoenfeld residuals (`cox.zph`). Remediation, if triggered, followed the frozen hierarchy and did not replace the primary model (remediation performed: `r isTRUE(meta$ph_remediation_performed)`).
+- **Limitations investigators should keep in mind.** This is observational public TARGET data. Missing covariates were handled under a MAR working assumption. Residual confounding remains possible. The 10-year risk set is small. There is no external validation. Language throughout is **prognostic association**, not causal effect.
+
+# 1. Scientific Objective
+
+Among children and adolescents with acute myeloid leukemia in public TARGET-AML data, estimate associations between **prespecified** baseline patient and disease characteristics and the hazard of all-cause death after diagnosis.
+
+The analysis is a prognostic association study. It does not estimate causal effects of intervening on a covariate, protocol, or treatment.
+
+# 2. Prespecified Primary Cohort
+
+The unit of analysis is the **analysis person**. Eligibility was locked in Stage 3 and was **not** reconstructed in R.
+
+| Item | Frozen value |
+| --- | ---: |
+| N | `r meta$cohort_n` |
+| Deaths | `r meta$deaths` |
+| Censored | `r meta$censored` |
+| Age at diagnosis | < 18 years |
+| Overall 5-year OS | `r sprintf("%.3f", km_os$km_1_3_5_year$survival[3])` |
+| Median potential follow-up | `r sprintf("%.2f years (95%% CI %.2f–%.2f)", followup$median_followup_years, followup$median_followup_lcl_years, followup$median_followup_ucl_years)` |
+
+Unknown / Not Reported vital status is not treated as censoring. Predictor completeness does not change cohort membership.
+
+# 3. Prespecified Statistical Models
+
+**Primary clinical model**
+
+```text
+`r meta$primary_formula`
+```
+
+Tied event times use the **Efron** approximation. Age is linear in `age5` (hazard ratio per 5 years). WBC is linear in `log2_wbc` (hazard ratio per doubling). Sex reference is Female. Risk-group reference is Low. There are **no interaction terms**.
+
+**Secondary molecular/cytogenetic model**
+
+```text
+`r meta$secondary_formula`
+```
+
+Risk group is **absent**. Primary cytogenetic code and FAB are absent. Binary flags use No as the reference.
+
+These formulas were frozen in Stage 5 before any predictor–survival association was examined. Stage 6 did not add, drop, or recode predictors because of p-values or hazard ratios.
+
+# 4. Missing Data
+
+Primary missing-data method: **multiple imputation by chained equations** (`mice`), **m = `r meta$m`**, seed **`r meta$seed`**, **`r meta$mice_maxit`** iterations.
+
+Not imputed: analysis-person ID, `os_event`, `os_days`, age, and sex.
+
+Imputation methods followed the freeze: predictive mean matching for `log2_wbc`; polytomous regression for risk group; logistic regression for binary molecular and lesion flags. Auxiliary predictors included marrow and peripheral blasts, CNS (Yes/No), collapsed race, ethnicity, an AML1031 source indicator, `os_event`, and a **nonparametric Nelson–Aalen** cumulative hazard. Post-baseline treatment and response variables were not used.
+
+Unresolved risk-group tokens `10` and `30` (n = 3) remained missing for inference. They were not mapped to Low/Standard/High.
+
+![MICE chain-mean traces](`r file.path(midir, "mi_trace_plots.png")`)
+
+Diagnostics are in `artifacts/inference/mi/`. Completed person-level imputations are gitignored.
+
+# 5. Primary Clinical Model
+
+Pooled using **Rubin's rules on the coefficient (log hazard ratio) scale**. Hazard ratios are exponentiated pooled coefficients. Hazard ratios were not averaged across imputations.
+
+```{r}
+#| label: primary-table
+knitr::kable(
+  primary[, c("predictor_label", "comparison_or_unit", "hr", "hr_lcl", "hr_ucl", "p_value", "fmi")],
+  digits = 3,
+  col.names = c("Predictor", "Comparison / unit", "HR", "95% CI lower", "95% CI upper", "Nominal p", "FMI"),
+  caption = "Primary clinical Cox model, multiply imputed and pooled."
+)
+```
+
+![Primary clinical model forest plot](`r file.path(fig, "forest_primary_clinical.png")`)
+
+`r interpret(row_of(primary, "age5"), "age, sex, WBC, and risk group")`
+
+`r interpret(row_of(primary, "sex_stdMale"), "age, sex, WBC, and risk group")`
+
+`r interpret(row_of(primary, "log2_wbc"), "age, sex, WBC, and risk group")`
+
+`r interpret(row_of(primary, "risk_group_stdStandard"), "age, sex, WBC, and risk group")`
+
+`r interpret(row_of(primary, "risk_group_stdHigh"), "age, sex, WBC, and risk group")`
+
+Pooled global test for risk group (2 df): `r notes$risk_group_global$method`. Statistic = `r fmt(notes$risk_group_global$statistic, 2)`; p = `r fmt_p(notes$risk_group_global$p_value)`.
+
+Descriptive concordance (mean across imputations): **`r sprintf("%.3f", notes$primary_concordance$mean)`**. This is not a prediction-model validation statistic and was not optimized.
+
+# 6. Secondary Molecular/Cytogenetic Model
+
+Benjamini–Hochberg q-values are reported **only** for the frozen biological family (FLT3/ITD, NPM, CEBPA, t(8;21), inv(16), MLL/KMT2A, monosomy 7). Age, sex, and WBC are adjustment variables and are not in the FDR family.
+
+```{r}
+#| label: secondary-table
+knitr::kable(
+  secondary[, c("predictor_label", "comparison_or_unit", "hr", "hr_lcl", "hr_ucl", "p_value", "q_value")],
+  digits = 3,
+  col.names = c("Predictor", "Comparison / unit", "HR", "95% CI lower", "95% CI upper", "Nominal p", "BH q"),
+  caption = "Secondary molecular/cytogenetic Cox model. q-values apply only to the frozen biological family."
+)
+```
+
+![Secondary molecular model forest plot](`r file.path(fig, "forest_secondary_molecular.png")`)
+
+```{r}
+#| label: secondary-interp
+bio <- secondary[!secondary$term %in% c("age5", "sex_stdMale", "log2_wbc"), ]
+paragraphs <- vapply(
+  seq_len(nrow(bio)),
+  function(i) interpret(bio[i, , drop = FALSE], "age, sex, and WBC"),
+  character(1)
+)
+```
+
+`r paste(paragraphs, collapse = "\n\n")`
+
+Descriptive concordance (mean across imputations): **`r sprintf("%.3f", notes$secondary_concordance$mean)`**.
+
+# 7. Complete-Case Sensitivity Analysis
+
+The formulas, references, and transformations were unchanged. Rows with missing model covariates were omitted from that fit only.
+
+| Model | Complete-case N | Deaths | Percent of primary cohort |
+| --- | ---: | ---: | ---: |
+| Primary clinical | `r primary_cc$n[1]` | `r primary_cc$deaths[1]` | `r primary_cc$percent_of_primary_cohort[1]`% |
+| Secondary molecular | `r secondary_cc$n[1]` | `r secondary_cc$deaths[1]` | `r secondary_cc$percent_of_primary_cohort[1]`% |
+
+```{r}
+#| label: mi-cc
+knitr::kable(
+  cmp[, c("model", "predictor_label", "hr_mi", "hr_lcl_mi", "hr_ucl_mi", "hr_cc", "hr_lcl_cc", "hr_ucl_cc", "qualitative")],
+  digits = 3,
+  col.names = c("Model", "Predictor", "MI HR", "MI LCL", "MI UCL", "CC HR", "CC LCL", "CC UCL", "Qualitative"),
+  caption = "Multiply imputed vs complete-case adjusted hazard ratios."
+)
+```
+
+Qualitative labels compare direction and magnitude. They are not a declaration that one method is correct because its intervals are narrower.
+
+# 8. Functional-Form Sensitivity
+
+Restricted cubic splines used **frozen Stage 4 knots** (10th, 50th, 90th percentiles). Knots were not moved using AIC, p-values, or Stage 6 results. The primary linear `age5` and log2-linear WBC specifications were **not replaced**.
+
+```{r}
+#| label: spline-table
+knitr::kable(
+  nl,
+  digits = 3,
+  caption = "Spline overall and nonlinearity tests. Complete-case Wald tests and median tests across imputations."
+)
+```
+
+Relative-hazard curves use the cohort median as the reference (age `r fmt(nl$reference[1])`; WBC median 26.7 ×10³/mcL). Those references were frozen from Stage 4, not chosen after seeing which reference made the figure look strongest.
+
+![Age spline relative hazard](`r file.path(fig, "age_spline_relative_hazard.png")`)
+
+![WBC spline relative hazard](`r file.path(fig, "wbc_spline_relative_hazard.png")`)
+
+# 9. Proportional-Hazards Diagnostics
+
+Assessment used scaled Schoenfeld residuals, covariate-specific tests, a global test, and plots. Classification combined the test, the residual correlation (`rho`), and whether the variable is a nuisance adjustment or a scientifically important predictor. A p-value below 0.05 was not automatically treated as a major violation.
+
+```{r}
+#| label: ph-table
+knitr::kable(
+  phs[, intersect(c("model", "term", "role", "rho", "chisq", "df", "p", "classification", "decision", "mi_median_classification"), names(phs))],
+  digits = 3,
+  caption = "Complete-case cox.zph diagnostics with prespecified classifications."
+)
+```
+
+![Primary model Schoenfeld plots](`r file.path(phdir, "primary_cox_zph_complete_case.png")`)
+
+![Secondary model Schoenfeld plots](`r file.path(phdir, "secondary_cox_zph_complete_case.png")`)
+
+Remediation performed: **`r isTRUE(meta$ph_remediation_performed)`**. The original Cox specifications remain the primary results.
+
+# 10. Influence Diagnostics
+
+Deviance residuals, martingale residuals, and dfbeta were examined on complete-case fits. Patient-level lists are gitignored. **No valid participant was deleted because they were influential.**
+
+![Primary deviance residuals](`r file.path(fig, "primary_deviance_residuals.png")`)
+
+![Secondary deviance residuals](`r file.path(fig, "secondary_deviance_residuals.png")`)
+
+# 11. Descriptive Kaplan–Meier Figures
+
+Stage 5 permitted only unadjusted curves for **risk group** and **FLT3/ITD**. Missing values are excluded from each figure. These plots are descriptive and were **not** used for variable selection. Log-rank tests were **not** computed.
+
+![Unadjusted KM by risk group](`r file.path(fig, "km_risk_group.png")`)
+
+![Unadjusted KM by FLT3/ITD](`r file.path(fig, "km_flt3_itd.png")`)
+
+# 12. Interpretation
+
+## Primary clinical findings
+
+Emphasis remains on risk group and WBC, as frozen in Stage 5.
+
+`r interpret(row_of(primary, "risk_group_stdHigh"), "age, sex, and WBC")`
+
+`r interpret(row_of(primary, "risk_group_stdStandard"), "age, sex, and WBC")`
+
+`r interpret(row_of(primary, "log2_wbc"), "age, sex, and risk group")`
+
+Age and sex were estimated as adjustment variables. They are interpreted as prognostic associations, not as targets of intervention.
+
+## Secondary molecular findings
+
+The secondary model asks a different question: granular mutation and lesion indicators **without** protocol risk group, so that overlapping cytogenetic information is not double-counted.
+
+Nominal p-values and BH q-values should be read together. q-values are not a ranking exercise and were not used to drop predictors.
+
+## Robustness
+
+Complete-case and multiply imputed estimates were compared for direction and magnitude. Nonlinear spline sensitivities assess whether linear `age5` and log2-linear WBC are materially inadequate; they do not automatically replace the primary forms. PH diagnostics assess whether reported hazard ratios should be read as average relative hazards over follow-up.
+
+# 13. Limitations
+
+- Observational study of public TARGET-AML data.
+- Prognostic associations, not causal effects.
+- Multiple integrated open clinical-supplement sources with documented provenance and some source conflicts.
+- Missing baseline covariates; multiple imputation relies on a MAR working assumption that Stage 4 did not prove. MNAR remains possible.
+- Potential residual confounding, including unmeasured disease biology and care access.
+- Cox proportional-hazards assumptions; material departures, if classified, were handled as sensitivity analyses rather than silent model replacement.
+- Sparse categories exist (for example monosomy 7).
+- The 10-year Kaplan–Meier risk set is small (Stage 4: 16 persons).
+- No external validation and no train/test prediction split. Concordance is descriptive only.
+
+# 14. SAP Deviations
+
+```{r}
+#| label: deviations
+#| output: asis
+cat(deviations)
+```
+
+# 15. Conclusions
+
+Stage 6 executed the frozen Stage 5 plan on the locked primary cohort. Adjusted associations are reported with confidence intervals and, for the secondary biological family, BH q-values. The primary clinical model remains the primary result. Sensitivity analyses (complete case, splines, PH remediation if triggered) inform robustness and do not rewrite the prespecified specification.
+
+# 16. Next Steps
+
+This stage stops after the prespecified frequentist survival analysis. Bayesian survival models, competing risks, time-dependent treatment effects beyond PH remediation, machine-learning prediction, external validation, and dashboards are out of scope here.
+
+# Software
+
+R `r session$r_version`; survival `r session$packages$survival`; mice `r session$packages$mice`. Run timestamp: `r meta$run_timestamp`. Ties method: Efron. Number of imputations: `r meta$m`. Seed: `r meta$seed`.

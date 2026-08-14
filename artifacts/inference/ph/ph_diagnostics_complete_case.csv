@@ -1,0 +1,17 @@
+"model","source","term","base_term","role","rho","chisq","df","p","classification"
+"primary_clinical","complete_case","age5","age5","nuisance",0.0394071720887911,0.872699762093316,1,0.350208983124873,"NO MATERIAL EVIDENCE OF VIOLATION"
+"primary_clinical","complete_case","sex_std","sex_std","nuisance",0.0402795791105739,1.27465947001486,1,0.258894383074449,"NO MATERIAL EVIDENCE OF VIOLATION"
+"primary_clinical","complete_case","log2_wbc","log2_wbc","important",-0.0922270887060288,6.49085459105038,1,0.01084308395318,"MINOR DEPARTURE"
+"primary_clinical","complete_case","risk_group_std","risk_group_std","important",0.0440656359704868,1.10435233036443,2,0.575695637429953,"NO MATERIAL EVIDENCE OF VIOLATION"
+"primary_clinical","complete_case","GLOBAL","GLOBAL","global",,9.96293636089137,5,0.0762922654036319,
+"secondary_molecular","complete_case","age5","age5","nuisance",0.0164667309995211,0.644426604514761,1,0.422112390424512,"NO MATERIAL EVIDENCE OF VIOLATION"
+"secondary_molecular","complete_case","sex_std","sex_std","nuisance",0.0363283813991014,1.24381676467375,1,0.264736736131225,"NO MATERIAL EVIDENCE OF VIOLATION"
+"secondary_molecular","complete_case","log2_wbc","log2_wbc","nuisance",-0.107123680398559,6.81278971703351,1,0.0090507258272616,"MINOR DEPARTURE"
+"secondary_molecular","complete_case","flt3_itd_std","flt3_itd_std","important",0.0587107690192596,2.15976990193301,1,0.141665902932596,"NO MATERIAL EVIDENCE OF VIOLATION"
+"secondary_molecular","complete_case","npm_std","npm_std","important",-0.0763517309869239,2.6094853181343,1,0.106226233217635,"NO MATERIAL EVIDENCE OF VIOLATION"
+"secondary_molecular","complete_case","cebpa_std","cebpa_std","important",-0.033410173228178,0.56050380520947,1,0.454057323007252,"NO MATERIAL EVIDENCE OF VIOLATION"
+"secondary_molecular","complete_case","cytogenetics_t821_std","cytogenetics_t821_std","important",-0.0525786279942932,0.896078489677858,1,0.34383539302234,"NO MATERIAL EVIDENCE OF VIOLATION"
+"secondary_molecular","complete_case","cytogenetics_inv16_std","cytogenetics_inv16_std","important",0.0165729670964505,0.0912492830721315,1,0.762594918311437,"NO MATERIAL EVIDENCE OF VIOLATION"
+"secondary_molecular","complete_case","cytogenetics_mll_std","cytogenetics_mll_std","important",-0.0352239676365734,1.35645996523331,1,0.244151943937007,"NO MATERIAL EVIDENCE OF VIOLATION"
+"secondary_molecular","complete_case","cytogenetics_monosomy7_std","cytogenetics_monosomy7_std","important",0.00123957677001746,0.0332723813750555,1,0.855263187077812,"NO MATERIAL EVIDENCE OF VIOLATION"
+"secondary_molecular","complete_case","GLOBAL","GLOBAL","global",,18.1079070417535,10,0.0531704552399764,

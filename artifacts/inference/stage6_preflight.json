@@ -1,0 +1,49 @@
+{
+  "n": 1978,
+  "n_unresolved_risk_tokens": 3,
+  "n_risk_group_missing_for_model": 114,
+  "n_log2_wbc_missing": 10,
+  "n_sex_missing": 0,
+  "n_age5_missing": 0,
+  "primary_complete_case_n": 1861,
+  "secondary_complete_case_n": 1825,
+  "primary_design_matrix": {
+    "n_rows": 1861,
+    "n_cols": 6,
+    "rank": 6,
+    "full_rank": true
+  },
+  "secondary_design_matrix": {
+    "n_rows": 1825,
+    "n_cols": 11,
+    "rank": 11,
+    "full_rank": true
+  },
+  "primary_colnames": ["(Intercept)", "age5", "sex_stdMale", "log2_wbc", "risk_group_stdStandard", "risk_group_stdHigh"],
+  "secondary_colnames": ["(Intercept)", "age5", "sex_stdMale", "log2_wbc", "flt3_itd_stdYes", "npm_stdYes", "cebpa_stdYes", "cytogenetics_t821_stdYes", "cytogenetics_inv16_stdYes", "cytogenetics_mll_stdYes", "cytogenetics_monosomy7_stdYes"],
+  "lesion_cooccurrence": {
+    "n_yes": {
+      "cytogenetics_t821_std": 270,
+      "cytogenetics_inv16_std": 199,
+      "cytogenetics_mll_std": 370,
+      "cytogenetics_monosomy7_std": 38
+    },
+    "n_two_or_more_lesions": 4
+  },
+  "expected_primary_df": 5,
+  "expected_secondary_df": 10,
+  "primary_mm_nonintercept_cols": 5,
+  "secondary_mm_nonintercept_cols": 10,
+  "cohort_checks": {
+    "n": 1978,
+    "unique_ids": 1978,
+    "deaths": 695,
+    "censored": 1283,
+    "missing_os_event": 0,
+    "missing_os_days": 0,
+    "negative_os_days": 0,
+    "age_ge_18": 0,
+    "duplicate_ids": 0
+  },
+  "n_unresolved_risk_tokens_recorded": 3
+}

@@ -1,0 +1,30 @@
+{
+  "primary_concordance": {
+    "mean": 0.658490005213318,
+    "min": 0.652826629940008,
+    "max": 0.663052825696211,
+    "n": 30
+  },
+  "secondary_concordance": {
+    "mean": 0.665239835975007,
+    "min": 0.659391675809426,
+    "max": 0.669993230467565,
+    "n": 30
+  },
+  "risk_group_global": {
+    "method": "mice::D1 multivariate Wald test (risk_group_std 2 df vs nested model without risk group)",
+    "statistic": 80.8400237160621,
+    "df1": 2,
+    "df2": 665.455292247037,
+    "p_value": 3.72661077347681e-32,
+    "result_columns": "F.value,df1,df2,P(>F),RIV"
+  },
+  "ph_remediation_notes": {
+    "primary": "No material PH violation was classified for the primary clinical model. No remediation model was fit."
+  },
+  "km": {
+    "risk_group": true,
+    "flt3": true,
+    "log_rank": false
+  }
+}

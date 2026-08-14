@@ -1,0 +1,14 @@
+{
+  "r_version": "4.5.3",
+  "platform": "x86_64-apple-darwin13.4.0",
+  "running": "macOS Ventura 13.7.8",
+  "packages": {
+    "survival": "3.8.9",
+    "mice": "3.19.0",
+    "ggplot2": "4.0.3",
+    "broom": "1.0.13",
+    "yaml": "2.3.12",
+    "jsonlite": "2.0.0",
+    "dplyr": "1.2.1"
+  }
+}

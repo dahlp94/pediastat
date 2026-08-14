@@ -1,0 +1,8 @@
+{
+  "method": "mice::D1 multivariate Wald test (risk_group_std 2 df vs nested model without risk group)",
+  "statistic": 80.8400237160621,
+  "df1": 2,
+  "df2": 665.455292247037,
+  "p_value": 3.72661077347681e-32,
+  "result_columns": "F.value,df1,df2,P(>F),RIV"
+}

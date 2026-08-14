@@ -1,0 +1,37 @@
+{
+  "cohort_n": 1978,
+  "deaths": 695,
+  "censored": 1283,
+  "primary_formula": "Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + risk_group_std",
+  "secondary_formula": "Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + flt3_itd_std + npm_std + cebpa_std + cytogenetics_t821_std + cytogenetics_inv16_std + cytogenetics_mll_std + cytogenetics_monosomy7_std",
+  "m": 30,
+  "seed": 20260814,
+  "mice_maxit": 20,
+  "ties": "efron",
+  "software": {
+    "r_version": "4.5.3",
+    "platform": "x86_64-apple-darwin13.4.0",
+    "running": "macOS Ventura 13.7.8",
+    "packages": {
+      "survival": "3.8.9",
+      "mice": "3.19.0",
+      "ggplot2": "4.0.3",
+      "broom": "1.0.13",
+      "yaml": "2.3.12",
+      "jsonlite": "2.0.0",
+      "dplyr": "1.2.1"
+    }
+  },
+  "run_timestamp": "2026-08-14 23:29:05 UTC",
+  "fdr_family": ["flt3_itd_std", "npm_std", "cebpa_std", "cytogenetics_t821_std", "cytogenetics_inv16_std", "cytogenetics_mll_std", "cytogenetics_monosomy7_std"],
+  "fdr_method": "benjamini_hochberg",
+  "ph_method": "cox.zph",
+  "complete_case_primary_n": 1861,
+  "complete_case_primary_deaths": 670,
+  "complete_case_secondary_n": 1825,
+  "complete_case_secondary_deaths": 648,
+  "primary_concordance_mi_mean": 0.658490005213318,
+  "secondary_concordance_mi_mean": 0.665239835975007,
+  "ph_remediation_performed": false,
+  "patient_level_data_included": false
+}

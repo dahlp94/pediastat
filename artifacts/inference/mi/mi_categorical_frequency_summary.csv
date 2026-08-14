@@ -1,0 +1,751 @@
+"variable","imputation","level","n_observed","n_imputed"
+"risk_group_std",1,"Low",679,63
+"risk_group_std",1,"Standard",935,46
+"risk_group_std",1,"High",250,5
+"risk_group_std",2,"Low",679,72
+"risk_group_std",2,"Standard",935,30
+"risk_group_std",2,"High",250,12
+"risk_group_std",3,"Low",679,77
+"risk_group_std",3,"Standard",935,26
+"risk_group_std",3,"High",250,11
+"risk_group_std",4,"Low",679,67
+"risk_group_std",4,"Standard",935,39
+"risk_group_std",4,"High",250,8
+"risk_group_std",5,"Low",679,68
+"risk_group_std",5,"Standard",935,34
+"risk_group_std",5,"High",250,12
+"risk_group_std",6,"Low",679,66
+"risk_group_std",6,"Standard",935,32
+"risk_group_std",6,"High",250,16
+"risk_group_std",7,"Low",679,68
+"risk_group_std",7,"Standard",935,32
+"risk_group_std",7,"High",250,14
+"risk_group_std",8,"Low",679,72
+"risk_group_std",8,"Standard",935,34
+"risk_group_std",8,"High",250,8
+"risk_group_std",9,"Low",679,80
+"risk_group_std",9,"Standard",935,26
+"risk_group_std",9,"High",250,8
+"risk_group_std",10,"Low",679,68
+"risk_group_std",10,"Standard",935,36
+"risk_group_std",10,"High",250,10
+"risk_group_std",11,"Low",679,80
+"risk_group_std",11,"Standard",935,28
+"risk_group_std",11,"High",250,6
+"risk_group_std",12,"Low",679,72
+"risk_group_std",12,"Standard",935,38
+"risk_group_std",12,"High",250,4
+"risk_group_std",13,"Low",679,70
+"risk_group_std",13,"Standard",935,34
+"risk_group_std",13,"High",250,10
+"risk_group_std",14,"Low",679,54
+"risk_group_std",14,"Standard",935,50
+"risk_group_std",14,"High",250,10
+"risk_group_std",15,"Low",679,81
+"risk_group_std",15,"Standard",935,23
+"risk_group_std",15,"High",250,10
+"risk_group_std",16,"Low",679,63
+"risk_group_std",16,"Standard",935,36
+"risk_group_std",16,"High",250,15
+"risk_group_std",17,"Low",679,64
+"risk_group_std",17,"Standard",935,42
+"risk_group_std",17,"High",250,8
+"risk_group_std",18,"Low",679,74
+"risk_group_std",18,"Standard",935,31
+"risk_group_std",18,"High",250,9
+"risk_group_std",19,"Low",679,77
+"risk_group_std",19,"Standard",935,27
+"risk_group_std",19,"High",250,10
+"risk_group_std",20,"Low",679,70
+"risk_group_std",20,"Standard",935,36
+"risk_group_std",20,"High",250,8
+"risk_group_std",21,"Low",679,82
+"risk_group_std",21,"Standard",935,26
+"risk_group_std",21,"High",250,6
+"risk_group_std",22,"Low",679,69
+"risk_group_std",22,"Standard",935,33
+"risk_group_std",22,"High",250,12
+"risk_group_std",23,"Low",679,82
+"risk_group_std",23,"Standard",935,22
+"risk_group_std",23,"High",250,10
+"risk_group_std",24,"Low",679,67
+"risk_group_std",24,"Standard",935,35
+"risk_group_std",24,"High",250,12
+"risk_group_std",25,"Low",679,74
+"risk_group_std",25,"Standard",935,29
+"risk_group_std",25,"High",250,11
+"risk_group_std",26,"Low",679,71
+"risk_group_std",26,"Standard",935,35
+"risk_group_std",26,"High",250,8
+"risk_group_std",27,"Low",679,68
+"risk_group_std",27,"Standard",935,34
+"risk_group_std",27,"High",250,12
+"risk_group_std",28,"Low",679,74
+"risk_group_std",28,"Standard",935,27
+"risk_group_std",28,"High",250,13
+"risk_group_std",29,"Low",679,71
+"risk_group_std",29,"Standard",935,33
+"risk_group_std",29,"High",250,10
+"risk_group_std",30,"Low",679,70
+"risk_group_std",30,"Standard",935,36
+"risk_group_std",30,"High",250,8
+"flt3_itd_std",1,"No",1598,64
+"flt3_itd_std",1,"Yes",305,11
+"flt3_itd_std",2,"No",1598,64
+"flt3_itd_std",2,"Yes",305,11
+"flt3_itd_std",3,"No",1598,65
+"flt3_itd_std",3,"Yes",305,10
+"flt3_itd_std",4,"No",1598,63
+"flt3_itd_std",4,"Yes",305,12
+"flt3_itd_std",5,"No",1598,60
+"flt3_itd_std",5,"Yes",305,15
+"flt3_itd_std",6,"No",1598,60
+"flt3_itd_std",6,"Yes",305,15
+"flt3_itd_std",7,"No",1598,69
+"flt3_itd_std",7,"Yes",305,6
+"flt3_itd_std",8,"No",1598,70
+"flt3_itd_std",8,"Yes",305,5
+"flt3_itd_std",9,"No",1598,65
+"flt3_itd_std",9,"Yes",305,10
+"flt3_itd_std",10,"No",1598,64
+"flt3_itd_std",10,"Yes",305,11
+"flt3_itd_std",11,"No",1598,71
+"flt3_itd_std",11,"Yes",305,4
+"flt3_itd_std",12,"No",1598,68
+"flt3_itd_std",12,"Yes",305,7
+"flt3_itd_std",13,"No",1598,67
+"flt3_itd_std",13,"Yes",305,8
+"flt3_itd_std",14,"No",1598,66
+"flt3_itd_std",14,"Yes",305,9
+"flt3_itd_std",15,"No",1598,68
+"flt3_itd_std",15,"Yes",305,7
+"flt3_itd_std",16,"No",1598,66
+"flt3_itd_std",16,"Yes",305,9
+"flt3_itd_std",17,"No",1598,66
+"flt3_itd_std",17,"Yes",305,9
+"flt3_itd_std",18,"No",1598,67
+"flt3_itd_std",18,"Yes",305,8
+"flt3_itd_std",19,"No",1598,66
+"flt3_itd_std",19,"Yes",305,9
+"flt3_itd_std",20,"No",1598,66
+"flt3_itd_std",20,"Yes",305,9
+"flt3_itd_std",21,"No",1598,72
+"flt3_itd_std",21,"Yes",305,3
+"flt3_itd_std",22,"No",1598,67
+"flt3_itd_std",22,"Yes",305,8
+"flt3_itd_std",23,"No",1598,66
+"flt3_itd_std",23,"Yes",305,9
+"flt3_itd_std",24,"No",1598,57
+"flt3_itd_std",24,"Yes",305,18
+"flt3_itd_std",25,"No",1598,60
+"flt3_itd_std",25,"Yes",305,15
+"flt3_itd_std",26,"No",1598,67
+"flt3_itd_std",26,"Yes",305,8
+"flt3_itd_std",27,"No",1598,65
+"flt3_itd_std",27,"Yes",305,10
+"flt3_itd_std",28,"No",1598,69
+"flt3_itd_std",28,"Yes",305,6
+"flt3_itd_std",29,"No",1598,66
+"flt3_itd_std",29,"Yes",305,9
+"flt3_itd_std",30,"No",1598,68
+"flt3_itd_std",30,"Yes",305,7
+"npm_std",1,"No",1743,80
+"npm_std",1,"Yes",148,7
+"npm_std",2,"No",1743,76
+"npm_std",2,"Yes",148,11
+"npm_std",3,"No",1743,79
+"npm_std",3,"Yes",148,8
+"npm_std",4,"No",1743,80
+"npm_std",4,"Yes",148,7
+"npm_std",5,"No",1743,74
+"npm_std",5,"Yes",148,13
+"npm_std",6,"No",1743,76
+"npm_std",6,"Yes",148,11
+"npm_std",7,"No",1743,80
+"npm_std",7,"Yes",148,7
+"npm_std",8,"No",1743,80
+"npm_std",8,"Yes",148,7
+"npm_std",9,"No",1743,78
+"npm_std",9,"Yes",148,9
+"npm_std",10,"No",1743,78
+"npm_std",10,"Yes",148,9
+"npm_std",11,"No",1743,80
+"npm_std",11,"Yes",148,7
+"npm_std",12,"No",1743,84
+"npm_std",12,"Yes",148,3
+"npm_std",13,"No",1743,77
+"npm_std",13,"Yes",148,10
+"npm_std",14,"No",1743,77
+"npm_std",14,"Yes",148,10
+"npm_std",15,"No",1743,79
+"npm_std",15,"Yes",148,8
+"npm_std",16,"No",1743,74
+"npm_std",16,"Yes",148,13
+"npm_std",17,"No",1743,79
+"npm_std",17,"Yes",148,8
+"npm_std",18,"No",1743,78
+"npm_std",18,"Yes",148,9
+"npm_std",19,"No",1743,81
+"npm_std",19,"Yes",148,6
+"npm_std",20,"No",1743,76
+"npm_std",20,"Yes",148,11
+"npm_std",21,"No",1743,78
+"npm_std",21,"Yes",148,9
+"npm_std",22,"No",1743,75
+"npm_std",22,"Yes",148,12
+"npm_std",23,"No",1743,74
+"npm_std",23,"Yes",148,13
+"npm_std",24,"No",1743,79
+"npm_std",24,"Yes",148,8
+"npm_std",25,"No",1743,73
+"npm_std",25,"Yes",148,14
+"npm_std",26,"No",1743,77
+"npm_std",26,"Yes",148,10
+"npm_std",27,"No",1743,69
+"npm_std",27,"Yes",148,18
+"npm_std",28,"No",1743,71
+"npm_std",28,"Yes",148,16
+"npm_std",29,"No",1743,76
+"npm_std",29,"Yes",148,11
+"npm_std",30,"No",1743,79
+"npm_std",30,"Yes",148,8
+"cebpa_std",1,"No",1788,69
+"cebpa_std",1,"Yes",107,14
+"cebpa_std",2,"No",1788,71
+"cebpa_std",2,"Yes",107,12
+"cebpa_std",3,"No",1788,73
+"cebpa_std",3,"Yes",107,10
+"cebpa_std",4,"No",1788,70
+"cebpa_std",4,"Yes",107,13
+"cebpa_std",5,"No",1788,72
+"cebpa_std",5,"Yes",107,11
+"cebpa_std",6,"No",1788,65
+"cebpa_std",6,"Yes",107,18
+"cebpa_std",7,"No",1788,69
+"cebpa_std",7,"Yes",107,14
+"cebpa_std",8,"No",1788,64
+"cebpa_std",8,"Yes",107,19
+"cebpa_std",9,"No",1788,68
+"cebpa_std",9,"Yes",107,15
+"cebpa_std",10,"No",1788,73
+"cebpa_std",10,"Yes",107,10
+"cebpa_std",11,"No",1788,72
+"cebpa_std",11,"Yes",107,11
+"cebpa_std",12,"No",1788,65
+"cebpa_std",12,"Yes",107,18
+"cebpa_std",13,"No",1788,79
+"cebpa_std",13,"Yes",107,4
+"cebpa_std",14,"No",1788,71
+"cebpa_std",14,"Yes",107,12
+"cebpa_std",15,"No",1788,68
+"cebpa_std",15,"Yes",107,15
+"cebpa_std",16,"No",1788,74
+"cebpa_std",16,"Yes",107,9
+"cebpa_std",17,"No",1788,66
+"cebpa_std",17,"Yes",107,17
+"cebpa_std",18,"No",1788,71
+"cebpa_std",18,"Yes",107,12
+"cebpa_std",19,"No",1788,66
+"cebpa_std",19,"Yes",107,17
+"cebpa_std",20,"No",1788,72
+"cebpa_std",20,"Yes",107,11
+"cebpa_std",21,"No",1788,65
+"cebpa_std",21,"Yes",107,18
+"cebpa_std",22,"No",1788,67
+"cebpa_std",22,"Yes",107,16
+"cebpa_std",23,"No",1788,67
+"cebpa_std",23,"Yes",107,16
+"cebpa_std",24,"No",1788,74
+"cebpa_std",24,"Yes",107,9
+"cebpa_std",25,"No",1788,74
+"cebpa_std",25,"Yes",107,9
+"cebpa_std",26,"No",1788,71
+"cebpa_std",26,"Yes",107,12
+"cebpa_std",27,"No",1788,70
+"cebpa_std",27,"Yes",107,13
+"cebpa_std",28,"No",1788,70
+"cebpa_std",28,"Yes",107,13
+"cebpa_std",29,"No",1788,68
+"cebpa_std",29,"Yes",107,15
+"cebpa_std",30,"No",1788,75
+"cebpa_std",30,"Yes",107,8
+"cytogenetics_t821_std",1,"No",1573,104
+"cytogenetics_t821_std",1,"Yes",270,31
+"cytogenetics_t821_std",2,"No",1573,93
+"cytogenetics_t821_std",2,"Yes",270,42
+"cytogenetics_t821_std",3,"No",1573,99
+"cytogenetics_t821_std",3,"Yes",270,36
+"cytogenetics_t821_std",4,"No",1573,112
+"cytogenetics_t821_std",4,"Yes",270,23
+"cytogenetics_t821_std",5,"No",1573,100
+"cytogenetics_t821_std",5,"Yes",270,35
+"cytogenetics_t821_std",6,"No",1573,110
+"cytogenetics_t821_std",6,"Yes",270,25
+"cytogenetics_t821_std",7,"No",1573,98
+"cytogenetics_t821_std",7,"Yes",270,37
+"cytogenetics_t821_std",8,"No",1573,111
+"cytogenetics_t821_std",8,"Yes",270,24
+"cytogenetics_t821_std",9,"No",1573,97
+"cytogenetics_t821_std",9,"Yes",270,38
+"cytogenetics_t821_std",10,"No",1573,102
+"cytogenetics_t821_std",10,"Yes",270,33
+"cytogenetics_t821_std",11,"No",1573,93
+"cytogenetics_t821_std",11,"Yes",270,42
+"cytogenetics_t821_std",12,"No",1573,99
+"cytogenetics_t821_std",12,"Yes",270,36
+"cytogenetics_t821_std",13,"No",1573,101
+"cytogenetics_t821_std",13,"Yes",270,34
+"cytogenetics_t821_std",14,"No",1573,112
+"cytogenetics_t821_std",14,"Yes",270,23
+"cytogenetics_t821_std",15,"No",1573,90
+"cytogenetics_t821_std",15,"Yes",270,45
+"cytogenetics_t821_std",16,"No",1573,114
+"cytogenetics_t821_std",16,"Yes",270,21
+"cytogenetics_t821_std",17,"No",1573,112
+"cytogenetics_t821_std",17,"Yes",270,23
+"cytogenetics_t821_std",18,"No",1573,112
+"cytogenetics_t821_std",18,"Yes",270,23
+"cytogenetics_t821_std",19,"No",1573,88
+"cytogenetics_t821_std",19,"Yes",270,47
+"cytogenetics_t821_std",20,"No",1573,103
+"cytogenetics_t821_std",20,"Yes",270,32
+"cytogenetics_t821_std",21,"No",1573,107
+"cytogenetics_t821_std",21,"Yes",270,28
+"cytogenetics_t821_std",22,"No",1573,107
+"cytogenetics_t821_std",22,"Yes",270,28
+"cytogenetics_t821_std",23,"No",1573,97
+"cytogenetics_t821_std",23,"Yes",270,38
+"cytogenetics_t821_std",24,"No",1573,113
+"cytogenetics_t821_std",24,"Yes",270,22
+"cytogenetics_t821_std",25,"No",1573,98
+"cytogenetics_t821_std",25,"Yes",270,37
+"cytogenetics_t821_std",26,"No",1573,108
+"cytogenetics_t821_std",26,"Yes",270,27
+"cytogenetics_t821_std",27,"No",1573,116
+"cytogenetics_t821_std",27,"Yes",270,19
+"cytogenetics_t821_std",28,"No",1573,106
+"cytogenetics_t821_std",28,"Yes",270,29
+"cytogenetics_t821_std",29,"No",1573,107
+"cytogenetics_t821_std",29,"Yes",270,28
+"cytogenetics_t821_std",30,"No",1573,102
+"cytogenetics_t821_std",30,"Yes",270,33
+"cytogenetics_inv16_std",1,"No",1645,119
+"cytogenetics_inv16_std",1,"Yes",199,15
+"cytogenetics_inv16_std",2,"No",1645,116
+"cytogenetics_inv16_std",2,"Yes",199,18
+"cytogenetics_inv16_std",3,"No",1645,108
+"cytogenetics_inv16_std",3,"Yes",199,26
+"cytogenetics_inv16_std",4,"No",1645,117
+"cytogenetics_inv16_std",4,"Yes",199,17
+"cytogenetics_inv16_std",5,"No",1645,118
+"cytogenetics_inv16_std",5,"Yes",199,16
+"cytogenetics_inv16_std",6,"No",1645,114
+"cytogenetics_inv16_std",6,"Yes",199,20
+"cytogenetics_inv16_std",7,"No",1645,113
+"cytogenetics_inv16_std",7,"Yes",199,21
+"cytogenetics_inv16_std",8,"No",1645,109
+"cytogenetics_inv16_std",8,"Yes",199,25
+"cytogenetics_inv16_std",9,"No",1645,112
+"cytogenetics_inv16_std",9,"Yes",199,22
+"cytogenetics_inv16_std",10,"No",1645,112
+"cytogenetics_inv16_std",10,"Yes",199,22
+"cytogenetics_inv16_std",11,"No",1645,112
+"cytogenetics_inv16_std",11,"Yes",199,22
+"cytogenetics_inv16_std",12,"No",1645,117
+"cytogenetics_inv16_std",12,"Yes",199,17
+"cytogenetics_inv16_std",13,"No",1645,104
+"cytogenetics_inv16_std",13,"Yes",199,30
+"cytogenetics_inv16_std",14,"No",1645,117
+"cytogenetics_inv16_std",14,"Yes",199,17
+"cytogenetics_inv16_std",15,"No",1645,110
+"cytogenetics_inv16_std",15,"Yes",199,24
+"cytogenetics_inv16_std",16,"No",1645,109
+"cytogenetics_inv16_std",16,"Yes",199,25
+"cytogenetics_inv16_std",17,"No",1645,113
+"cytogenetics_inv16_std",17,"Yes",199,21
+"cytogenetics_inv16_std",18,"No",1645,99
+"cytogenetics_inv16_std",18,"Yes",199,35
+"cytogenetics_inv16_std",19,"No",1645,113
+"cytogenetics_inv16_std",19,"Yes",199,21
+"cytogenetics_inv16_std",20,"No",1645,115
+"cytogenetics_inv16_std",20,"Yes",199,19
+"cytogenetics_inv16_std",21,"No",1645,104
+"cytogenetics_inv16_std",21,"Yes",199,30
+"cytogenetics_inv16_std",22,"No",1645,110
+"cytogenetics_inv16_std",22,"Yes",199,24
+"cytogenetics_inv16_std",23,"No",1645,113
+"cytogenetics_inv16_std",23,"Yes",199,21
+"cytogenetics_inv16_std",24,"No",1645,97
+"cytogenetics_inv16_std",24,"Yes",199,37
+"cytogenetics_inv16_std",25,"No",1645,110
+"cytogenetics_inv16_std",25,"Yes",199,24
+"cytogenetics_inv16_std",26,"No",1645,102
+"cytogenetics_inv16_std",26,"Yes",199,32
+"cytogenetics_inv16_std",27,"No",1645,105
+"cytogenetics_inv16_std",27,"Yes",199,29
+"cytogenetics_inv16_std",28,"No",1645,110
+"cytogenetics_inv16_std",28,"Yes",199,24
+"cytogenetics_inv16_std",29,"No",1645,107
+"cytogenetics_inv16_std",29,"Yes",199,27
+"cytogenetics_inv16_std",30,"No",1645,109
+"cytogenetics_inv16_std",30,"Yes",199,25
+"cytogenetics_mll_std",1,"No",1474,114
+"cytogenetics_mll_std",1,"Yes",370,20
+"cytogenetics_mll_std",2,"No",1474,123
+"cytogenetics_mll_std",2,"Yes",370,11
+"cytogenetics_mll_std",3,"No",1474,124
+"cytogenetics_mll_std",3,"Yes",370,10
+"cytogenetics_mll_std",4,"No",1474,124
+"cytogenetics_mll_std",4,"Yes",370,10
+"cytogenetics_mll_std",5,"No",1474,123
+"cytogenetics_mll_std",5,"Yes",370,11
+"cytogenetics_mll_std",6,"No",1474,121
+"cytogenetics_mll_std",6,"Yes",370,13
+"cytogenetics_mll_std",7,"No",1474,121
+"cytogenetics_mll_std",7,"Yes",370,13
+"cytogenetics_mll_std",8,"No",1474,120
+"cytogenetics_mll_std",8,"Yes",370,14
+"cytogenetics_mll_std",9,"No",1474,125
+"cytogenetics_mll_std",9,"Yes",370,9
+"cytogenetics_mll_std",10,"No",1474,125
+"cytogenetics_mll_std",10,"Yes",370,9
+"cytogenetics_mll_std",11,"No",1474,122
+"cytogenetics_mll_std",11,"Yes",370,12
+"cytogenetics_mll_std",12,"No",1474,122
+"cytogenetics_mll_std",12,"Yes",370,12
+"cytogenetics_mll_std",13,"No",1474,115
+"cytogenetics_mll_std",13,"Yes",370,19
+"cytogenetics_mll_std",14,"No",1474,115
+"cytogenetics_mll_std",14,"Yes",370,19
+"cytogenetics_mll_std",15,"No",1474,124
+"cytogenetics_mll_std",15,"Yes",370,10
+"cytogenetics_mll_std",16,"No",1474,117
+"cytogenetics_mll_std",16,"Yes",370,17
+"cytogenetics_mll_std",17,"No",1474,116
+"cytogenetics_mll_std",17,"Yes",370,18
+"cytogenetics_mll_std",18,"No",1474,122
+"cytogenetics_mll_std",18,"Yes",370,12
+"cytogenetics_mll_std",19,"No",1474,123
+"cytogenetics_mll_std",19,"Yes",370,11
+"cytogenetics_mll_std",20,"No",1474,124
+"cytogenetics_mll_std",20,"Yes",370,10
+"cytogenetics_mll_std",21,"No",1474,123
+"cytogenetics_mll_std",21,"Yes",370,11
+"cytogenetics_mll_std",22,"No",1474,118
+"cytogenetics_mll_std",22,"Yes",370,16
+"cytogenetics_mll_std",23,"No",1474,125
+"cytogenetics_mll_std",23,"Yes",370,9
+"cytogenetics_mll_std",24,"No",1474,122
+"cytogenetics_mll_std",24,"Yes",370,12
+"cytogenetics_mll_std",25,"No",1474,124
+"cytogenetics_mll_std",25,"Yes",370,10
+"cytogenetics_mll_std",26,"No",1474,119
+"cytogenetics_mll_std",26,"Yes",370,15
+"cytogenetics_mll_std",27,"No",1474,125
+"cytogenetics_mll_std",27,"Yes",370,9
+"cytogenetics_mll_std",28,"No",1474,125
+"cytogenetics_mll_std",28,"Yes",370,9
+"cytogenetics_mll_std",29,"No",1474,124
+"cytogenetics_mll_std",29,"Yes",370,10
+"cytogenetics_mll_std",30,"No",1474,116
+"cytogenetics_mll_std",30,"Yes",370,18
+"cytogenetics_monosomy7_std",1,"No",1806,131
+"cytogenetics_monosomy7_std",1,"Yes",38,3
+"cytogenetics_monosomy7_std",2,"No",1806,129
+"cytogenetics_monosomy7_std",2,"Yes",38,5
+"cytogenetics_monosomy7_std",3,"No",1806,130
+"cytogenetics_monosomy7_std",3,"Yes",38,4
+"cytogenetics_monosomy7_std",4,"No",1806,128
+"cytogenetics_monosomy7_std",4,"Yes",38,6
+"cytogenetics_monosomy7_std",5,"No",1806,132
+"cytogenetics_monosomy7_std",5,"Yes",38,2
+"cytogenetics_monosomy7_std",6,"No",1806,126
+"cytogenetics_monosomy7_std",6,"Yes",38,8
+"cytogenetics_monosomy7_std",7,"No",1806,124
+"cytogenetics_monosomy7_std",7,"Yes",38,10
+"cytogenetics_monosomy7_std",8,"No",1806,131
+"cytogenetics_monosomy7_std",8,"Yes",38,3
+"cytogenetics_monosomy7_std",9,"No",1806,132
+"cytogenetics_monosomy7_std",9,"Yes",38,2
+"cytogenetics_monosomy7_std",10,"No",1806,130
+"cytogenetics_monosomy7_std",10,"Yes",38,4
+"cytogenetics_monosomy7_std",11,"No",1806,134
+"cytogenetics_monosomy7_std",11,"Yes",38,0
+"cytogenetics_monosomy7_std",12,"No",1806,132
+"cytogenetics_monosomy7_std",12,"Yes",38,2
+"cytogenetics_monosomy7_std",13,"No",1806,131
+"cytogenetics_monosomy7_std",13,"Yes",38,3
+"cytogenetics_monosomy7_std",14,"No",1806,129
+"cytogenetics_monosomy7_std",14,"Yes",38,5
+"cytogenetics_monosomy7_std",15,"No",1806,129
+"cytogenetics_monosomy7_std",15,"Yes",38,5
+"cytogenetics_monosomy7_std",16,"No",1806,131
+"cytogenetics_monosomy7_std",16,"Yes",38,3
+"cytogenetics_monosomy7_std",17,"No",1806,128
+"cytogenetics_monosomy7_std",17,"Yes",38,6
+"cytogenetics_monosomy7_std",18,"No",1806,128
+"cytogenetics_monosomy7_std",18,"Yes",38,6
+"cytogenetics_monosomy7_std",19,"No",1806,132
+"cytogenetics_monosomy7_std",19,"Yes",38,2
+"cytogenetics_monosomy7_std",20,"No",1806,127
+"cytogenetics_monosomy7_std",20,"Yes",38,7
+"cytogenetics_monosomy7_std",21,"No",1806,130
+"cytogenetics_monosomy7_std",21,"Yes",38,4
+"cytogenetics_monosomy7_std",22,"No",1806,127
+"cytogenetics_monosomy7_std",22,"Yes",38,7
+"cytogenetics_monosomy7_std",23,"No",1806,131
+"cytogenetics_monosomy7_std",23,"Yes",38,3
+"cytogenetics_monosomy7_std",24,"No",1806,131
+"cytogenetics_monosomy7_std",24,"Yes",38,3
+"cytogenetics_monosomy7_std",25,"No",1806,132
+"cytogenetics_monosomy7_std",25,"Yes",38,2
+"cytogenetics_monosomy7_std",26,"No",1806,130
+"cytogenetics_monosomy7_std",26,"Yes",38,4
+"cytogenetics_monosomy7_std",27,"No",1806,131
+"cytogenetics_monosomy7_std",27,"Yes",38,3
+"cytogenetics_monosomy7_std",28,"No",1806,128
+"cytogenetics_monosomy7_std",28,"Yes",38,6
+"cytogenetics_monosomy7_std",29,"No",1806,130
+"cytogenetics_monosomy7_std",29,"Yes",38,4
+"cytogenetics_monosomy7_std",30,"No",1806,130
+"cytogenetics_monosomy7_std",30,"Yes",38,4
+"cns_disease_std",1,"No",856,46
+"cns_disease_std",1,"Yes",1027,49
+"cns_disease_std",2,"No",856,48
+"cns_disease_std",2,"Yes",1027,47
+"cns_disease_std",3,"No",856,51
+"cns_disease_std",3,"Yes",1027,44
+"cns_disease_std",4,"No",856,52
+"cns_disease_std",4,"Yes",1027,43
+"cns_disease_std",5,"No",856,53
+"cns_disease_std",5,"Yes",1027,42
+"cns_disease_std",6,"No",856,41
+"cns_disease_std",6,"Yes",1027,54
+"cns_disease_std",7,"No",856,47
+"cns_disease_std",7,"Yes",1027,48
+"cns_disease_std",8,"No",856,54
+"cns_disease_std",8,"Yes",1027,41
+"cns_disease_std",9,"No",856,50
+"cns_disease_std",9,"Yes",1027,45
+"cns_disease_std",10,"No",856,53
+"cns_disease_std",10,"Yes",1027,42
+"cns_disease_std",11,"No",856,50
+"cns_disease_std",11,"Yes",1027,45
+"cns_disease_std",12,"No",856,50
+"cns_disease_std",12,"Yes",1027,45
+"cns_disease_std",13,"No",856,46
+"cns_disease_std",13,"Yes",1027,49
+"cns_disease_std",14,"No",856,41
+"cns_disease_std",14,"Yes",1027,54
+"cns_disease_std",15,"No",856,46
+"cns_disease_std",15,"Yes",1027,49
+"cns_disease_std",16,"No",856,49
+"cns_disease_std",16,"Yes",1027,46
+"cns_disease_std",17,"No",856,43
+"cns_disease_std",17,"Yes",1027,52
+"cns_disease_std",18,"No",856,47
+"cns_disease_std",18,"Yes",1027,48
+"cns_disease_std",19,"No",856,52
+"cns_disease_std",19,"Yes",1027,43
+"cns_disease_std",20,"No",856,48
+"cns_disease_std",20,"Yes",1027,47
+"cns_disease_std",21,"No",856,49
+"cns_disease_std",21,"Yes",1027,46
+"cns_disease_std",22,"No",856,49
+"cns_disease_std",22,"Yes",1027,46
+"cns_disease_std",23,"No",856,52
+"cns_disease_std",23,"Yes",1027,43
+"cns_disease_std",24,"No",856,53
+"cns_disease_std",24,"Yes",1027,42
+"cns_disease_std",25,"No",856,41
+"cns_disease_std",25,"Yes",1027,54
+"cns_disease_std",26,"No",856,46
+"cns_disease_std",26,"Yes",1027,49
+"cns_disease_std",27,"No",856,51
+"cns_disease_std",27,"Yes",1027,44
+"cns_disease_std",28,"No",856,48
+"cns_disease_std",28,"Yes",1027,47
+"cns_disease_std",29,"No",856,50
+"cns_disease_std",29,"Yes",1027,45
+"cns_disease_std",30,"No",856,47
+"cns_disease_std",30,"Yes",1027,48
+"race_aux",1,"White",1421,159
+"race_aux",1,"Black or African American",232,18
+"race_aux",1,"Asian",91,9
+"race_aux",1,"Other",41,7
+"race_aux",2,"White",1421,160
+"race_aux",2,"Black or African American",232,25
+"race_aux",2,"Asian",91,3
+"race_aux",2,"Other",41,5
+"race_aux",3,"White",1421,163
+"race_aux",3,"Black or African American",232,19
+"race_aux",3,"Asian",91,7
+"race_aux",3,"Other",41,4
+"race_aux",4,"White",1421,157
+"race_aux",4,"Black or African American",232,23
+"race_aux",4,"Asian",91,6
+"race_aux",4,"Other",41,7
+"race_aux",5,"White",1421,167
+"race_aux",5,"Black or African American",232,15
+"race_aux",5,"Asian",91,6
+"race_aux",5,"Other",41,5
+"race_aux",6,"White",1421,152
+"race_aux",6,"Black or African American",232,17
+"race_aux",6,"Asian",91,9
+"race_aux",6,"Other",41,15
+"race_aux",7,"White",1421,159
+"race_aux",7,"Black or African American",232,24
+"race_aux",7,"Asian",91,4
+"race_aux",7,"Other",41,6
+"race_aux",8,"White",1421,157
+"race_aux",8,"Black or African American",232,16
+"race_aux",8,"Asian",91,9
+"race_aux",8,"Other",41,11
+"race_aux",9,"White",1421,161
+"race_aux",9,"Black or African American",232,19
+"race_aux",9,"Asian",91,4
+"race_aux",9,"Other",41,9
+"race_aux",10,"White",1421,160
+"race_aux",10,"Black or African American",232,20
+"race_aux",10,"Asian",91,4
+"race_aux",10,"Other",41,9
+"race_aux",11,"White",1421,163
+"race_aux",11,"Black or African American",232,17
+"race_aux",11,"Asian",91,8
+"race_aux",11,"Other",41,5
+"race_aux",12,"White",1421,160
+"race_aux",12,"Black or African American",232,21
+"race_aux",12,"Asian",91,7
+"race_aux",12,"Other",41,5
+"race_aux",13,"White",1421,160
+"race_aux",13,"Black or African American",232,16
+"race_aux",13,"Asian",91,10
+"race_aux",13,"Other",41,7
+"race_aux",14,"White",1421,162
+"race_aux",14,"Black or African American",232,16
+"race_aux",14,"Asian",91,6
+"race_aux",14,"Other",41,9
+"race_aux",15,"White",1421,166
+"race_aux",15,"Black or African American",232,19
+"race_aux",15,"Asian",91,4
+"race_aux",15,"Other",41,4
+"race_aux",16,"White",1421,167
+"race_aux",16,"Black or African American",232,16
+"race_aux",16,"Asian",91,6
+"race_aux",16,"Other",41,4
+"race_aux",17,"White",1421,155
+"race_aux",17,"Black or African American",232,21
+"race_aux",17,"Asian",91,8
+"race_aux",17,"Other",41,9
+"race_aux",18,"White",1421,161
+"race_aux",18,"Black or African American",232,16
+"race_aux",18,"Asian",91,8
+"race_aux",18,"Other",41,8
+"race_aux",19,"White",1421,160
+"race_aux",19,"Black or African American",232,21
+"race_aux",19,"Asian",91,8
+"race_aux",19,"Other",41,4
+"race_aux",20,"White",1421,156
+"race_aux",20,"Black or African American",232,20
+"race_aux",20,"Asian",91,5
+"race_aux",20,"Other",41,12
+"race_aux",21,"White",1421,162
+"race_aux",21,"Black or African American",232,16
+"race_aux",21,"Asian",91,9
+"race_aux",21,"Other",41,6
+"race_aux",22,"White",1421,163
+"race_aux",22,"Black or African American",232,17
+"race_aux",22,"Asian",91,7
+"race_aux",22,"Other",41,6
+"race_aux",23,"White",1421,157
+"race_aux",23,"Black or African American",232,18
+"race_aux",23,"Asian",91,10
+"race_aux",23,"Other",41,8
+"race_aux",24,"White",1421,166
+"race_aux",24,"Black or African American",232,16
+"race_aux",24,"Asian",91,4
+"race_aux",24,"Other",41,7
+"race_aux",25,"White",1421,152
+"race_aux",25,"Black or African American",232,25
+"race_aux",25,"Asian",91,8
+"race_aux",25,"Other",41,8
+"race_aux",26,"White",1421,165
+"race_aux",26,"Black or African American",232,15
+"race_aux",26,"Asian",91,8
+"race_aux",26,"Other",41,5
+"race_aux",27,"White",1421,154
+"race_aux",27,"Black or African American",232,16
+"race_aux",27,"Asian",91,12
+"race_aux",27,"Other",41,11
+"race_aux",28,"White",1421,166
+"race_aux",28,"Black or African American",232,15
+"race_aux",28,"Asian",91,7
+"race_aux",28,"Other",41,5
+"race_aux",29,"White",1421,162
+"race_aux",29,"Black or African American",232,19
+"race_aux",29,"Asian",91,6
+"race_aux",29,"Other",41,6
+"race_aux",30,"White",1421,160
+"race_aux",30,"Black or African American",232,18
+"race_aux",30,"Asian",91,5
+"race_aux",30,"Other",41,10
+"ethnicity_aux",1,"Not Hispanic or Latino",1552,57
+"ethnicity_aux",1,"Hispanic or Latino",357,12
+"ethnicity_aux",2,"Not Hispanic or Latino",1552,59
+"ethnicity_aux",2,"Hispanic or Latino",357,10
+"ethnicity_aux",3,"Not Hispanic or Latino",1552,55
+"ethnicity_aux",3,"Hispanic or Latino",357,14
+"ethnicity_aux",4,"Not Hispanic or Latino",1552,55
+"ethnicity_aux",4,"Hispanic or Latino",357,14
+"ethnicity_aux",5,"Not Hispanic or Latino",1552,58
+"ethnicity_aux",5,"Hispanic or Latino",357,11
+"ethnicity_aux",6,"Not Hispanic or Latino",1552,57
+"ethnicity_aux",6,"Hispanic or Latino",357,12
+"ethnicity_aux",7,"Not Hispanic or Latino",1552,56
+"ethnicity_aux",7,"Hispanic or Latino",357,13
+"ethnicity_aux",8,"Not Hispanic or Latino",1552,59
+"ethnicity_aux",8,"Hispanic or Latino",357,10
+"ethnicity_aux",9,"Not Hispanic or Latino",1552,56
+"ethnicity_aux",9,"Hispanic or Latino",357,13
+"ethnicity_aux",10,"Not Hispanic or Latino",1552,53
+"ethnicity_aux",10,"Hispanic or Latino",357,16
+"ethnicity_aux",11,"Not Hispanic or Latino",1552,48
+"ethnicity_aux",11,"Hispanic or Latino",357,21
+"ethnicity_aux",12,"Not Hispanic or Latino",1552,57
+"ethnicity_aux",12,"Hispanic or Latino",357,12
+"ethnicity_aux",13,"Not Hispanic or Latino",1552,55
+"ethnicity_aux",13,"Hispanic or Latino",357,14
+"ethnicity_aux",14,"Not Hispanic or Latino",1552,59
+"ethnicity_aux",14,"Hispanic or Latino",357,10
+"ethnicity_aux",15,"Not Hispanic or Latino",1552,62
+"ethnicity_aux",15,"Hispanic or Latino",357,7
+"ethnicity_aux",16,"Not Hispanic or Latino",1552,55
+"ethnicity_aux",16,"Hispanic or Latino",357,14
+"ethnicity_aux",17,"Not Hispanic or Latino",1552,53
+"ethnicity_aux",17,"Hispanic or Latino",357,16
+"ethnicity_aux",18,"Not Hispanic or Latino",1552,53
+"ethnicity_aux",18,"Hispanic or Latino",357,16
+"ethnicity_aux",19,"Not Hispanic or Latino",1552,57
+"ethnicity_aux",19,"Hispanic or Latino",357,12
+"ethnicity_aux",20,"Not Hispanic or Latino",1552,55
+"ethnicity_aux",20,"Hispanic or Latino",357,14
+"ethnicity_aux",21,"Not Hispanic or Latino",1552,54
+"ethnicity_aux",21,"Hispanic or Latino",357,15
+"ethnicity_aux",22,"Not Hispanic or Latino",1552,58
+"ethnicity_aux",22,"Hispanic or Latino",357,11
+"ethnicity_aux",23,"Not Hispanic or Latino",1552,57
+"ethnicity_aux",23,"Hispanic or Latino",357,12
+"ethnicity_aux",24,"Not Hispanic or Latino",1552,59
+"ethnicity_aux",24,"Hispanic or Latino",357,10
+"ethnicity_aux",25,"Not Hispanic or Latino",1552,57
+"ethnicity_aux",25,"Hispanic or Latino",357,12
+"ethnicity_aux",26,"Not Hispanic or Latino",1552,55
+"ethnicity_aux",26,"Hispanic or Latino",357,14
+"ethnicity_aux",27,"Not Hispanic or Latino",1552,59
+"ethnicity_aux",27,"Hispanic or Latino",357,10
+"ethnicity_aux",28,"Not Hispanic or Latino",1552,55
+"ethnicity_aux",28,"Hispanic or Latino",357,14
+"ethnicity_aux",29,"Not Hispanic or Latino",1552,57
+"ethnicity_aux",29,"Hispanic or Latino",357,12
+"ethnicity_aux",30,"Not Hispanic or Latino",1552,56
+"ethnicity_aux",30,"Hispanic or Latino",357,13
