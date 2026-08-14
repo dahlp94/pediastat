@@ -18,7 +18,7 @@ def _main() -> int:
     parser.add_argument(
         "--local-cluster",
         action="store_true",
-        help="Initialize a project-local PostgreSQL cluster under .pgdata (port 5433).",
+        help="Initialize a project-local PostgreSQL cluster.",
     )
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
