@@ -1,0 +1,14 @@
+workbook,sheet,n_rows,n_columns,identifier_field,is_patient_level
+TARGET_AML_CDE_20230524.xlsx,Data Elements,65,11,,False
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Sheet1,89,64,TARGET USI,True
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Clinical Data,1069,64,TARGET USI,True
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Original File,2,2,,False
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Clinical Data,466,64,TARGET USI,True
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Original File,5,2,,False
+TARGET_AML_ClinicalData_Discovery_and_Validation_Tumor_Content_and_RIN_Supplement_20230720.xlsx,Sample Submission,133,33,TARGET USI,True
+TARGET_AML_ClinicalData_Discovery_and_Validation_Tumor_Content_and_RIN_Supplement_20230720.xlsx,Lists,11,11,,False
+TARGET_AML_ClinicalData_Discovery_and_Validation_Tumor_Content_and_RIN_Supplement_20230720.xlsx,Checkbox Status,2,2,,False
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Clinical Data,449,67,TARGET USI,True
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Original File,1,2,,False
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Clinical Data,627,64,TARGET USI,True
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Original File,4,2,,False

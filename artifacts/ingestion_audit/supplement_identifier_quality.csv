@@ -1,0 +1,7 @@
+n_records,n_non_null,n_null,n_unique_normalized,n_duplicated_normalized_ids,n_duplicate_records,n_whitespace,n_case_differences,n_canonical,n_extended,n_malformed,source,workbook,shapes
+2492,2492,0,2492,0,0,0,98,2385,84,23,gdc_cases,,"{""canonical"": 2385, ""extended"": 84, ""malformed"": 23}"
+89,89,0,89,0,0,0,17,72,17,0,patient_level_supplement,TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,"{""canonical"": 72, ""extended"": 17}"
+1069,1069,0,1069,0,0,0,0,1069,0,0,patient_level_supplement,TARGET_AML_ClinicalData_AML1031_20230720.xlsx,"{""canonical"": 1069}"
+466,465,1,465,0,0,0,0,465,0,0,patient_level_supplement,TARGET_AML_ClinicalData_Discovery_20230720.xlsx,"{""canonical"": 465}"
+449,449,0,449,0,0,0,0,449,0,0,patient_level_supplement,TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,"{""canonical"": 449}"
+627,626,1,626,0,0,0,0,626,0,0,patient_level_supplement,TARGET_AML_ClinicalData_Validation_20230720.xlsx,"{""canonical"": 626}"

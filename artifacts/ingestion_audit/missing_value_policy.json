@@ -1,0 +1,5 @@
+{
+  "note": "Inventory is aggregated; tokens with fewer than 5 occurrences omitted.",
+  "policy": "structurally_missing vs not_reported vs unknown vs not_applicable vs sentinel vs observed. NA/N/A classified as unknown because spreadsheet N/A is ambiguous. Unknown vital status is not censored.",
+  "token_inventory": "missing_value_token_inventory.csv"
+}

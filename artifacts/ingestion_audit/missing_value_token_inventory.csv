@@ -1,0 +1,319 @@
+workbook,column,token,missing_class,n
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Bone marrow leukemic blast percentage (%),,structurally_missing,9
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,CEBPA mutation,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,CNS disease,Unknown,unknown,55
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,CR status at end of course 1,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,CR status at end of course 2,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Chloroma,Unknown,unknown,53
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Cytogenetic Code Other,,structurally_missing,84
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Cytogenetic Complexity,N/A,unknown,7
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Ethnicity,Unknown,unknown,6
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,FAB Category,Unknown,unknown,17
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,FLT3 PM,N/A,unknown,17
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,FLT3 PM,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,FLT3/ITD allelic ratio,N/A,unknown,18
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,FLT3/ITD allelic ratio,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,FLT3/ITD positive?,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Gemtuzumab ozogamicin treatment,,structurally_missing,89
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Gene Fusion,,structurally_missing,89
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,MLL,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,MRD % at end of course 1,N/A,unknown,16
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,MRD % at end of course 1,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,MRD % at end of course 2,N/A,unknown,17
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,MRD % at end of course 2,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,MRD at end of course 1,Unknown,unknown,87
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,MRD at end of course 2,Unknown,unknown,88
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Minus X,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Minus Y,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,NPM mutation,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Race,Unknown,unknown,13
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Refractory Timepoint sent for Induction Failure Project,,structurally_missing,89
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Risk group,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,SCT in 1st CR,Unknown,unknown,17
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,WT1 mutation,N/A,unknown,17
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,WT1 mutation,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,c-Kit Mutation Exon 17,N/A,unknown,17
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,c-Kit Mutation Exon 17,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,c-Kit Mutation Exon 8,N/A,unknown,17
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,c-Kit Mutation Exon 8,Unknown,unknown,71
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,del5q,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,del7q,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,del9q,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,inv(16),Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,monosomy 5,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,monosomy 7,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,t(10;11)(p11.2;q23),Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,t(11:19)(q23:p13.1),Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,t(3;5)(q25;q34),Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,t(6;11)(q27;q23),Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,t(6;9),Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,t(8;21),Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,t(9;11)(p22;q23),Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,trisomy 21,Unknown,unknown,75
+TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,trisomy 8,Unknown,unknown,75
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Bone marrow leukemic blast percentage (%),,structurally_missing,80
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,CNS disease,Unknown,unknown,38
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Chloroma,Unknown,unknown,562
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Cytogenetic Code Other,,structurally_missing,668
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Cytogenetic Complexity,N/A,unknown,12
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Ethnicity,Unknown,unknown,34
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,FAB Category,,structurally_missing,1061
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,FLT3 PM,,structurally_missing,1061
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,FLT3/ITD allelic ratio,N/A,unknown,896
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Gemtuzumab ozogamicin treatment,,structurally_missing,1061
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Gene Fusion,,structurally_missing,1061
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,ISCN,,structurally_missing,20
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,MLL,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,MRD % at end of course 1,,structurally_missing,60
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,MRD % at end of course 2,,structurally_missing,369
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,MRD at end of course 1,,structurally_missing,61
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,MRD at end of course 2,,structurally_missing,227
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Minus X,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Minus Y,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Peripheral blasts (%),,structurally_missing,18
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Primary Cytogenetic Code,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Race,Unknown,unknown,108
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Refractory Timepoint sent for Induction Failure Project,,structurally_missing,1069
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Risk group,,structurally_missing,9
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,SCT in 1st CR,Unknown,unknown,64
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,WT1 mutation,,structurally_missing,1061
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,c-Kit Mutation Exon 17,,structurally_missing,1064
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,c-Kit Mutation Exon 8,,structurally_missing,1064
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,del5q,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,del7q,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,del9q,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,inv(16),Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,monosomy 5,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,monosomy 7,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,t(10;11)(p11.2;q23),Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,t(11:19)(q23:p13.1),Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,t(3;5)(q25;q34),Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,t(6;11)(q27;q23),Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,t(6;9),Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,t(8;21),Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,t(9;11)(p22;q23),Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,trisomy 21,Unknown,unknown,10
+TARGET_AML_ClinicalData_AML1031_20230720.xlsx,trisomy 8,Unknown,unknown,10
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Age at Diagnosis in Days,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Bone Marrow Site of Relapse/Induction Failure,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Bone marrow leukemic blast percentage (%),,structurally_missing,32
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,CEBPA mutation,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,CEBPA mutation,Unknown,unknown,11
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,CNS Site of Relapse/Induction Failure,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,CNS disease,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,CR status at end of course 1,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,CR status at end of course 2,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Chloroma,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Chloroma Site of Relapse/Induction Failure,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Cytogenetic Code Other,,structurally_missing,346
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Cytogenetic Complexity,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Cytogenetic Complexity,NA,unknown,24
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Cytogenetic Site of Relapse/Induction Failure,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Ethnicity,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Ethnicity,Unknown,unknown,16
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Event Free Survival Time in Days,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,FAB Category,,structurally_missing,20
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,FAB Category,Unknown,unknown,34
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,FLT3 PM,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,FLT3/ITD allelic ratio,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,FLT3/ITD allelic ratio,NA,unknown,360
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,FLT3/ITD positive?,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,First Event,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Gemtuzumab ozogamicin treatment,,structurally_missing,77
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Gender,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Gene Fusion,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Gene Fusion,NA,unknown,173
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,ISCN,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,ISCN,Unknown,unknown,24
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,MLL,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,MLL,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,MRD % at end of course 1,,structurally_missing,138
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,MRD % at end of course 2,,structurally_missing,175
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,MRD at end of course 1,,structurally_missing,138
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,MRD at end of course 2,,structurally_missing,175
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Minus X,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Minus X,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Minus Y,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Minus Y,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,NPM mutation,,structurally_missing,34
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Other Site of Relapse/Induction Failure,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Overall Survival Time in Days,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Peripheral blasts (%),,structurally_missing,21
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Primary Cytogenetic Code,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Primary Cytogenetic Code,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Protocol,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Race,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Race,Unknown,unknown,34
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Refractory Timepoint sent for Induction Failure Project,,structurally_missing,434
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Risk group,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Risk group,Unknown,unknown,21
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,SCT in 1st CR,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,SCT in 1st CR,Unknown,unknown,37
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Vital Status,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,WBC at Diagnosis,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,WT1 mutation,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,WT1 mutation,Unknown,unknown,14
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Year of Diagnosis,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Year of Last Follow Up,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,c-Kit Mutation Exon 17,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,c-Kit Mutation Exon 8,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,del5q,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,del5q,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,del7q,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,del7q,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,del9q,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,del9q,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,inv(16),,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,inv(16),Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,monosomy 5,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,monosomy 5,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,monosomy 7,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,monosomy 7,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(10;11)(p11.2;q23),,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(10;11)(p11.2;q23),Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(11:19)(q23:p13.1),,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(11:19)(q23:p13.1),Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(3;5)(q25;q34),,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(3;5)(q25;q34),Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(6;11)(q27;q23),,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(6;11)(q27;q23),Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(6;9),,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(6;9),Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(8;21),,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(8;21),Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(9;11)(p22;q23),,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,t(9;11)(p22;q23),Unknown,unknown,30
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,trisomy 21,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,trisomy 21,Unknown,unknown,28
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,trisomy 8,,structurally_missing,19
+TARGET_AML_ClinicalData_Discovery_20230720.xlsx,trisomy 8,Unknown,unknown,28
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Bone marrow leukemic blast percentage (%),,structurally_missing,36
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,CEBPA mutation,,structurally_missing,5
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Comment,,structurally_missing,449
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Cytogenetic Code Other,,structurally_missing,316
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Cytogenetic Complexity,N/A,unknown,20
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Ethnicity,Unknown,unknown,13
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,FAB Category,,structurally_missing,5
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,FAB Category,Unknown,unknown,62
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,FLT3/ITD allelic ratio,N/A,unknown,346
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Gemtuzumab ozogamicin treatment,,structurally_missing,449
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Gene Fusion,unknown,unknown,6
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,ISCN,Unknown,unknown,20
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,MLL,Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,MRD % at end of course 1,,structurally_missing,97
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,MRD % at end of course 2,,structurally_missing,159
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,MRD at end of course 1,Unknown,unknown,97
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,MRD at end of course 2,,structurally_missing,159
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Minus X,Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Minus Y,Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Primary Cytogenetic Code,Unknown,unknown,9
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Race,Unknown,unknown,45
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Refractory Timepoint sent for Induction Failure Project,,structurally_missing,449
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Risk group,,structurally_missing,12
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,SCT in 1st CR,Unknown,unknown,53
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,del5q,Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,del7q,Unknown,unknown,24
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,del9q,Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,inv(16),Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,monosomy 5,Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,monosomy 7,Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,t(10;11)(p11.2;q23),Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,t(11:19)(q23:p13.1),Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,t(3;5)(q25;q34),Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,t(6;11)(q27;q23),Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,t(6;9),Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,t(8;21),Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,t(9;11)(p22;q23),Unknown,unknown,26
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,trisomy 21,Unknown,unknown,23
+TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,trisomy 8,Unknown,unknown,24
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Age at Diagnosis in Days,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Bone Marrow Site of Relapse/Induction Failure,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Bone marrow leukemic blast percentage (%),,structurally_missing,55
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,CEBPA mutation,,structurally_missing,16
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,CNS Site of Relapse/Induction Failure,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,CNS disease,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,CR status at end of course 1,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,CR status at end of course 2,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Chloroma,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Chloroma Site of Relapse/Induction Failure,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Cytogenetic Code Other,,structurally_missing,434
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Cytogenetic Complexity,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Cytogenetic Complexity,N/A,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Cytogenetic Site of Relapse/Induction Failure,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Ethnicity,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Ethnicity,Unknown,unknown,20
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Event Free Survival Time in Days,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,FAB Category,,structurally_missing,20
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,FAB Category,Unknown,unknown,88
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,FLT3 PM,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,FLT3/ITD allelic ratio,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,FLT3/ITD allelic ratio,N/A,unknown,506
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,FLT3/ITD positive?,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,First Event,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Gemtuzumab ozogamicin treatment,,structurally_missing,33
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Gender,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Gene Fusion,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Gene Fusion,NA,unknown,264
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,ISCN,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,ISCN,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,MLL,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,MLL,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,MRD % at end of course 1,,structurally_missing,126
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,MRD % at end of course 2,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,MRD % at end of course 2,N/A,unknown,185
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,MRD at end of course 1,,structurally_missing,126
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,MRD at end of course 2,,structurally_missing,198
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Minus X,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Minus X,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Minus Y,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Minus Y,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,NPM mutation,,structurally_missing,15
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Other Site of Relapse/Induction Failure,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Overall Survival Time in Days,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Peripheral blasts (%),,structurally_missing,19
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Primary Cytogenetic Code,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Primary Cytogenetic Code,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Protocol,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Race,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Race,Unknown,unknown,29
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Refractory Timepoint sent for Induction Failure Project,,structurally_missing,608
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Risk group,,structurally_missing,25
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,SCT in 1st CR,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,SCT in 1st CR,Unknown,unknown,64
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Vital Status,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,WBC at Diagnosis,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,WT1 mutation,,structurally_missing,15
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Year of Diagnosis,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,Year of Last Follow Up,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,c-Kit Mutation Exon 17,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,c-Kit Mutation Exon 8,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,del5q,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,del5q,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,del7q,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,del7q,Unknown,unknown,23
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,del9q,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,del9q,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,inv(16),,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,inv(16),Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,monosomy 5,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,monosomy 5,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,monosomy 7,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,monosomy 7,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(10;11)(p11.2;q23),,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(10;11)(p11.2;q23),Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(11:19)(q23:p13.1),,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(11:19)(q23:p13.1),Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(3;5)(q25;q34),,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(3;5)(q25;q34),Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(6;11)(q27;q23),,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(6;11)(q27;q23),Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(6;9),,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(6;9),Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(8;21),,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(8;21),Unknown,unknown,23
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(9;11)(p22;q23),,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,t(9;11)(p22;q23),Unknown,unknown,25
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,trisomy 21,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,trisomy 21,Unknown,unknown,22
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,trisomy 8,,structurally_missing,13
+TARGET_AML_ClinicalData_Validation_20230720.xlsx,trisomy 8,Unknown,unknown,23

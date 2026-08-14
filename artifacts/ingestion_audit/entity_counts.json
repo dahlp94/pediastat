@@ -1,0 +1,22 @@
+{
+  "follow_ups_per_case_max": 33,
+  "n_cases_with_multiple_follow_ups": 2151,
+  "n_cases_with_multiple_treatments": 2151,
+  "raw": {
+    "gdc_cases": 2492,
+    "gdc_demographics": 2189,
+    "gdc_diagnoses": 2189,
+    "gdc_follow_ups": 61746,
+    "gdc_treatments": 9477,
+    "supplement_rows": 2923
+  },
+  "staging": {
+    "gdc_cases": 2492,
+    "gdc_demographics": 2189,
+    "gdc_diagnoses": 2189,
+    "gdc_follow_ups": 61746,
+    "gdc_treatments": 9477,
+    "supplement_clinical_rows": 2700
+  },
+  "treatments_per_case_max": 5
+}

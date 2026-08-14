@@ -1,0 +1,4 @@
+universe,n_identifiers,note
+gdc_only,268,"Present in GDC staging.gdc_cases, not in patient-level supplements"
+supplement_only,0,"Present in patient-level supplements, not in GDC cases"
+intersection,2144,Matched on join_barcode

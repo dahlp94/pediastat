@@ -1,0 +1,10 @@
+{
+  "gdc_only": 268,
+  "gdc_unique_join_barcodes": 2412,
+  "intersection": 2144,
+  "normalization_rule": "strip whitespace, uppercase; join_barcode is leading TARGET-NN-TOKEN; suffixes such as -Unsorted are kept on normalized_identifier",
+  "pct_gdc_matched": 88.89,
+  "pct_supplement_matched": 100.0,
+  "supplement_only": 0,
+  "supplement_unique_join_barcodes": 2144
+}
