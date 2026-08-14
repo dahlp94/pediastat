@@ -1,0 +1,6 @@
+{
+  "note": "Eligibility flags only. No survival comparison was performed.",
+  "primary_age_lt_18": 1978,
+  "sensitivity_age_le_21": 2080,
+  "sensitivity_unrestricted_age": 2121
+}

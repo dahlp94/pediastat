@@ -1,0 +1,66 @@
+[
+  {
+    "criterion": "all_gdc_cases",
+    "n_before": 2492,
+    "n_excluded": 0,
+    "n_remaining": 2492,
+    "notes": "TARGET-AML Cases API extract.",
+    "unit": "gdc_case"
+  },
+  {
+    "criterion": "valid_analysis_person_identity",
+    "n_before": 2492,
+    "n_excluded": 138,
+    "n_remaining": 2354,
+    "notes": "Canonical TARGET-20/21 6-character USI or biospecimen-suffix extension mapped to that USI.",
+    "unit": "gdc_case"
+  },
+  {
+    "criterion": "unique_valid_analysis_persons",
+    "n_before": 2354,
+    "n_excluded": 0,
+    "n_remaining": 2315,
+    "notes": "2354 GDC cases map to 2315 persons; extra cases are biospecimen-suffix duplicates, not exclusions.",
+    "unit": "analysis_person"
+  },
+  {
+    "criterion": "diagnosis_available",
+    "n_before": 2315,
+    "n_excluded": 163,
+    "n_remaining": 2152,
+    "notes": "GDC diagnosis entity present.",
+    "unit": "analysis_person"
+  },
+  {
+    "criterion": "age_available",
+    "n_before": 2152,
+    "n_excluded": 31,
+    "n_remaining": 2121,
+    "notes": "GDC diagnoses.age_at_diagnosis present and non-negative.",
+    "unit": "analysis_person"
+  },
+  {
+    "criterion": "age_at_diagnosis_lt_18",
+    "n_before": 2121,
+    "n_excluded": 143,
+    "n_remaining": 1978,
+    "notes": "Primary eligibility: age_at_diagnosis_days / 365.25 < 18. Not chosen to maximize N.",
+    "unit": "analysis_person"
+  },
+  {
+    "criterion": "vital_status_alive_or_dead",
+    "n_before": 1978,
+    "n_excluded": 0,
+    "n_remaining": 1978,
+    "notes": "Unknown / Not Reported / missing vital status excluded, not censored.",
+    "unit": "analysis_person"
+  },
+  {
+    "criterion": "valid_status_specific_os_time",
+    "n_before": 1978,
+    "n_excluded": 0,
+    "n_remaining": 1978,
+    "notes": "Dead requires days_to_death >= 0; Alive requires days_to_last_follow_up >= 0.",
+    "unit": "analysis_person"
+  }
+]

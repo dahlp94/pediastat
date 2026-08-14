@@ -1,0 +1,19 @@
+{
+  "identity_exclusion_reasons": {
+    "ambiguous_experimental_construct": 6,
+    "ambiguous_experimental_d_token": 44,
+    "identity_record_conflict": 0,
+    "not_patient_identifier": 88
+  },
+  "max_gdc_cases_per_person": 4,
+  "n_analysis_person_keys": 2453,
+  "n_excluded_ambiguous_experimental_construct": 6,
+  "n_excluded_ambiguous_experimental_d_token": 44,
+  "n_excluded_identity_record_conflict": 0,
+  "n_excluded_not_patient_identifier": 88,
+  "n_gdc_cases": 2492,
+  "n_gdc_cases_ineligible_identity": 138,
+  "n_gdc_cases_valid_identity": 2354,
+  "n_multi_case_persons": 18,
+  "n_valid_analysis_persons": 2315
+}

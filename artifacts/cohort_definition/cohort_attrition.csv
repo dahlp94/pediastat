@@ -1,0 +1,9 @@
+criterion,unit,n_before,n_excluded,n_remaining,notes
+all_gdc_cases,gdc_case,2492,0,2492,TARGET-AML Cases API extract.
+valid_analysis_person_identity,gdc_case,2492,138,2354,Canonical TARGET-20/21 6-character USI or biospecimen-suffix extension mapped to that USI.
+unique_valid_analysis_persons,analysis_person,2354,0,2315,"2354 GDC cases map to 2315 persons; extra cases are biospecimen-suffix duplicates, not exclusions."
+diagnosis_available,analysis_person,2315,163,2152,GDC diagnosis entity present.
+age_available,analysis_person,2152,31,2121,GDC diagnoses.age_at_diagnosis present and non-negative.
+age_at_diagnosis_lt_18,analysis_person,2121,143,1978,Primary eligibility: age_at_diagnosis_days / 365.25 < 18. Not chosen to maximize N.
+vital_status_alive_or_dead,analysis_person,1978,0,1978,"Unknown / Not Reported / missing vital status excluded, not censored."
+valid_status_specific_os_time,analysis_person,1978,0,1978,Dead requires days_to_death >= 0; Alive requires days_to_last_follow_up >= 0.

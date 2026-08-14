@@ -1,0 +1,14 @@
+{
+  "n_age_ge_18_in_primary": 0,
+  "n_alive_invalid_time": 0,
+  "n_dead_invalid_time": 0,
+  "n_eligibility_rows": 2453,
+  "n_excluded_missing_reason": 0,
+  "n_identity_crosswalk_rows": 2492,
+  "n_negative_os": 0,
+  "n_primary_os_cohort": 1978,
+  "n_primary_with_unobserved_wbc": 10,
+  "n_unique_persons_in_cohort": 1978,
+  "n_unknown_or_invalid_event": 0,
+  "passed": true
+}

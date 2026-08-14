@@ -1,0 +1,6 @@
+supplement_family,overlap_n,event_both_observed,event_agreements,event_disagreements,event_agreement_percent,time_both_observed,time_exact_agreements,time_disagreements,time_agreement_percent,time_abs_diff_median
+AML1031,983,983,983,0,100.0,983,981,2,99.8,0.0
+Discovery,426,426,425,1,99.77,426,385,41,90.38,0.0
+LowDepth,424,424,424,0,100.0,424,424,0,100.0,0.0
+Validation,578,578,578,0,100.0,578,396,182,68.51,0.0
+additional,83,83,83,0,100.0,83,83,0,100.0,0.0

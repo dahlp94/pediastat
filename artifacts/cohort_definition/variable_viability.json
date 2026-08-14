@@ -1,0 +1,35 @@
+{
+  "core_candidate": [
+    "age_at_diagnosis_days",
+    "sex_at_birth",
+    "wbc_at_diagnosis",
+    "risk_group",
+    "flt3_itd",
+    "npm",
+    "cebpa"
+  ],
+  "needs_review": [
+    "primary_cytogenetic_code"
+  ],
+  "not_recommended": [
+    "protocol_identifier",
+    "primary_diagnosis",
+    "mrd_end_course_1",
+    "sct_in_first_cr",
+    "gemtuzumab",
+    "first_event"
+  ],
+  "note": "Viability is scientific/source-quality classification, not outcome-driven variable selection.",
+  "secondary_candidate": [
+    "race",
+    "ethnicity",
+    "fab",
+    "cns_disease",
+    "marrow_blasts",
+    "peripheral_blasts",
+    "cytogenetics_t821",
+    "cytogenetics_inv16",
+    "cytogenetics_mll",
+    "cytogenetics_monosomy7"
+  ]
+}

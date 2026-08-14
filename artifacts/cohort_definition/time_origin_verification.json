@@ -1,0 +1,39 @@
+{
+  "age_at_diagnosis": {
+    "cde_id": 3225640,
+    "cde_version": "2.0",
+    "description": "Age at the time of diagnosis expressed in number of days since birth.",
+    "field": "diagnoses.age_at_diagnosis",
+    "source": "GDC Data Dictionary / caDSR",
+    "term": "Patient Diagnosis Age Day Value"
+  },
+  "conclusion": "days_to_last_follow_up is defined from initial pathologic diagnosis. days_to_death is defined from the GDC index date. GDC policy sets that index to initial pathologic diagnosis. In this TARGET-AML extract, index_date is Diagnosis and days_to_diagnosis is 0 whenever those fields are populated among Alive/Dead cases. The two OS time fields therefore share a scientifically coherent origin at diagnosis.",
+  "days_to_death": {
+    "cde_id": 6154724,
+    "cde_version": "1.0",
+    "description": "Number of days between the date used for index and the date from a person's date of death represented as a calculated number of days.",
+    "field": "demographic.days_to_death",
+    "source": "GDC Data Dictionary / caDSR",
+    "term": "Index Date to Death Day Count"
+  },
+  "days_to_last_follow_up": {
+    "cde_id": 3008273,
+    "cde_version": "1.0",
+    "description": "Time interval from the date of last follow up to the date of initial pathologic diagnosis, represented as a calculated number of days.",
+    "field": "diagnoses.days_to_last_follow_up",
+    "source": "GDC Data Dictionary / caDSR",
+    "term": "Last Communication Contact Less Initial Pathologic Diagnosis Date Calculated Day Value"
+  },
+  "n_alive_dead_index_missing": 7,
+  "n_days_to_diagnosis_missing": 311,
+  "n_days_to_diagnosis_nonzero": 0,
+  "n_days_to_diagnosis_zero": 2181,
+  "n_dead_death_equals_last_fu_when_index_missing": 3,
+  "n_index_diagnosis": 2181,
+  "n_index_missing": 311,
+  "n_index_other": 0,
+  "n_records_assessed": 2492,
+  "official_index_policy": "GDC stores absolute clinical dates as intervals from the date of initial pathologic diagnosis. Events after diagnosis are positive; events before diagnosis are negative. The actual calendar date of diagnosis is not stored.",
+  "origin_is_coherent": true,
+  "proceed_with_endpoint": true
+}

@@ -273,3 +273,101 @@ Stage 2 stops after raw/staging ingestion and reconciliation. No
 `analytics.patient_cohort`, survival dataset, Table 1, Kaplan–Meier, Cox
 model, imputation, Bayesian analysis, or power calculation was produced.
 
+## Decision 24 — Primary age eligibility is < 18 years
+
+Date: 2026-08-14
+Status: accepted
+
+The primary OS cohort is restricted to age at diagnosis < 18 years, using
+GDC `diagnoses.age_at_diagnosis` converted as days / 365.25. The cutoff
+follows the scientific question (children and adolescents). It was not
+chosen to maximize N. TARGET-AML young adults are reserved for a
+prespecified age ≤21 sensitivity population and are not in the primary
+analysis.
+
+## Decision 25 — Primary OS event is GDC vital status
+
+Date: 2026-08-14
+Status: accepted
+
+Dead = event 1; Alive = event 0, from GDC `demographic.vital_status`.
+Unknown, Not Reported, and structurally missing vital status are excluded
+from the primary OS cohort and are not classified as censored. Supplement
+vital status is QA only and is not required to define the event.
+
+## Decision 26 — Primary OS time is status-dependent GDC time
+
+Date: 2026-08-14
+Status: accepted
+
+If Dead: `demographic.days_to_death`. If Alive:
+`diagnoses.days_to_last_follow_up`. First-event follow-up times, maximum
+arbitrary follow-up records, treatment dates, and supplement OS days are
+not the primary endpoint. Supplement OS remains QA / future sensitivity
+information. The endpoint was not switched to the source that maximizes N
+or event count.
+
+## Decision 27 — Time origin is initial pathologic diagnosis
+
+Date: 2026-08-14
+Status: accepted
+
+Official GDC/caDSR definitions: `days_to_last_follow_up` is the interval
+from last follow-up to initial pathologic diagnosis (CDE 3008273);
+`days_to_death` is days from the GDC index to death (CDE 6154724); GDC
+policy stores dates as intervals from initial pathologic diagnosis;
+`age_at_diagnosis` is days since birth (CDE 3225640). In this extract,
+`index_date` is Diagnosis and `days_to_diagnosis` is 0 when populated
+among Alive/Dead cases. The fields share a coherent origin. A few cases
+lack `index_date`; they are retained with a QA flag rather than used as
+grounds to abandon the endpoint.
+
+## Decision 28 — Analysis-person identity
+
+Date: 2026-08-14
+Status: accepted
+
+The unit of analysis is the analysis person. Eligible identity is a
+canonical six-character `TARGET-20` or `TARGET-21` USI. Extended
+identifiers are collapsed to that USI only when the suffix is a documented
+biospecimen qualifier (Unsorted / Sorted-…) and clinical fields are
+compatible. Prefix similarity alone is not sufficient. Short
+`TARGET-20-D#` experimental tokens, other experimental constructs,
+cell-line names, and `TARGET-00-` barcodes are not primary person IDs.
+Conflicting multi-case records exclude the person. Original GDC
+identifiers are retained.
+
+## Decision 29 — Cohort eligibility does not require covariate completeness
+
+Date: 2026-08-14
+Status: accepted
+
+WBC, risk group, FLT3/ITD, NPM, CEBPA, FAB, race, ethnicity, and
+supplement membership do not define primary cohort membership. Missing
+covariate handling will be specified later, before model fitting. No
+imputation was performed in Stage 3.
+
+## Decision 30 — Baseline source precedence is locked from source quality
+
+Date: 2026-08-14
+Status: accepted
+
+AML1031 is preferred for WBC, risk group, FLT3/ITD, NPM, CEBPA, CNS
+disease, and lesion flags where present. FAB uses Discovery / Validation /
+LowDepth, not AML1031. Conflicts set a flag and keep the precedence
+winner. Values are not averaged. Survival association was not used to
+choose precedence. See `docs/baseline_covariate_source_rules.md`.
+
+## Decision 31 — Stage 3 freeze
+
+Date: 2026-08-14
+Status: accepted
+
+Stage 3 created `analytics.patient_identity_crosswalk`,
+`analytics.cohort_eligibility`, `analytics.primary_os_cohort`, and
+`analytics.baseline_covariates_reconciled`. No Table 1, Kaplan–Meier,
+log-rank, Cox model, hazard ratio, imputation, Bayesian model, or power
+calculation was produced. Later changes to the locked population or
+endpoint must be recorded as SAP deviations.
+
+
