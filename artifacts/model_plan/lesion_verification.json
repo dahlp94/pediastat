@@ -1,0 +1,17 @@
+{
+  "included": ["flt3_itd", "npm", "cebpa", "cytogenetics_t821", "cytogenetics_inv16", "cytogenetics_mll", "cytogenetics_monosomy7"],
+  "omitted": [],
+  "primary_cytogenetic_code": "NOT INCLUDED IN PRESPECIFIED MODELS",
+  "baseline_status": "CDE-defined diagnostic/baseline lesion and mutation indicators.",
+  "coding": "Yes/No after mixed-case harmonization; Unknown/Not Reported/Not Done/Not Applicable/structural missing become missing.",
+  "cooccurrence": {
+    "n_yes": {
+      "cytogenetics_t821_std": 270,
+      "cytogenetics_inv16_std": 199,
+      "cytogenetics_mll_std": 370,
+      "cytogenetics_monosomy7_std": 38
+    },
+    "n_two_or_more_lesions": 4
+  },
+  "note": "Rare co-occurrence of distinct lesion flags does not create a structurally singular dummy design. Primary cytogenetic code is not substituted for flags."
+}

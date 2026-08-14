@@ -99,13 +99,24 @@ The statistical analysis plan in `docs/statistical_analysis_plan.md` will be com
 
 ## Project Status
 
-Stage 4 — descriptive cohort characterization and overall survival summary.
+Stage 5 — inferential model, coding, missing-data strategy, and diagnostics
+plan frozen. No Cox model has been fit.
 
-The Stage 3 primary OS cohort is frozen (N = 1978; 695 deaths; 1283
-censored). Stage 4 produces an overall Table 1, missingness summaries,
-overall Kaplan–Meier estimates, and reverse Kaplan–Meier follow-up. It
-does not fit Cox models, run log-rank tests, or compare predictors with
-survival.
+The Stage 3 primary OS cohort remains frozen (N = 1978; 695 deaths; 1283
+censored). Stage 4 descriptive results remain the overall KM and reverse-KM
+summaries. Stage 5 specifies the primary clinical Cox model and a separate
+secondary molecular/cytogenetic model, plus MI and diagnostic rules.
+Stage 6 will execute that plan.
+
+## Stage 5 commands
+
+```bash
+make model-plan
+```
+
+This writes aggregate planning artifacts under `artifacts/model_plan/`
+and runs coding/preflight checks on the locked cohort. It does not fit
+Cox models or run multiple imputation.
 
 ## Stage 4 commands
 

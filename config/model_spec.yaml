@@ -1,0 +1,416 @@
+# Stage 5 inferential model specification.
+# Analysis decisions only. No patient data. No model results.
+# Any change after inspecting survival associations is an SAP deviation.
+
+version: "1.0"
+stage: 5
+locked: true
+scientific_estimand: prognostic_associations
+causal_language: forbidden
+
+outcome:
+  name: overall_survival
+  time: os_days
+  event: os_event
+  origin: initial_pathologic_diagnosis
+  ties: efron
+  inference: ordinary_partial_likelihood
+
+primary_model:
+  name: primary_clinical
+  label: Primary clinical Cox model
+  formula: "Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + risk_group_std"
+  role: primary
+  predictors:
+    age:
+      concept: age_at_diagnosis
+      variable: age5
+      source: gdc.diagnoses.age_at_diagnosis
+      coding: age_at_diagnosis_years / 5
+      functional_form: linear
+      reference: null
+      interpretation: adjusted HR per 5-year increase in age at diagnosis
+      missing_data: not_missing_in_primary_cohort
+      df: 1
+      role: adjustment
+    sex:
+      concept: sex_at_birth
+      variable: sex_std
+      source: gdc.demographic.sex_at_birth
+      coding: Female / Male
+      functional_form: dummy
+      reference: Female
+      interpretation: adjusted HR for Male vs Female
+      missing_data: not_missing_in_primary_cohort
+      df: 1
+      role: adjustment
+    wbc:
+      concept: wbc_at_diagnosis
+      variable: log2_wbc
+      source: supplement.WBC at Diagnosis
+      coding: log2 of observed WBC (x10^3/mcL)
+      functional_form: log2_linear
+      reference: null
+      interpretation: adjusted HR per doubling of baseline WBC
+      missing_data: multiple_imputation
+      df: 1
+      role: prognostic
+    risk_group:
+      concept: risk_group
+      variable: risk_group_std
+      source: supplement.Risk group
+      coding: Low / Standard / High
+      functional_form: dummy
+      reference: Low
+      interpretation: adjusted HR for Standard vs Low and High vs Low
+      missing_data: multiple_imputation
+      df: 2
+      role: prognostic
+  excluded_from_this_model:
+    - flt3_itd
+    - npm
+    - cebpa
+    - cytogenetics_t821
+    - cytogenetics_inv16
+    - cytogenetics_mll
+    - cytogenetics_monosomy7
+    - primary_cytogenetic_code
+    - fab
+    - race
+    - ethnicity
+    - cns_disease
+    - marrow_blasts
+    - peripheral_blasts
+  interactions: []
+  df: 5
+
+secondary_model:
+  name: secondary_molecular
+  label: Secondary molecular/cytogenetic Cox model
+  formula: "Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + flt3_itd_std + npm_std + cebpa_std + cytogenetics_t821_std + cytogenetics_inv16_std + cytogenetics_mll_std + cytogenetics_monosomy7_std"
+  role: secondary
+  predictors:
+    age:
+      concept: age_at_diagnosis
+      variable: age5
+      source: gdc.diagnoses.age_at_diagnosis
+      coding: age_at_diagnosis_years / 5
+      functional_form: linear
+      reference: null
+      interpretation: adjusted HR per 5-year increase in age at diagnosis
+      missing_data: not_missing_in_primary_cohort
+      df: 1
+      role: adjustment
+    sex:
+      concept: sex_at_birth
+      variable: sex_std
+      source: gdc.demographic.sex_at_birth
+      coding: Female / Male
+      functional_form: dummy
+      reference: Female
+      interpretation: adjusted HR for Male vs Female
+      missing_data: not_missing_in_primary_cohort
+      df: 1
+      role: adjustment
+    wbc:
+      concept: wbc_at_diagnosis
+      variable: log2_wbc
+      source: supplement.WBC at Diagnosis
+      coding: log2 of observed WBC (x10^3/mcL)
+      functional_form: log2_linear
+      reference: null
+      interpretation: adjusted HR per doubling of baseline WBC
+      missing_data: multiple_imputation
+      df: 1
+      role: adjustment
+    flt3_itd:
+      concept: flt3_itd
+      variable: flt3_itd_std
+      source: supplement.FLT3/ITD positive?
+      coding: Yes / No
+      functional_form: dummy
+      reference: "No"
+      interpretation: adjusted HR for FLT3/ITD Yes vs No
+      missing_data: multiple_imputation
+      df: 1
+      role: prognostic_secondary
+    npm:
+      concept: npm
+      variable: npm_std
+      source: supplement.NPM mutation
+      coding: Yes / No
+      functional_form: dummy
+      reference: "No"
+      interpretation: adjusted HR for NPM mutation Yes vs No
+      missing_data: multiple_imputation
+      df: 1
+      role: prognostic_secondary
+    cebpa:
+      concept: cebpa
+      variable: cebpa_std
+      source: supplement.CEBPA mutation
+      coding: Yes / No
+      functional_form: dummy
+      reference: "No"
+      interpretation: adjusted HR for CEBPA mutation Yes vs No
+      missing_data: multiple_imputation
+      df: 1
+      role: prognostic_secondary
+    cytogenetics_t821:
+      concept: cytogenetics_t821
+      variable: cytogenetics_t821_std
+      source: supplement.t(8;21)
+      coding: Yes / No
+      functional_form: dummy
+      reference: "No"
+      interpretation: adjusted HR for t(8;21) Yes vs No
+      missing_data: multiple_imputation
+      df: 1
+      role: prognostic_secondary
+    cytogenetics_inv16:
+      concept: cytogenetics_inv16
+      variable: cytogenetics_inv16_std
+      source: supplement.inv(16)
+      coding: Yes / No
+      functional_form: dummy
+      reference: "No"
+      interpretation: adjusted HR for inv(16) Yes vs No
+      missing_data: multiple_imputation
+      df: 1
+      role: prognostic_secondary
+    cytogenetics_mll:
+      concept: cytogenetics_mll
+      variable: cytogenetics_mll_std
+      source: supplement.MLL
+      coding: Yes / No
+      functional_form: dummy
+      reference: "No"
+      interpretation: adjusted HR for MLL/KMT2A rearrangement Yes vs No
+      missing_data: multiple_imputation
+      df: 1
+      role: prognostic_secondary
+    cytogenetics_monosomy7:
+      concept: cytogenetics_monosomy7
+      variable: cytogenetics_monosomy7_std
+      source: supplement.monosomy 7
+      coding: Yes / No
+      functional_form: dummy
+      reference: "No"
+      interpretation: adjusted HR for monosomy 7 Yes vs No
+      missing_data: multiple_imputation
+      df: 1
+      role: prognostic_secondary
+  excluded_from_this_model:
+    - risk_group
+    - primary_cytogenetic_code
+    - fab
+    - race
+    - ethnicity
+    - cns_disease
+    - marrow_blasts
+    - peripheral_blasts
+  interactions: []
+  df: 10
+
+coding:
+  age5_divisor: 5
+  sex:
+    map:
+      female: Female
+      male: Male
+      Female: Female
+      Male: Male
+    missing_tokens: [unknown, Unknown, "not reported", "Not Reported"]
+    reference: Female
+  risk_group:
+    map:
+      Low Risk: Low
+      Standard Risk: Standard
+      High Risk: High
+      Low: Low
+      Standard: Standard
+      High: High
+    unresolved_tokens: ["10", "30", "10.0", "30.0"]
+    missing_tokens:
+      - Unknown
+      - unknown
+      - "Not Reported"
+      - "not reported"
+      - Unspecified
+    reference: Low
+    cde_permissible_values:
+      - High Risk
+      - Low Risk
+      - Standard Risk
+  yes_no:
+    yes_tokens: ["Yes", "YES", "yes"]
+    no_tokens: ["No", "NO", "no"]
+    missing_tokens:
+      - Unknown
+      - unknown
+      - "Not Reported"
+      - "not reported"
+      - Unspecified
+      - "Not Applicable"
+      - "Not Done"
+    reference: "No"
+
+exclusions:
+  fab:
+    reason: Approximately 56% not observed in the primary cohort; file-dependent completeness.
+  primary_cytogenetic_code:
+    reason: NEEDS REVIEW coding, source conflicts, and redundancy with lesion flags.
+  race_ethnicity:
+    reason: Principal model is disease/prognostic biology; race/ethnicity require a separately framed disparities analysis.
+  cns_blasts:
+    reason: Parsimony and redundancy with disease-burden / risk constructs; reserved for a labeled expanded sensitivity model.
+  interactions:
+    reason: No prespecified biological interaction hypothesis in the current study objective.
+
+missing_data:
+  primary_method: multiple_imputation
+  implementation: mice
+  m: 30
+  seed: 20260814
+  complete_case_sensitivity: true
+  working_assumption: MAR_conditional_on_imputation_model
+  mar_not_proven_by_stage4: true
+  mnar_sensitivity_required_for_mvp: false
+  do_not_impute:
+    - analysis_person_id
+    - os_event
+    - os_days
+    - os_years
+    - age_at_diagnosis_years
+    - age5
+    - sex_std
+  methods:
+    log2_wbc: pmm
+    risk_group_std: polyreg
+    flt3_itd_std: logreg
+    npm_std: logreg
+    cebpa_std: logreg
+    cytogenetics_t821_std: logreg
+    cytogenetics_inv16_std: logreg
+    cytogenetics_mll_std: logreg
+    cytogenetics_monosomy7_std: logreg
+  auxiliary_predictors:
+    - age5
+    - sex_std
+    - log2_wbc
+    - risk_group_std
+    - flt3_itd_std
+    - npm_std
+    - cebpa_std
+    - cytogenetics_t821_std
+    - cytogenetics_inv16_std
+    - cytogenetics_mll_std
+    - cytogenetics_monosomy7_std
+    - marrow_blasts_num
+    - peripheral_blasts_num
+    - cns_disease_std
+    - race
+    - ethnicity
+    - source_family_aml1031
+    - os_event
+    - nelson_aalen
+  forbidden_auxiliaries:
+    - sct_in_first_cr
+    - mrd_end_course_1
+    - gemtuzumab
+    - treatment_response
+    - first_event
+  pooling: rubin_on_coefficient_scale
+  nelson_aalen:
+    estimator: nonparametric_fleming_harrington
+    not_from_cox_model: true
+
+nonlinear_sensitivity:
+  age:
+    method: restricted_cubic_spline
+    knots: 3
+    knot_rule: observed_quantiles
+    quantiles: [0.10, 0.50, 0.90]
+    scale: age_at_diagnosis_years
+    knot_locations_years:
+      - 1.14168377823409
+      - 9.4839151266256
+      - 16.5656399726215
+    knot_source: artifacts/descriptive/continuous_distribution_summary.csv
+    replaces_primary_term: age5
+  wbc:
+    method: restricted_cubic_spline
+    knots: 3
+    knot_rule: observed_quantiles
+    quantiles: [0.10, 0.50, 0.90]
+    scale: log2_wbc
+    knot_locations_wbc:
+      - 3.87
+      - 26.7
+      - 192.69
+    knot_source: artifacts/descriptive/continuous_distribution_summary.csv p10/median/p90 of observed WBC
+    note: Because log2 is strictly increasing, WBC percentiles map to log2_wbc percentiles.
+
+ph:
+  assessment:
+    - scaled_schoenfeld
+    - covariate_specific_tests
+    - global_test
+    - diagnostic_plots
+  method: cox.zph
+  p_value_alone_insufficient: true
+  remediation:
+    minor: retain_cox_average_hr
+    nuisance_variable: consider_strata
+    scientifically_important_predictor: log_time_interaction_sensitivity
+    primary_model_not_silently_replaced: true
+
+influence:
+  checks:
+    - deviance_residuals
+    - martingale_residuals
+    - dfbeta
+    - concordance_descriptive
+  auto_delete_influential_observations: false
+
+multiplicity:
+  primary:
+    report: [adjusted_hr, ci95, nominal_two_sided_p]
+    automated_correction: none
+    inferential_emphasis: [risk_group, log2_wbc]
+  secondary:
+    report: [adjusted_hr, ci95, nominal_two_sided_p, bh_q]
+    fdr_method: benjamini_hochberg
+    fdr_family:
+      - flt3_itd_std
+      - npm_std
+      - cebpa_std
+      - cytogenetics_t821_std
+      - cytogenetics_inv16_std
+      - cytogenetics_mll_std
+      - cytogenetics_monosomy7_std
+    fdr_not_applied_to:
+      - age5
+      - sex_std
+      - log2_wbc
+
+stratified_km:
+  allowed:
+    - risk_group_std
+    - flt3_itd_std
+  log_rank_required: false
+  if_log_rank_shown: unadjusted_secondary
+  not_for_variable_selection: true
+
+forbidden_methods:
+  - stepwise
+  - lasso
+  - elastic_net
+  - random_survival_forests
+  - boosting
+  - automated_feature_selection
+
+cohort:
+  n: 1978
+  deaths: 695
+  censored: 1283

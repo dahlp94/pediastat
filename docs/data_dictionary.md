@@ -157,3 +157,8 @@ records retained for audit. Do not describe every row as a patient.
 
 Stage 4 descriptive analysis reads `analytics.stage4_primary_cohort_extract`,
 a view over the frozen primary OS cohort. It does not redefine eligibility.
+
+Stage 5 analysis variables (`age5`, `log2_wbc`, `sex_std`, `risk_group_std`,
+and standardized Yes/No molecular and lesion flags) are defined in
+`docs/inferential_model_specification.md` and `config/model_spec.yaml`.
+They do not change cohort membership.

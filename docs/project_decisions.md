@@ -425,5 +425,137 @@ Stage 4 recorded, without using survival association:
 These are planning notes for Stage 5. They are not automatic exclusions
 and were not chosen by p-values.
 
+## Decision 37 — Cox PH is the locked primary inferential framework
+
+Date: 2026-08-14
+Status: accepted (supersedes the provisional status of Decisions 4 and 13
+for the principal analyses)
+
+The primary inferential method is Cox proportional hazards regression
+with Efron ties and ordinary partial-likelihood inference. Estimands are
+adjusted hazard ratios for prognostic associations, not causal effects.
+Stepwise selection, penalized prediction machines, and automated feature
+selection are not used for the principal analyses.
+
+## Decision 38 — Two principal models; risk group is separated from its components
+
+Date: 2026-08-14
+Status: accepted
+
+The primary clinical model is:
+
+Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + risk_group_std
+
+The secondary molecular/cytogenetic model is:
+
+Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + flt3_itd_std +
+npm_std + cebpa_std + cytogenetics_t821_std + cytogenetics_inv16_std +
+cytogenetics_mll_std + cytogenetics_monosomy7_std
+
+Risk group is a protocol summary that already incorporates molecular and
+cytogenetic information. FLT3/ITD and lesion flags are therefore not
+placed in the same principal model as risk group. This is a scientific
+structure decision, not the result of survival screening. Primary
+cytogenetic code is not used in either model.
+
+## Decision 39 — Age is continuous per 5 years
+
+Date: 2026-08-14
+Status: accepted
+
+Primary coding is age5 = age_at_diagnosis_years / 5, linear. Age is
+complete in the locked cohort. Categorization is not used for the
+primary model. A 3-knot restricted cubic spline of age in years is a
+prespecified sensitivity, with knots frozen at Stage 4 10th/50th/90th
+percentiles.
+
+## Decision 40 — WBC is modeled as log2
+
+Date: 2026-08-14
+Status: accepted
+
+Primary coding is log2 of strictly positive observed WBC (x10^3/mcL).
+The HR is per doubling. The transformation was chosen from the Stage 4
+right-skewed, strictly positive distribution, not from association with
+OS. Extreme values are not winsorized unless a source error is shown. A
+3-knot spline of log2(WBC) is a prespecified sensitivity.
+
+## Decision 41 — Risk-group tokens 10 and 30 are unresolved missing
+
+Date: 2026-08-14
+Status: accepted
+
+CDE permissible values are High Risk, Low Risk, and Standard Risk only.
+Tokens 10 and 30 (n = 3, Validation workbook only) have no documented
+mapping. They are retained as original QA values and coded missing for
+inference. Numeric order was not used to guess a CDE label. Unknown /
+Not Reported / structural missing are also missing for inference, not a
+biological "Unknown risk" level. Reference is Low.
+
+## Decision 42 — FAB, primary cytogenetic code, race/ethnicity, CNS, and blasts
+
+Date: 2026-08-14
+Status: accepted
+
+FAB is excluded from both principal models because about 56% is not
+observed. Primary cytogenetic code is excluded because of source
+conflict and redundancy with lesion flags. Race and ethnicity are not
+automatic principal-model covariates; a disparities analysis would need
+an explicit framing beyond unmeasured social and access factors. CNS
+disease and blast percentages remain secondary candidates for a later
+labeled expanded sensitivity, not for the frozen principal models.
+
+## Decision 43 — Multiple imputation is primary; complete case is sensitivity
+
+Date: 2026-08-14
+Status: accepted
+
+Missing baseline covariates used in the models are handled by mice
+(m = 30, seed 20260814). Complete-case Cox is a sensitivity with the
+same specification. Cohort eligibility is unchanged. Outcome, time, ID,
+age, and sex are not imputed. log2_wbc uses PMM; risk group uses
+polyreg; binary flags use logreg. The imputation model includes os_event
+and a nonparametric Nelson-Aalen cumulative hazard so that covariate
+imputation can preserve relationships with survival, without imputing
+the outcome and without fitting the prognostic Cox model to create that
+auxiliary. MAR is assumed conditional on the imputation model; Stage 4
+did not prove MAR. Rubin pooling is on the coefficient scale.
+
+## Decision 44 — No interactions; limited KM; multiplicity
+
+Date: 2026-08-14
+Status: accepted
+
+Neither principal model includes interaction terms. Stage 6 may show
+unadjusted KM curves for risk group and FLT3/ITD only; log-rank is not
+required and is not used for selection. The primary clinical model uses
+nominal p-values without automated multiplicity correction. The
+secondary molecular family uses Benjamini-Hochberg q-values for the
+seven frozen biological coefficients only.
+
+## Decision 45 — PH diagnostics and remediation are prespecified
+
+Date: 2026-08-14
+Status: accepted
+
+Stage 6 will assess PH with scaled Schoenfeld residuals, covariate and
+global tests, and plots. Remediation hierarchy: minor departure, retain
+Cox as an average HR; material violation in a nuisance factor, consider
+strata; material violation in an important predictor, log(time)
+interaction sensitivity. The original Cox specification remains primary
+unless a later SAP deviation says otherwise. Influential observations
+are not deleted for influence alone.
+
+## Decision 46 — Stage 5 freeze
+
+Date: 2026-08-14
+Status: accepted
+
+Stage 5 locked the inferential plan, coding, MI strategy, and
+diagnostics. It did not fit Cox models, did not run mice(), did not
+compute hazard ratios, and did not examine predictor-specific survival.
+Stage 6 executes this plan.
+
+
 
 

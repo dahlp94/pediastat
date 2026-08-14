@@ -1,0 +1,11 @@
+{
+  "decision": "set_inferential_value_missing",
+  "guessed_mapping": false,
+  "cde_permissible_values": ["High Risk", "Low Risk", "Standard Risk"],
+  "rationale": "TARGET AML CDE Data Elements row for Risk group lists only High Risk, Low Risk, and Standard Risk. Tokens 10 and 30 appear only in the Validation clinical-data workbook, have no overlapping alternative source, and have no documented mapping. Numeric order was not used.",
+  "n_primary_cohort": 3,
+  "original_values": ["10", "30", "10"],
+  "source_workbook": ["TARGET_AML_ClinicalData_Validation_20230720.xlsx", "TARGET_AML_ClinicalData_Validation_20230720.xlsx", "TARGET_AML_ClinicalData_Validation_20230720.xlsx"],
+  "standardized_value": null,
+  "qa_flag": "unresolved_risk_group_token"
+}

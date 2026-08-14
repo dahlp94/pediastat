@@ -263,6 +263,9 @@ gt(redundancy) |>
 
 These findings are not automatic exclusions.
 
+Stage 5 locked the inferential models, coding, missing-data strategy, and
+diagnostics before any Cox fit. See `docs/inferential_model_specification.md`.
+
 # 11. Limitations
 
 - Public TARGET-AML data are observational and incomplete relative to controlled-access clinical files.
@@ -273,21 +276,14 @@ These findings are not automatic exclusions.
 - No causal interpretation is offered.
 - No multivariable inference, missing-data method, or sensitivity survival analysis has been performed.
 
-# 12. Next Statistical Decisions
+# 12. Subsequent Inferential Plan
 
-Stage 5 must freeze the inferential plan **before** regression is run, including:
+Stage 5 froze the inferential plan before regression. The locked specification is `docs/inferential_model_specification.md`. In brief:
 
-1. Which CORE and SECONDARY covariates enter the primary Cox model
-2. Functional form for age and WBC (linear, log, spline), prespecified rather than chosen by survival association
-3. Handling of Unknown versus structural missingness
-4. The missing-data method (complete case is not the default decision)
-5. Whether risk group and lesion flags / FLT3 can co-exist given redundancy
-6. Coding of unexpected risk-group tokens (`10`, `30`) and mixed-case Yes/No
-7. Whether primary cytogenetic code is used at all (currently NEEDS REVIEW)
-8. Interaction terms, if any
-9. Multiplicity rules for secondary/exploratory analyses
-10. Proportional-hazards assessment and remediation strategy
-11. Whether predictor-stratified Kaplan–Meier curves will be shown, and if so under what multiplicity plan
+- Primary clinical Cox model: age5 + sex + log2(WBC) + risk group
+- Secondary molecular/cytogenetic Cox model without risk group
+- Multiple imputation is primary; complete case is sensitivity
+- No Cox model, hazard ratio, or predictor-specific survival analysis is contained in this Stage 4 report
 
 # Appendix
 

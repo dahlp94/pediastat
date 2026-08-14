@@ -1,0 +1,35 @@
+{
+  "primary_cohort_n": 1978,
+  "deaths": 695,
+  "censored": 1283,
+  "primary_clinical": {
+    "model": "Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + risk_group_std",
+    "df": 5,
+    "events_per_df": 139.0,
+    "components": {
+      "age5": 1,
+      "sex_std": 1,
+      "log2_wbc": 1,
+      "risk_group_std": 2
+    }
+  },
+  "secondary_molecular": {
+    "model": "Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + flt3_itd_std + npm_std + cebpa_std + cytogenetics_t821_std + cytogenetics_inv16_std + cytogenetics_mll_std + cytogenetics_monosomy7_std",
+    "df": 10,
+    "events_per_df": 69.5,
+    "components": {
+      "age5": 1,
+      "sex_std": 1,
+      "log2_wbc": 1,
+      "flt3_itd_std": 1,
+      "npm_std": 1,
+      "cebpa_std": 1,
+      "cytogenetics_t821_std": 1,
+      "cytogenetics_inv16_std": 1,
+      "cytogenetics_mll_std": 1,
+      "cytogenetics_monosomy7_std": 1
+    }
+  },
+  "note": "Events-per-df is a complexity descriptor, not a formal power calculation and not a reason to drop prespecified predictors.",
+  "overparameterized": false
+}

@@ -1,22 +1,10 @@
 # Analysis
 
-This directory will hold the statistical analysis scripts.
+R is the primary statistical-analysis language. Python is used for
+ingestion, cohort construction, and the Stage 5 model-plan export.
 
-R is the primary statistical-analysis language. Python may be used for
-data-prep utilities, but inferential analyses belong under `analysis/R/`.
+Current scripts live under `analysis/R/`. See `analysis/R/README.md`.
 
-Scripts will be numbered so the workflow is explicit. Later stages are
-expected to add:
-
-```text
-01_build_analysis_cohort.R
-02_descriptive_statistics.R
-03_survival_analysis.R
-04_missing_data.R
-05_sensitivity_analysis.R
-06_power_analysis.R
-```
-
-Those scripts are not present in Stage 0. They will be written after the
-source data are inspected and the statistical analysis plan is completed.
-Do not treat empty filenames as a substitute for a written analysis plan.
+Stage 4: descriptive Table 1, missingness, overall KM, reverse KM.  
+Stage 5: inferential coding and preflight (no Cox fit, no `mice()`).  
+Stage 6 will execute the frozen Cox + MI plan.

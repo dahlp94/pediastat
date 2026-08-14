@@ -1,0 +1,15 @@
+model,concept,analysis_variable,source,coding,functional_form,reference_category,interpretation,missing_data_method,df,role
+primary_clinical,age_at_diagnosis,age5,gdc.diagnoses.age_at_diagnosis,age_at_diagnosis_years / 5,linear,,adjusted HR per 5-year increase in age at diagnosis,not_missing_in_primary_cohort,1,adjustment
+primary_clinical,sex_at_birth,sex_std,gdc.demographic.sex_at_birth,Female / Male,dummy,Female,adjusted HR for Male vs Female,not_missing_in_primary_cohort,1,adjustment
+primary_clinical,wbc_at_diagnosis,log2_wbc,supplement.WBC at Diagnosis,log2 of observed WBC (x10^3/mcL),log2_linear,,adjusted HR per doubling of baseline WBC,multiple_imputation,1,prognostic
+primary_clinical,risk_group,risk_group_std,supplement.Risk group,Low / Standard / High,dummy,Low,adjusted HR for Standard vs Low and High vs Low,multiple_imputation,2,prognostic
+secondary_molecular,age_at_diagnosis,age5,gdc.diagnoses.age_at_diagnosis,age_at_diagnosis_years / 5,linear,,adjusted HR per 5-year increase in age at diagnosis,not_missing_in_primary_cohort,1,adjustment
+secondary_molecular,sex_at_birth,sex_std,gdc.demographic.sex_at_birth,Female / Male,dummy,Female,adjusted HR for Male vs Female,not_missing_in_primary_cohort,1,adjustment
+secondary_molecular,wbc_at_diagnosis,log2_wbc,supplement.WBC at Diagnosis,log2 of observed WBC (x10^3/mcL),log2_linear,,adjusted HR per doubling of baseline WBC,multiple_imputation,1,adjustment
+secondary_molecular,flt3_itd,flt3_itd_std,supplement.FLT3/ITD positive?,Yes / No,dummy,No,adjusted HR for FLT3/ITD Yes vs No,multiple_imputation,1,prognostic_secondary
+secondary_molecular,npm,npm_std,supplement.NPM mutation,Yes / No,dummy,No,adjusted HR for NPM mutation Yes vs No,multiple_imputation,1,prognostic_secondary
+secondary_molecular,cebpa,cebpa_std,supplement.CEBPA mutation,Yes / No,dummy,No,adjusted HR for CEBPA mutation Yes vs No,multiple_imputation,1,prognostic_secondary
+secondary_molecular,cytogenetics_t821,cytogenetics_t821_std,supplement.t(8;21),Yes / No,dummy,No,adjusted HR for t(8;21) Yes vs No,multiple_imputation,1,prognostic_secondary
+secondary_molecular,cytogenetics_inv16,cytogenetics_inv16_std,supplement.inv(16),Yes / No,dummy,No,adjusted HR for inv(16) Yes vs No,multiple_imputation,1,prognostic_secondary
+secondary_molecular,cytogenetics_mll,cytogenetics_mll_std,supplement.MLL,Yes / No,dummy,No,adjusted HR for MLL/KMT2A rearrangement Yes vs No,multiple_imputation,1,prognostic_secondary
+secondary_molecular,cytogenetics_monosomy7,cytogenetics_monosomy7_std,supplement.monosomy 7,Yes / No,dummy,No,adjusted HR for monosomy 7 Yes vs No,multiple_imputation,1,prognostic_secondary

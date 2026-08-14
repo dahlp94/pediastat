@@ -24,6 +24,25 @@ not fit Cox models or compare predictors with survival.
 aggregate artifacts when a complete Quarto CLI is not available. The
 investigator narrative source remains `reports/stage4_descriptive_analysis.qmd`.
 
+## Stage 5 scripts
+
+```text
+10_model_coding.R
+11_preflight.R
+run_stage5.R
+tests/test_stage5.R
+```
+
+These scripts construct planned analysis variables (`age5`, `log2_wbc`,
+standardized categories), check design-matrix rank, and write aggregate
+planning artifacts. They do not call `coxph()` or `mice()`.
+
+```bash
+make model-plan
+```
+
+## Environment
+
 Run from the repository root:
 
 ```bash
@@ -48,4 +67,5 @@ conda activate pediastat-r
 Packages: DBI, RPostgres, dplyr, tidyr, ggplot2, survival, gtsummary, gt,
 broom, here, scales, yaml, jsonlite, testthat, renv.
 
-`mice` is a future missing-data dependency and is not used in Stage 4.
+`mice` is specified for Stage 6 multiple imputation and is not called in
+Stage 4 or Stage 5. Add `r-mice` to this environment before Stage 6.

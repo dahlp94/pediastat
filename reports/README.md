@@ -12,4 +12,5 @@ part of that target when Quarto is available.
 
 The Stage 4 report describes the locked primary cohort and overall
 survival. It does not contain Cox models or predictor-stratified
-Kaplan–Meier curves.
+Kaplan–Meier curves. Inferential rules are in
+`docs/inferential_model_specification.md`.

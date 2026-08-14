@@ -2,7 +2,7 @@ PYTHON ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 PYTEST ?= $(if $(wildcard .venv/bin/pytest),.venv/bin/pytest,pytest)
 RUFF ?= $(if $(wildcard .venv/bin/ruff),.venv/bin/ruff,ruff)
 
-.PHONY: test lint check audit db-bootstrap ingest-gdc ingest-supplements reconcile ingest cohort descriptive
+.PHONY: test lint check audit db-bootstrap ingest-gdc ingest-supplements reconcile ingest cohort descriptive model-plan
 
 CONDA_RSCRIPT := $(HOME)/miniconda3/envs/pediastat-r/bin/Rscript
 CONDA_QUARTO := $(HOME)/miniconda3/envs/pediastat-r/bin/quarto
@@ -47,3 +47,8 @@ descriptive:
 		echo "Complete Quarto CLI not available; rendering HTML from Stage 4 artifacts with R."; \
 		$(RSCRIPT) analysis/R/07_render_report.R; \
 	fi
+
+model-plan:
+	$(PYTHON) scripts/check_environment.py
+	$(PYTHON) scripts/export_model_plan.py
+	$(RSCRIPT) analysis/R/run_stage5.R

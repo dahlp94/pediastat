@@ -1,0 +1,17 @@
+variable,mice_method,imputed,notes
+log2_wbc,pmm,yes,
+risk_group_std,polyreg,yes,
+flt3_itd_std,logreg,yes,
+npm_std,logreg,yes,
+cebpa_std,logreg,yes,
+cytogenetics_t821_std,logreg,yes,
+cytogenetics_inv16_std,logreg,yes,
+cytogenetics_mll_std,logreg,yes,
+cytogenetics_monosomy7_std,logreg,yes,
+analysis_person_id,not_imputed,no,Observed in the frozen primary cohort or identifier/outcome.
+os_event,not_imputed,no,Observed in the frozen primary cohort or identifier/outcome.
+os_days,not_imputed,no,Observed in the frozen primary cohort or identifier/outcome.
+os_years,not_imputed,no,Observed in the frozen primary cohort or identifier/outcome.
+age_at_diagnosis_years,not_imputed,no,Observed in the frozen primary cohort or identifier/outcome.
+age5,not_imputed,no,Observed in the frozen primary cohort or identifier/outcome.
+sex_std,not_imputed,no,Observed in the frozen primary cohort or identifier/outcome.

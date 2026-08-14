@@ -1,7 +1,7 @@
 # Statistical Analysis Plan
 
-Version: 0.4 (Stage 4 descriptive conventions locked; inferential model still TBD)
-Status: population and primary endpoint locked; overall descriptive and KM reporting conventions locked; multivariable model, missing-data method for covariates, and inferential analysis remain TBD.
+Version: 0.5 (Stage 5 inferential models, coding, missing-data strategy, and diagnostics locked; no Cox fit yet)
+Status: population, primary endpoint, descriptive conventions, and inferential analysis rules locked. Stage 6 will execute the frozen Cox + MI plan. Changes after inspecting survival associations are SAP deviations.
 
 Companion documents:
 
@@ -9,9 +9,12 @@ Companion documents:
 - `docs/baseline_covariate_source_rules.md`
 - `docs/stage4_variable_definitions.md`
 - `docs/stage4_analysis_extract.md`
+- `docs/inferential_model_specification.md`
+- `config/model_spec.yaml`
 - `docs/target_aml_reconciliation_report.md`
 - `artifacts/cohort_definition/`
 - `artifacts/descriptive/`
+- `artifacts/model_plan/`
 
 ## 1. Study Objective
 
@@ -21,7 +24,13 @@ This is an observational association study. Causal effects will not be claimed.
 
 ## 2. Scientific Hypotheses
 
-TBD — the primary multivariable model is not locked. Hypotheses will distinguish prespecified associations of scientific interest from exploratory analyses before model fitting. Variable inclusion will not be determined by univariable p-value screening against survival.
+Prespecified prognostic associations (not causal effects):
+
+**Primary clinical model.** After adjustment for age and sex, protocol risk group and log2 WBC at diagnosis are associated with the hazard of all-cause death.
+
+**Secondary molecular/cytogenetic model.** After adjustment for age, sex, and log2 WBC, FLT3/ITD, NPM, CEBPA, t(8;21), inv(16), MLL/KMT2A rearrangement, and monosomy 7 are associated with the hazard of all-cause death. This model does not include protocol risk group.
+
+Variable inclusion is frozen above. It was not determined by univariable p-value screening against survival. Exploratory analyses, if added later, will be labeled as such.
 
 ## 3. Data Source
 
@@ -107,27 +116,18 @@ TBD — event-free survival or relapse will be included only if they can be defi
 
 ## 9. Candidate Covariates
 
-The final multivariable model is **not** locked. Source-supported baseline candidates:
+Locked for the principal inferential models in Stage 5. Details: `docs/inferential_model_specification.md`.
 
-**CORE CANDIDATE**
+**Primary clinical model:** age5, sex at birth, log2(WBC), risk group (Low / Standard / High).
 
-- age at diagnosis (GDC; also an eligibility variable)
-- sex at birth (GDC)
-- WBC at diagnosis (supplements; AML1031 preferred)
-- risk group (supplements; AML1031 preferred)
-- FLT3/ITD, NPM, CEBPA (supplements; AML1031 preferred)
+**Secondary molecular/cytogenetic model:** age5, sex at birth, log2(WBC), FLT3/ITD, NPM, CEBPA, t(8;21), inv(16), MLL, monosomy 7. Risk group is excluded from this model.
 
-**SECONDARY CANDIDATE**
+**Excluded from both principal models**
 
-- FAB (Discovery/Validation/LowDepth preferred; not AML1031)
-- CNS disease
-- marrow and peripheral blast percentages
-- cytogenetic lesion flags: t(8;21), inv(16), MLL, monosomy 7
-- race, ethnicity (GDC; substantial Unknown)
-
-**NEEDS REVIEW**
-
-- primary cytogenetic code (source disagreements; not equivalent to lesion flags)
+- FAB (~56% not observed)
+- primary cytogenetic code (NEEDS REVIEW; redundancy with lesion flags)
+- race and ethnicity (not automatic biological risk factors; reserved for a separately framed analysis)
+- CNS disease, marrow blasts, peripheral blasts (parsimony / redundancy; optional labeled expanded sensitivity later)
 
 **NOT RECOMMENDED as ordinary baseline covariates**
 
@@ -135,7 +135,7 @@ The final multivariable model is **not** locked. Source-supported baseline candi
 - unvarying Cases API diagnosis labels
 - MRD, SCT in first CR, gemtuzumab, first event, treatment outcome
 
-File precedence: `docs/baseline_covariate_source_rules.md`. Conflicts set a flag and keep the precedence winner. Values are not averaged. Association with survival was not used to classify variables.
+File precedence remains `docs/baseline_covariate_source_rules.md`. Association with survival was not used to classify or include variables.
 
 ## 10. Descriptive Analysis
 
@@ -153,29 +153,48 @@ Locked in Stage 4. Produced for the overall primary cohort only.
 - Follow-up duration by reverse Kaplan–Meier (deaths treated as censored)
 - The median of observed `os_days` is not reported as median follow-up or as median OS
 
-Predictor-stratified Kaplan–Meier curves, log-rank tests, and univariable survival screening are deferred until the inferential plan is frozen.
+Stage 6 may add unadjusted KM curves for risk group and FLT3/ITD only. Those plots are descriptive, not variable-selection tools. Log-rank tests are not required; if shown they are unadjusted and secondary. Univariable survival screening is not used to include or exclude covariates.
 
 ## 11. Primary Statistical Analysis
 
-TBD — finalize before model fitting.
+Locked. Cox proportional hazards regression with Efron ties.
 
-Provisional primary method: Cox proportional hazards regression for associations between prespecified baseline covariates and overall survival.
+Primary formula:
 
-This choice remains provisional until event counts, missingness, follow-up, and proportional-hazards tenability are assessed in later stages. Effect estimates will be reported as hazard ratios with confidence intervals. The analysis estimates associations, not causal effects.
+`Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + risk_group_std`
 
-Covariates will not be selected by univariable screening against the outcome.
+- `age5` = age in years / 5 (linear; HR per 5 years)
+- `sex_std`: Male vs Female (reference Female)
+- `log2_wbc`: HR per doubling of baseline WBC
+- `risk_group_std`: Standard and High vs Low (reference Low)
+
+Secondary formula:
+
+`Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + flt3_itd_std + npm_std + cebpa_std + cytogenetics_t821_std + cytogenetics_inv16_std + cytogenetics_mll_std + cytogenetics_monosomy7_std`
+
+Binary flags: Yes vs No (reference No).
+
+Estimates are associations, not causal effects. No stepwise, LASSO, elastic net, random survival forests, boosting, or automated feature selection. No interactions in either principal model.
+
+Complexity descriptor (not power): 695 deaths; primary df = 5 (139 events/df); secondary df = 10 (69.5 events/df).
 
 ## 12. Model Assumptions and Diagnostics
 
-TBD — finalize before the primary fit is treated as final.
+Locked for Stage 6 execution.
 
-Assumptions to be assessed for a Cox model, if retained: proportional hazards, functional form of continuous covariates, influence of individual observations, and adequacy of follow-up and event counts.
+Proportional hazards: scaled Schoenfeld residuals, covariate-specific and global `cox.zph` tests, and plots. A p-value alone is not proof of a material violation.
+
+Functional form: primary linear age5 and log2 WBC; spline sensitivities with 3 knots at Stage 4 10th/50th/90th percentiles.
+
+Influence: deviance residuals, martingale residuals where useful, dfbeta. Concordance is descriptive. Influential observations are not deleted automatically.
+
+PH remediation (prespecified): minor departure → retain Cox as an average HR; material violation in a nuisance factor → consider strata; material violation in a scientifically important predictor → log(time) interaction sensitivity without replacing the primary model.
 
 ## 13. Missing Data
 
 Primary cohort eligibility is **not** conditional on complete candidate covariates.
 
-Unknown / Not Reported vital status is a cohort exclusion (or missingness class), not censoring.
+Unknown / Not Reported vital status is a cohort exclusion, not censoring.
 
 Source encodings distinguished in staging/analytics:
 
@@ -186,7 +205,15 @@ Source encodings distinguished in staging/analytics:
 - numeric sentinels (−99 / −999 / −9999)
 - observed (including 0)
 
-Missing-covariate handling (complete case, multiple imputation, or another method) will be specified in a later stage **before** model fitting. No imputation was performed in Stage 3 or Stage 4. Stage 4 missingness summaries do not establish MCAR/MAR/MNAR and were not tested against survival.
+For inferential covariates, Unknown / Not Reported / structural missing / unresolved risk tokens `10`/`30` are missing information, not biological levels.
+
+**Primary method:** multiple imputation with `mice`, m = 30, seed 20260814. Do not impute identifiers, OS time, OS event, age, or sex. Impute `log2_wbc` with PMM, risk group with polytomous regression, and binary flags with logistic regression. Include `os_event` and a nonparametric Nelson–Aalen cumulative hazard as auxiliaries. Rubin pooling is on the coefficient scale.
+
+**Sensitivity:** complete-case Cox using the same specification.
+
+MAR is a working assumption conditional on the imputation model. Stage 4 did not prove MAR. MNAR remains possible. No MNAR sensitivity is required for the portfolio MVP unless later justified.
+
+No imputation was performed in Stages 3–5.
 
 ## 14. Sensitivity Analyses
 
@@ -196,13 +223,19 @@ Prespecified population sensitivities (eligibility flags only in Stage 3; not an
 - No age restriction, otherwise the same identity, diagnosis, and OS rules
 - Supplement OS time comparison if later justified by the documented discordance; the primary endpoint will not be switched to maximize N or event count
 
-Other anticipated sensitivities, pending later specification: alternative missing-data methods, alternative covariate coding, and proportional-hazards violations.
+Locked analysis sensitivities (Stage 6):
+
+- Complete-case Cox vs primary MI, same formulas
+- Restricted cubic splines for age and log2 WBC (3 knots; Stage 4 quantiles)
+- PH remediation models only if diagnostics indicate a material violation, following the hierarchy in Section 12
 
 Bayesian models, if used, will be secondary unless later justified in this plan.
 
 ## 15. Multiplicity
 
-TBD — the primary analysis will be distinguished from secondary and exploratory analyses. Any multiplicity adjustment, or a decision not to adjust, will be stated explicitly before model fitting.
+**Primary clinical model:** report adjusted HR, 95% CI, and nominal two-sided p-values. No automated correction across this small prespecified set. Emphasis on risk group and WBC.
+
+**Secondary molecular/cytogenetic model:** report HR, CI, and nominal p, plus Benjamini–Hochberg q-values for the frozen family FLT3/ITD, NPM, CEBPA, t(8;21), inv(16), MLL, monosomy 7. FDR is not applied to age, sex, or WBC.
 
 ## 16. Sample Size / Power
 
@@ -225,11 +258,13 @@ No deviation from those prescribed Stage 3 rules was required by the GDC field d
 
 Later changes to the locked population or endpoint must be dated, described, and justified here.
 
-Stage 4 descriptive findings that affect later planning, but do **not** change frozen eligibility or lock the model:
+Stage 4 descriptive findings that affected Stage 5 planning, but did **not** change frozen eligibility and were **not** chosen by survival association:
 
-- WBC at diagnosis is strongly right-skewed. A transformation or spline should be prespecified in Stage 5, not chosen by survival association.
-- Risk group contains unexpected tokens `10` and `30` (n = 3) that need clinical coding review.
-- FLT3/ITD, NPM, and CEBPA have mixed-case Yes/NO source tokens; case-harmonization is display/coding, not collapsing of distinct clinical levels.
-- FAB is too incomplete for ordinary CORE use.
-- Risk group is potentially redundant with FLT3/ITD and cytogenetic lesion flags because of how pediatric AML risk is defined.
-- Primary cytogenetic code remains NEEDS REVIEW versus lesion flags.
+- WBC at diagnosis is strongly right-skewed → primary log2(WBC); spline sensitivity of log2(WBC)
+- Risk-group tokens `10` and `30` (n = 3) have no CDE mapping → inferential missing plus QA flag
+- Mixed-case Yes/NO molecular tokens → case-harmonized Yes/No
+- FAB is too incomplete for ordinary CORE use → excluded from both principal models
+- Risk group is potentially redundant with FLT3/ITD and cytogenetic lesion flags → separate primary vs secondary models
+- Primary cytogenetic code remains NEEDS REVIEW versus lesion flags → excluded from both principal models
+
+Stage 5 locked the inferential plan without fitting Cox models, running mice(), or examining predictor-specific survival. Any later change after seeing survival associations must be recorded as a deviation here.

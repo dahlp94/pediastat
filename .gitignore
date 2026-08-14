@@ -41,6 +41,7 @@ coverage.xml
 .DS_Store
 Thumbs.db
 
+# Local PostgreSQL cluster
 .pgdata/
 
 # Downloaded raw data and derived analysis datasets
@@ -52,16 +53,22 @@ artifacts/**/*.xlsx
 artifacts/**/*.xls
 artifacts/**/*.tsv
 artifacts/**/*.txt.gz
+
+# Interim data
 data/interim/*
 !data/interim/.gitkeep
-!data/interim/stage4/
-!data/interim/stage4/.gitkeep
+
+# Stage 4 contains generated person-level/intermediate analysis data
+data/interim/stage4/
+
+# Stage 5 contains person-level / generated intermediate data only
+data/interim/stage5/
+
+# Processed datasets
 data/processed/*
 !data/processed/.gitkeep
 
-# Person-level Stage 4 extracts (never commit)
-data/interim/stage4/*.csv
-data/interim/stage4/*.rds
+# Derived R artifacts that may contain person-level data
 artifacts/descriptive/**/*.rds
 
 # Local YAML settings (keep the committed example)
@@ -80,5 +87,3 @@ reports/**/*.pdf
 reports/**/*_files/
 /_freeze/
 *.quarto_ipynb
-
-data/interim/stage4/

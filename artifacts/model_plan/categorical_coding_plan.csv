@@ -1,0 +1,8 @@
+concept,source_value,standardized_value,inferential_status,reference,notes
+sex_at_birth,female / male (any documented case),Female / Male,observed,Female,GDC sex at birth. Unknown would be missing; none in the primary cohort.
+risk_group,Low Risk / Standard Risk / High Risk,Low / Standard / High,observed,Low,CDE permissible values only.
+risk_group,10 / 30,,missing_unresolved_token,Low,No CDE mapping. Not guessed from numeric order.
+risk_group,Unknown / Not Reported / structurally missing,,missing,Low,"Unavailable status is missing covariate information, not a biological level."
+yes_no_molecular_or_lesion,Yes / YES / yes,Yes,observed,No,Case harmonization only.
+yes_no_molecular_or_lesion,No / NO / no,No,observed,No,Case harmonization only.
+yes_no_molecular_or_lesion,Unknown / Not Reported / Not Done / Not Applicable / structurally missing,,missing,No,Unavailable status is missing for inferential models.
