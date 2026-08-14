@@ -2,7 +2,7 @@ PYTHON ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
 PYTEST ?= $(if $(wildcard .venv/bin/pytest),.venv/bin/pytest,pytest)
 RUFF ?= $(if $(wildcard .venv/bin/ruff),.venv/bin/ruff,ruff)
 
-.PHONY: test lint check audit db-bootstrap ingest-gdc ingest-supplements reconcile ingest cohort descriptive model-plan
+.PHONY: test lint check audit db-bootstrap ingest-gdc ingest-supplements reconcile ingest cohort descriptive model-plan inference
 
 CONDA_RSCRIPT := $(HOME)/miniconda3/envs/pediastat-r/bin/Rscript
 CONDA_QUARTO := $(HOME)/miniconda3/envs/pediastat-r/bin/quarto
@@ -52,3 +52,12 @@ model-plan:
 	$(PYTHON) scripts/check_environment.py
 	$(PYTHON) scripts/export_model_plan.py
 	$(RSCRIPT) analysis/R/run_stage5.R
+
+inference:
+	$(PYTHON) scripts/check_environment.py
+	$(RSCRIPT) analysis/R/run_stage6.R
+	@if [ -x "$(QUARTO)" ] && [ -x "$(dir $(QUARTO))tools/x86_64/deno" ] && [ -f reports/stage6_inferential_analysis.qmd ]; then \
+		if [ ! -f reports/stage6_inferential_analysis.html ]; then \
+			$(QUARTO) render reports/stage6_inferential_analysis.qmd --to html --output-dir reports; \
+		fi; \
+	fi

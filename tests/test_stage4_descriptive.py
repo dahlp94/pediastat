@@ -13,12 +13,24 @@ DESC_DIR = PROJECT_ROOT / "artifacts" / "descriptive"
 GITIGNORE = PROJECT_ROOT / ".gitignore"
 
 
-def _r_scripts() -> list[Path]:
-    return sorted(R_DIR.rglob("*.R"))
+def _stage4_scripts() -> list[Path]:
+    names = {
+        "00_setup.R",
+        "01_load_primary_cohort.R",
+        "02_baseline_descriptives.R",
+        "03_missingness.R",
+        "04_overall_survival.R",
+        "05_followup.R",
+        "06_generate_descriptive_outputs.R",
+        "07_render_report.R",
+        "run_stage4.R",
+        "test_stage4.R",
+    }
+    return [path for path in R_DIR.rglob("*.R") if path.name in names]
 
 
 def test_stage4_scripts_do_not_fit_cox_or_logrank() -> None:
-    for path in _r_scripts():
+    for path in _stage4_scripts():
         text = path.read_text(encoding="utf-8")
         assert "coxph(" not in text, f"{path} contains coxph("
         assert "survdiff(" not in text, f"{path} contains survdiff("

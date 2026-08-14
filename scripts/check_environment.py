@@ -49,6 +49,7 @@ EXPECTED_DIRECTORIES: Sequence[Path] = (
     PROJECT_ROOT / "artifacts" / "cohort_definition",
     PROJECT_ROOT / "artifacts" / "descriptive",
     PROJECT_ROOT / "artifacts" / "model_plan",
+    PROJECT_ROOT / "artifacts" / "inference",
 )
 
 
