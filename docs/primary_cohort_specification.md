@@ -128,6 +128,8 @@ No survival comparison across these populations has been performed.
 
 See `artifacts/cohort_definition/cohort_attrition.csv`. Counts are produced by the locked rules above. They are not a substitute for the scientific definitions.
 
+`analytics.cohort_eligibility` has **2453** rows. That is **2315** valid analysis persons plus **138** deliberately retained ineligible identity records (44 experimental `TARGET-20-D#` tokens, 6 other experimental constructs, and 88 non-patient identifiers). Those 138 rows are not valid analysis persons and are kept for auditability. The primary OS cohort remains **1978** rows in `analytics.primary_os_cohort`.
+
 ## Remaining Limitations
 
 - Public GDC data do not include controlled-access TARGET clinical files.

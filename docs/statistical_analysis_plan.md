@@ -1,14 +1,17 @@
 # Statistical Analysis Plan
 
-Version: 0.3 (Stage 3 primary population and OS endpoint locked)
-Status: population and primary endpoint locked; multivariable model, missing-data method for covariates, and inferential analysis remain TBD.
+Version: 0.4 (Stage 4 descriptive conventions locked; inferential model still TBD)
+Status: population and primary endpoint locked; overall descriptive and KM reporting conventions locked; multivariable model, missing-data method for covariates, and inferential analysis remain TBD.
 
 Companion documents:
 
 - `docs/primary_cohort_specification.md`
 - `docs/baseline_covariate_source_rules.md`
+- `docs/stage4_variable_definitions.md`
+- `docs/stage4_analysis_extract.md`
 - `docs/target_aml_reconciliation_report.md`
 - `artifacts/cohort_definition/`
+- `artifacts/descriptive/`
 
 ## 1. Study Objective
 
@@ -136,12 +139,21 @@ File precedence: `docs/baseline_covariate_source_rules.md`. Conflicts set a flag
 
 ## 10. Descriptive Analysis
 
-TBD in Stage 4. Planned elements, not produced in Stage 3:
+Locked in Stage 4. Produced for the overall primary cohort only.
 
-- Cohort size and exclusion counts (attrition already produced)
-- Table 1 of baseline characteristics, including missingness
-- Follow-up summaries
-- Crude survival summaries (Kaplan–Meier) for the locked cohort only after Stage 3 freeze
+- Cohort size and exclusion counts, including identity accounting
+- Table 1 of baseline characteristics for the full locked cohort (N = 1978)
+- Table 1 is **not** stratified by vital status, death, or any survival outcome
+- Table 1 contains **no p-values**
+- Continuous variables: median (Q1, Q3); min–max and selected quantiles in companion summaries
+- Categorical variables: n (%) with Unknown and Missing retained as distinguishable
+- Percentages use the full cohort denominator unless a companion audit says otherwise
+- Overall Kaplan–Meier survival at 1, 3, and 5 years with 95% confidence intervals
+- Number at risk at 0, 1, 3, 5, and 10 years
+- Follow-up duration by reverse Kaplan–Meier (deaths treated as censored)
+- The median of observed `os_days` is not reported as median follow-up or as median OS
+
+Predictor-stratified Kaplan–Meier curves, log-rank tests, and univariable survival screening are deferred until the inferential plan is frozen.
 
 ## 11. Primary Statistical Analysis
 
@@ -174,7 +186,7 @@ Source encodings distinguished in staging/analytics:
 - numeric sentinels (−99 / −999 / −9999)
 - observed (including 0)
 
-Missing-covariate handling (complete case, multiple imputation, or another method) will be specified in a later stage **before** model fitting. No imputation was performed in Stage 3.
+Missing-covariate handling (complete case, multiple imputation, or another method) will be specified in a later stage **before** model fitting. No imputation was performed in Stage 3 or Stage 4. Stage 4 missingness summaries do not establish MCAR/MAR/MNAR and were not tested against survival.
 
 ## 14. Sensitivity Analyses
 
@@ -194,7 +206,7 @@ TBD — the primary analysis will be distinguished from secondary and explorator
 
 ## 16. Sample Size / Power
 
-This is a secondary use of an existing clinical dataset. Available sample size and event counts will be described from the locked cohort. Any post-hoc precision or power calculations will be labeled as such and will not be presented as prospective trial design. Formal power analysis is not part of Stage 3.
+This is a secondary use of an existing clinical dataset. Available sample size and event counts are described from the locked cohort in Stage 4. Any post-hoc precision or power calculations will be labeled as such and will not be presented as prospective trial design. Formal power analysis is not part of Stage 4.
 
 ## 17. Statistical Software
 
@@ -212,3 +224,12 @@ Stage 3 implemented the prespecified primary rules (age <18; GDC vital status; G
 No deviation from those prescribed Stage 3 rules was required by the GDC field definitions. Time origin was verified from official GDC/caDSR definitions and extract metadata before the endpoint table was created.
 
 Later changes to the locked population or endpoint must be dated, described, and justified here.
+
+Stage 4 descriptive findings that affect later planning, but do **not** change frozen eligibility or lock the model:
+
+- WBC at diagnosis is strongly right-skewed. A transformation or spline should be prespecified in Stage 5, not chosen by survival association.
+- Risk group contains unexpected tokens `10` and `30` (n = 3) that need clinical coding review.
+- FLT3/ITD, NPM, and CEBPA have mixed-case Yes/NO source tokens; case-harmonization is display/coding, not collapsing of distinct clinical levels.
+- FAB is too incomplete for ordinary CORE use.
+- Risk group is potentially redundant with FLT3/ITD and cytogenetic lesion flags because of how pediatric AML risk is defined.
+- Primary cytogenetic code remains NEEDS REVIEW versus lesion flags.

@@ -370,4 +370,60 @@ log-rank, Cox model, hazard ratio, imputation, Bayesian model, or power
 calculation was produced. Later changes to the locked population or
 endpoint must be recorded as SAP deviations.
 
+## Decision 32 — Stage 4 is descriptive and overall-survival only
+
+Date: 2026-08-14
+Status: accepted
+
+Stage 4 describes the locked primary cohort and estimates overall
+Kaplan–Meier survival. It does not reopen Stage 3 eligibility. It does
+not produce predictor-stratified survival, log-rank tests, Cox models,
+hazard ratios, or p-values comparing outcome-defined groups.
+
+## Decision 33 — Table 1 is unstratified and has no p-values
+
+Date: 2026-08-14
+Status: accepted
+
+The primary baseline characteristics table is the overall cohort
+(N = 1978). An alive-versus-dead Table 1 is intentionally not produced.
+
+## Decision 34 — Follow-up is estimated by reverse Kaplan–Meier
+
+Date: 2026-08-14
+Status: accepted
+
+Potential follow-up uses reverse Kaplan–Meier (deaths treated as
+censored). The median of observed `os_days` is not median follow-up and
+is not Kaplan–Meier median survival. Overall KM reporting times are 1, 3,
+and 5 years. If the KM curve does not reach 0.50, median OS is reported
+as not reached.
+
+## Decision 35 — R is used for Stage 4 descriptive and survival summaries
+
+Date: 2026-08-14
+Status: accepted
+
+R is the analysis language for Table 1, missingness, overall KM, and
+reverse-KM follow-up. Python/PostgreSQL remain the source of the frozen
+cohort. The analysis reads `analytics.primary_os_cohort` and reconciled
+baseline covariates; it does not reimplement identity or endpoint rules.
+
+## Decision 36 — Coding and redundancy concerns recorded without outcome screening
+
+Date: 2026-08-14
+Status: accepted
+
+Stage 4 recorded, without using survival association:
+
+- WBC is strongly right-skewed
+- risk-group tokens `10` and `30` need clinical review
+- mixed-case Yes/NO molecular tokens should be harmonized for coding, not treated as extra clinical levels
+- risk group is potentially redundant with FLT3/ITD and lesion flags
+- primary cytogenetic code remains NEEDS REVIEW versus lesion flags
+
+These are planning notes for Stage 5. They are not automatic exclusions
+and were not chosen by p-values.
+
+
 

@@ -99,13 +99,28 @@ The statistical analysis plan in `docs/statistical_analysis_plan.md` will be com
 
 ## Project Status
 
-Stage 2 — raw ingestion and clinical source reconciliation.
+Stage 4 — descriptive cohort characterization and overall survival summary.
 
-GDC Cases API entities and open clinical supplements have been loaded into
-PostgreSQL `raw` and `staging` tables. Cross-source overlap and discordance
-are in `docs/target_aml_reconciliation_report.md`. No analysis cohort, OS
-endpoint, age cutoff, Kaplan–Meier estimate, Cox model, imputation, or
-investigator-facing results have been produced.
+The Stage 3 primary OS cohort is frozen (N = 1978; 695 deaths; 1283
+censored). Stage 4 produces an overall Table 1, missingness summaries,
+overall Kaplan–Meier estimates, and reverse Kaplan–Meier follow-up. It
+does not fit Cox models, run log-rank tests, or compare predictors with
+survival.
+
+## Stage 4 commands
+
+```bash
+make descriptive
+```
+
+This reads the locked PostgreSQL cohort, writes aggregate artifacts under
+`artifacts/descriptive/`, and renders `reports/stage4_descriptive_analysis.qmd`
+when Quarto is available. It does not rebuild the cohort.
+
+R is expected from the `pediastat-r` conda environment (see
+`analysis/R/README.md`). Person-level extracts under `data/interim/stage4/`
+are gitignored.
+
 
 ## Stage 2 commands
 

@@ -150,3 +150,10 @@ definitions (CDE 3008273, 6154724, 3225640) and extract metadata
 Unknown/Not Reported vital status is not an analytics event code. Missing
 baseline covariates are retained with provenance and do not remove a person
 from `primary_os_cohort`.
+
+`analytics.cohort_eligibility` is not restricted to valid persons. It has
+2453 rows: 2315 valid analysis persons plus 138 ineligible identity
+records retained for audit. Do not describe every row as a patient.
+
+Stage 4 descriptive analysis reads `analytics.stage4_primary_cohort_extract`,
+a view over the frozen primary OS cohort. It does not redefine eligibility.
