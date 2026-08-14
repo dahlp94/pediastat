@@ -162,3 +162,8 @@ Stage 5 analysis variables (`age5`, `log2_wbc`, `sex_std`, `risk_group_std`,
 and standardized Yes/No molecular and lesion flags) are defined in
 `docs/inferential_model_specification.md` and `config/model_spec.yaml`.
 They do not change cohort membership.
+
+Stage 6 executes those variables in Cox models after multiple imputation.
+The Nelson–Aalen auxiliary `nelson_aalen` is used only in the imputation
+model. Aggregate inferential output is in `artifacts/inference/`.
+Person-level imputations are not committed.

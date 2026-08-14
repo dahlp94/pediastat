@@ -556,6 +556,21 @@ diagnostics. It did not fit Cox models, did not run mice(), did not
 compute hazard ratios, and did not examine predictor-specific survival.
 Stage 6 executes this plan.
 
+## Decision 47 — Stage 6 executes the frozen plan
+
+Date: 2026-08-14
+Status: accepted
+
+Stage 6 ran the frozen primary and secondary Cox models with mice
+(m = 30, seed 20260814), Rubin pooling on the coefficient scale,
+complete-case sensitivity, spline sensitivities with frozen Stage 4
+knots, cox.zph diagnostics, and the two prespecified KM displays.
+Models were not redesigned from observed associations. Auxiliary race
+for MICE was collapsed to four levels before viewing hazard ratios
+because sparse OMB cells are not stably estimated by polyreg; race is
+not a principal-model predictor. Details:
+`docs/stage6_sap_deviations.md`.
+
 
 
 

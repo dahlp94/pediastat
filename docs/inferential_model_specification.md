@@ -242,7 +242,10 @@ Stage 6 may produce unadjusted KM curves for **risk group** and **FLT3/ITD** onl
 
 ## 19. Deviations From This Plan
 
-None at lock. Any later change after inspecting survival associations must be dated, described, and justified here and in `docs/statistical_analysis_plan.md`.
+Stage 6 executed this specification. See `docs/stage6_sap_deviations.md`
+and `artifacts/inference/`. Any later change after inspecting survival
+associations must be dated, described, and justified here and in
+`docs/statistical_analysis_plan.md`.
 
 ## 20. Variables Deliberately Excluded From Both Principal Models
 

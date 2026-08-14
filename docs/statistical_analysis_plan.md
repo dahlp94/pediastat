@@ -1,7 +1,7 @@
 # Statistical Analysis Plan
 
-Version: 0.5 (Stage 5 inferential models, coding, missing-data strategy, and diagnostics locked; no Cox fit yet)
-Status: population, primary endpoint, descriptive conventions, and inferential analysis rules locked. Stage 6 will execute the frozen Cox + MI plan. Changes after inspecting survival associations are SAP deviations.
+Version: 0.6 (Stage 6 executed the frozen Stage 5 Cox + multiple-imputation plan)
+Status: population, primary endpoint, descriptive conventions, and inferential analysis rules remain locked. Stage 6 executed those rules. Changes after inspecting survival associations are SAP deviations (`docs/stage6_sap_deviations.md`).
 
 Companion documents:
 
@@ -157,7 +157,7 @@ Stage 6 may add unadjusted KM curves for risk group and FLT3/ITD only. Those plo
 
 ## 11. Primary Statistical Analysis
 
-Locked. Cox proportional hazards regression with Efron ties.
+Locked. Cox proportional hazards regression with Efron ties. **Executed in Stage 6** (`artifacts/inference/`, `reports/stage6_inferential_analysis.qmd`). The specification below is unchanged.
 
 Primary formula:
 
@@ -180,7 +180,7 @@ Complexity descriptor (not power): 695 deaths; primary df = 5 (139 events/df); s
 
 ## 12. Model Assumptions and Diagnostics
 
-Locked for Stage 6 execution.
+Locked for Stage 6 execution. **Executed in Stage 6** (`artifacts/inference/ph/`, `artifacts/inference/nonlinear_sensitivity_summary.csv`). Diagnostic rules below are unchanged.
 
 Proportional hazards: scaled Schoenfeld residuals, covariate-specific and global `cox.zph` tests, and plots. A p-value alone is not proof of a material violation.
 
@@ -213,7 +213,7 @@ For inferential covariates, Unknown / Not Reported / structural missing / unreso
 
 MAR is a working assumption conditional on the imputation model. Stage 4 did not prove MAR. MNAR remains possible. No MNAR sensitivity is required for the portfolio MVP unless later justified.
 
-No imputation was performed in Stages 3–5.
+**Executed in Stage 6.** Diagnostics: `artifacts/inference/mi/`. Completed person-level imputations are gitignored. No imputation was performed in Stages 3–5.
 
 ## 14. Sensitivity Analyses
 
@@ -223,7 +223,7 @@ Prespecified population sensitivities (eligibility flags only in Stage 3; not an
 - No age restriction, otherwise the same identity, diagnosis, and OS rules
 - Supplement OS time comparison if later justified by the documented discordance; the primary endpoint will not be switched to maximize N or event count
 
-Locked analysis sensitivities (Stage 6):
+Locked analysis sensitivities (Stage 6; **executed**):
 
 - Complete-case Cox vs primary MI, same formulas
 - Restricted cubic splines for age and log2 WBC (3 knots; Stage 4 quantiles)
@@ -248,7 +248,7 @@ This is a secondary use of an existing clinical dataset. Available sample size a
 - R: primary statistical analysis (expected packages include dplyr, tidyr, ggplot2, survival, gtsummary, broom, and mice)
 - Quarto: investigator-facing report
 
-Package versions used for the locked inferential analysis will be recorded at analysis time.
+Package versions used for the locked inferential analysis are recorded in `artifacts/inference/r_session_info.json` and `artifacts/inference/model_metadata.json`.
 
 ## 18. Deviations From the Analysis Plan
 
@@ -267,4 +267,4 @@ Stage 4 descriptive findings that affected Stage 5 planning, but did **not** cha
 - Risk group is potentially redundant with FLT3/ITD and cytogenetic lesion flags → separate primary vs secondary models
 - Primary cytogenetic code remains NEEDS REVIEW versus lesion flags → excluded from both principal models
 
-Stage 5 locked the inferential plan without fitting Cox models, running mice(), or examining predictor-specific survival. Any later change after seeing survival associations must be recorded as a deviation here.
+Stage 5 locked the inferential plan without fitting Cox models, running mice(), or examining predictor-specific survival. Stage 6 executed that plan. Deviations, including implementation details that do not change estimands, are recorded in `docs/stage6_sap_deviations.md`. Any later change after seeing survival associations must be recorded there and here.
