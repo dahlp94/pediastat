@@ -1,26 +1,51 @@
 # R Statistical Analysis
 
-This directory will contain the R scripts that implement the statistical
-analysis plan.
+R is the primary language for descriptive and inferential analysis after
+the Python/PostgreSQL cohort is frozen.
 
-Expected later scripts:
+## Stage 4 scripts
 
 ```text
-01_build_analysis_cohort.R
-02_descriptive_statistics.R
-03_survival_analysis.R
-04_missing_data.R
-05_sensitivity_analysis.R
-06_power_analysis.R
+00_setup.R
+01_load_primary_cohort.R
+02_baseline_descriptives.R
+03_missingness.R
+04_overall_survival.R
+05_followup.R
+06_generate_descriptive_outputs.R
+run_stage4.R
 ```
 
-These files are not created yet. When they are added, they should:
+These scripts read `analytics.stage4_primary_cohort_extract`. They do not
+reimplement identity, age eligibility, event, or censoring rules. They do
+not fit Cox models or compare predictors with survival.
 
-- Read analysis-ready data from the analytics layer (or a documented extract)
-- Define the cohort and endpoints explicitly
-- Preserve missingness unless a documented method handles it
-- Fit pre-specified models rather than searching for favorable results
-- Write tables and figures consumed by the Quarto report
+`07_render_report.R` writes `reports/stage4_descriptive_analysis.html` from
+aggregate artifacts when a complete Quarto CLI is not available. The
+investigator narrative source remains `reports/stage4_descriptive_analysis.qmd`.
 
-Expected packages include dplyr, tidyr, ggplot2, survival, gtsummary,
-broom, and mice. Package versions will be recorded at analysis time.
+Run from the repository root:
+
+```bash
+make descriptive
+```
+
+or
+
+```bash
+conda run -n pediastat-r Rscript analysis/R/run_stage4.R
+```
+
+## Environment
+
+Preferred local environment:
+
+```bash
+conda env create -f analysis/R/environment.yml
+conda activate pediastat-r
+```
+
+Packages: DBI, RPostgres, dplyr, tidyr, ggplot2, survival, gtsummary, gt,
+broom, here, scales, yaml, jsonlite, testthat, renv.
+
+`mice` is a future missing-data dependency and is not used in Stage 4.

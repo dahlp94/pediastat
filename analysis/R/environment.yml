@@ -1,0 +1,21 @@
+name: pediastat-r
+channels:
+  - conda-forge
+dependencies:
+  - r-base
+  - r-dbi
+  - r-rpostgres
+  - r-dplyr
+  - r-tidyr
+  - r-ggplot2
+  - r-survival
+  - r-gtsummary
+  - r-gt
+  - r-broom
+  - r-here
+  - r-scales
+  - r-yaml
+  - r-jsonlite
+  - r-testthat
+  - r-renv
+  - quarto
