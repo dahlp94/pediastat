@@ -31,6 +31,8 @@ dependencies = [
     "sqlalchemy",
     "psycopg[binary]",
     "PyYAML",
+    "requests",
+    "openpyxl",
 ]
 
 [project.optional-dependencies]

@@ -27,6 +27,8 @@ REQUIRED_IMPORTS: Sequence[str] = (
     "yaml",
     "pediastat",
     "pediastat.config",
+    "requests",
+    "openpyxl",
 )
 
 EXPECTED_DIRECTORIES: Sequence[Path] = (
@@ -41,6 +43,8 @@ EXPECTED_DIRECTORIES: Sequence[Path] = (
     PROJECT_ROOT / "analysis" / "R",
     PROJECT_ROOT / "reports",
     PROJECT_ROOT / "tests",
+    PROJECT_ROOT / "artifacts",
+    PROJECT_ROOT / "artifacts" / "source_audit",
 )
 
 
