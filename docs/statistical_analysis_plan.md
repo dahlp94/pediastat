@@ -29,11 +29,26 @@ analyses.
 
 ## 3. Data Source
 
-TBD — finalize after inspecting the source data and documentation.
+Primary public source: NCI Genomic Data Commons project **TARGET-AML**
+(`https://api.gdc.cancer.gov`), dbGaP accession phs000465.
 
-Expected source: NCI TARGET-AML clinical data. The specific files, data
-versions, access method, and data-use constraints will be recorded here
-once inspected. No source variables are listed until they are observed.
+Stage 1 inspected the Cases API, the cases `_mapping` endpoint, and seven
+open-access Clinical Supplement XLSX files. See
+`docs/target_aml_source_audit.md` for the audit date, case count, and
+field-level findings. Counts are release-specific and must be refreshed
+before analysis lock.
+
+Provisional raw sources for later ingestion (not yet loaded):
+
+- GDC Cases API clinical entities (case, demographic, diagnosis, follow_up,
+  treatment)
+- Open TARGET-AML clinical supplements, joined on TARGET USI /
+  `submitter_id`
+
+TCGA-LAML and genomic files are out of scope.
+
+TBD — finalize file versions, the USI crosswalk rule, and the locked
+extract date after Stage 2 ingestion design.
 
 ## 4. Study Population
 

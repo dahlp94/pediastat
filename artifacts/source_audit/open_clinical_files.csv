@@ -1,0 +1,8 @@
+file_id,file_name,data_category,data_type,data_format,access,file_size,md5sum,state,associated_project,n_associated_cases
+5f8b7137-c1e1-4191-aee5-a5ea55d32ca7,TARGET_AML_ClinicalData_Validation_20230720.xlsx,Clinical,Clinical Supplement,XLSX,open,201188,1bbde9ecce2b02953fe3577b7e6a6afa,released,TARGET-AML,626
+68170d63-c297-4d93-a21b-7bb43b451a96,TARGET_AML_ClinicalData_AML1031_20230720.xlsx,Clinical,Clinical Supplement,XLSX,open,290224,8e20e0a20b5f89ec2f6b498fda94def5,released,TARGET-AML,1069
+129e5399-6892-4cb7-99a8-1406309a2e4d,TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx,Clinical,Clinical Supplement,XLSX,open,154424,bf0a4c8ca112b0b93cc11f3408b265de,released,TARGET-AML,449
+e58771ff-8501-4100-9c0a-c6dfa7dfb503,TARGET_AML_ClinicalData_Discovery_and_Validation_Tumor_Content_and_RIN_Supplement_20230720.xlsx,Clinical,Clinical Supplement,XLSX,open,27199,e35eb99468b464e20bf51a088ef89899,released,TARGET-AML,133
+3bf97830-865d-4e66-aaf1-d5bac81f119a,TARGET_AML_ClinicalData_Discovery_20230720.xlsx,Clinical,Clinical Supplement,XLSX,open,149626,5e9562fe8e3cf7b5c2f55fe006dd75cc,released,TARGET-AML,465
+52fd584b-9ca3-4f7e-bdd5-fd9dce3d630b,TARGET_AML_CDE_20230524.xlsx,Clinical,Clinical Supplement,XLSX,open,27667,fc5b42f89b1ac84699b8b10dafed02dc,released,TARGET-AML,2181
+727dbb38-32fc-4444-9db2-13c8eb427fa2,TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx,Clinical,Clinical Supplement,XLSX,open,35422,d15e2dcb4e5b0e4b3392550693307a1f,released,TARGET-AML,89

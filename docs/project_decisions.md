@@ -97,3 +97,95 @@ will be recorded in the analysis plan.
 Rationale: pre-specification reduces the risk of cherry-picking models,
 covariates, or subgroups and makes the work closer to collaborative
 biostatistics practice.
+
+## Decision 8 — TARGET-AML remains the chosen public dataset
+
+Date: 2026-08-14
+Status: accepted
+
+The public NCI GDC TARGET-AML project remains the intended source. TCGA-LAML
+and other adult AML datasets will not be substituted. The Cases API returned
+2492 TARGET-AML cases at the Stage 1 audit; that count is not permanent.
+
+## Decision 9 — Overall survival is feasible with modifications
+
+Date: 2026-08-14
+Status: accepted
+
+An overall-survival association study is feasible from public TARGET-AML
+data, with modifications. At the Stage 1 audit, 2158 of 2492 cases had
+Alive/Dead vital status and a non-negative death or last-follow-up time
+(742 deaths). Unknown and not-reported vital status will not be treated as
+censored.
+
+The Cases API diagnosis table alone is not scientifically sufficient:
+primary diagnosis and morphology have no variation, and AML-specific
+baseline fields (risk group, FAB, FLT3, WBC, cytogenetics) are unpopulated
+there.
+
+## Decision 10 — Use Cases API plus open clinical supplements
+
+Date: 2026-08-14
+Status: accepted
+
+The appropriate source is a **combination**:
+
+- GDC Cases API for identifiers, demographic/vital status, nested
+  diagnosis/follow-up/treatment structure, and GDC-normalized survival
+  fields
+- Open-access TARGET clinical supplements for AML-specific baseline
+  covariates and a CDE-defined OS time
+
+Neither source alone is the production extract yet. Controlled-access
+files will not be downloaded.
+
+## Decision 11 — Censoring rule remains unlocked
+
+Date: 2026-08-14
+Status: provisional
+
+A candidate OS rule is: event if Dead, censored if Alive; time from
+`demographic.days_to_death` or `diagnoses.days_to_last_follow_up`; time
+origin at diagnosis. Last Contact follow-up times and supplement
+`Overall Survival Time in Days` are sensitivity candidates.
+
+This is not locked. Nested follow-up records mix Last Contact with
+first-event (EFS-like) times. Concordance across API and supplements has
+not been measured case-by-case.
+
+## Decision 12 — Candidate baseline covariates from observed fields
+
+Date: 2026-08-14
+Status: provisional
+
+High-priority candidates actually found: age at diagnosis (days), sex at
+birth, and supplement WBC, risk group, FLT3/ITD, and cytogenetic/FAB
+fields where populated.
+
+Possible: race, ethnicity, year of diagnosis, protocol as a stratifier.
+
+Not recommended as baseline covariates: unvarying Cases API diagnosis
+labels; empty mapping fields such as ELN/CALGB risk on the Cases API;
+post-baseline SCT, MRD, gemtuzumab, and treatment outcome; treatment
+records without start days.
+
+## Decision 13 — Cox PH remains provisional
+
+Date: 2026-08-14
+Status: provisional
+
+Decision 4 is not locked by this audit. Event counts appear large enough
+to consider Cox PH later, but proportional-hazards tenability, follow-up
+completeness, missingness in supplement covariates, and the final cohort
+definition are still unknown. No survival model was fit in Stage 1.
+
+## Decision 14 — Keep one-to-many clinical entities until Stage 2
+
+Date: 2026-08-14
+Status: accepted
+
+Diagnoses are one-to-one when present in this extract, but follow-ups and
+treatments are one-to-many. Raw/staging tables should preserve that
+cardinality. A one-row-per-patient analytics table will be built only
+after follow-up timepoint rules and supplement de-duplication are
+documented.

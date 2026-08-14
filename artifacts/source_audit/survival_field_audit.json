@@ -1,0 +1,54 @@
+{
+  "n_alive_missing_all_follow_up_times": 0,
+  "n_alive_with_diagnoses_days_to_last_follow_up": 1416,
+  "n_alive_with_either_follow_up_time": 1416,
+  "n_alive_with_follow_ups_days_to_follow_up": 1412,
+  "n_cases": 2492,
+  "n_cases_death_vs_diagnosis_follow_up_disagree": 0,
+  "n_cases_death_vs_follow_up_time_disagree": 0,
+  "n_cases_diagnosis_vs_follow_up_time_disagree": 0,
+  "n_cases_with_multiple_follow_up_times": 2151,
+  "n_cases_with_possible_gdc_style_survival_time": 2158,
+  "n_dead_missing_days_to_death": 0,
+  "n_dead_with_days_to_death": 742,
+  "n_dead_with_nonnegative_days_to_death": 742,
+  "n_negative_days_to_death_values": 0,
+  "n_negative_days_to_follow_up_values": 0,
+  "n_negative_days_to_last_follow_up_values": 0,
+  "n_zero_days_to_death_values": 0,
+  "n_zero_days_to_follow_up_values": 156,
+  "n_zero_days_to_last_follow_up_values": 0,
+  "possible_rules": {
+    "diagnosis_follow_up_only_for_censoring": {
+      "description": "Same event rule, but living cases use only diagnoses.days_to_last_follow_up.",
+      "n_cases_with_required_fields": 2158
+    },
+    "gdc_style_alive_dead_only": {
+      "description": "Event if vital_status is dead; censored if alive. Time from days_to_death for deaths and from diagnoses.days_to_last_follow_up and/or follow_ups.days_to_follow_up for living cases. Exclude missing/unknown/other vital_status. Do not treat unknown as censored.",
+      "n_cases_with_required_fields": 2158
+    },
+    "max_follow_up_time_for_censoring": {
+      "description": "Same event rule, but living cases use the maximum follow_ups.days_to_follow_up.",
+      "n_cases_with_required_fields": 2154
+    }
+  },
+  "unresolved": [
+    "Exact censoring-time field (diagnosis vs follow-up vs combination) is not locked.",
+    "How to handle disagreements among time fields is not locked.",
+    "Whether zero times are valid events or data errors is not locked.",
+    "Unknown/not reported vital status must not be recoded as censored."
+  ],
+  "vital_status_class_counts": {
+    "alive": 1416,
+    "dead": 742,
+    "missing": 303,
+    "other": 31
+  },
+  "vital_status_raw_counts": {
+    "<null>": 303,
+    "Alive": 1416,
+    "Dead": 742,
+    "Not Reported": 30,
+    "Unknown": 1
+  }
+}

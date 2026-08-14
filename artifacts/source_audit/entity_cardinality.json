@@ -1,0 +1,33 @@
+{
+  "diagnoses": {
+    "max": 1,
+    "min": 0,
+    "n_cases_with_0": 303,
+    "n_cases_with_1": 2189,
+    "n_cases_with_gt1": 0
+  },
+  "follow_up_association": "Follow-up records are returned as a case-level array in the Cases API response inspected here, not nested under diagnoses. Treatments are nested under diagnoses.",
+  "follow_ups": {
+    "max": 33,
+    "min": 0,
+    "n_cases_with_0": 341,
+    "n_cases_with_1": 0,
+    "n_cases_with_gt1": 2151
+  },
+  "follow_ups_with_days_to_follow_up": {
+    "max": 3,
+    "min": 0,
+    "n_cases_with_0": 341,
+    "n_cases_with_1": 0,
+    "n_cases_with_gt1": 2151
+  },
+  "n_cases": 2492,
+  "n_cases_with_follow_ups_nested_under_diagnosis": 0,
+  "treatments": {
+    "max": 5,
+    "min": 0,
+    "n_cases_with_0": 341,
+    "n_cases_with_1": 0,
+    "n_cases_with_gt1": 2151
+  }
+}

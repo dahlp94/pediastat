@@ -1,0 +1,62 @@
+{
+  "note": "Column-completeness counts from open-access TARGET-AML clinical supplements downloaded during the Stage 1 audit. These are not analysis results. Overlapping TARGET USIs exist across files; files are not a single mutually exclusive cohort table.",
+  "audit_timestamp_utc": "2026-08-14T01:24:42+00:00",
+  "unique_target_usi_union_clinical_data_files": 2144,
+  "files": [
+    {
+      "file_name": "TARGET_AML_ClinicalData_AML1031_20230720.xlsx",
+      "n_rows": 1069,
+      "unique_target_usi": 1069,
+      "vital_status_counts": {"Alive": 702, "Dead": 367},
+      "n_with_overall_survival_time": 1069,
+      "n_with_risk_group": 1060,
+      "n_with_wbc_at_diagnosis": 1068,
+      "n_with_flt3_itd": 1069,
+      "n_with_fab_category": 8
+    },
+    {
+      "file_name": "TARGET_AML_ClinicalData_Validation_20230720.xlsx",
+      "n_rows": 627,
+      "unique_target_usi": 626,
+      "vital_status_counts": {"Alive": 427, "Dead": 187},
+      "n_with_overall_survival_time": 614,
+      "n_with_risk_group": 602,
+      "n_with_wbc_at_diagnosis": 614,
+      "n_with_flt3_itd": 614,
+      "n_with_fab_category": 607
+    },
+    {
+      "file_name": "TARGET_AML_ClinicalData_Discovery_20230720.xlsx",
+      "n_rows": 466,
+      "unique_target_usi": 465,
+      "vital_status_counts": {"Alive": 251, "Dead": 196},
+      "n_with_overall_survival_time": 447,
+      "n_with_risk_group": 447,
+      "n_with_wbc_at_diagnosis": 447,
+      "n_with_flt3_itd": 447,
+      "n_with_fab_category": 446
+    },
+    {
+      "file_name": "TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx",
+      "n_rows": 449,
+      "unique_target_usi": 449,
+      "vital_status_counts": {"Alive": 283, "Dead": 166},
+      "n_with_overall_survival_time": 449,
+      "n_with_risk_group": 437,
+      "n_with_wbc_at_diagnosis": 449,
+      "n_with_flt3_itd": 449,
+      "n_with_fab_category": 444
+    },
+    {
+      "file_name": "TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx",
+      "n_rows": 89,
+      "unique_target_usi": 89,
+      "vital_status_counts": {"Alive": 79, "Dead": 10},
+      "n_with_overall_survival_time": 89,
+      "n_with_risk_group": 89,
+      "n_with_wbc_at_diagnosis": 87,
+      "n_with_flt3_itd": 89,
+      "n_with_fab_category": 89
+    }
+  ]
+}
