@@ -41,6 +41,8 @@ coverage.xml
 .DS_Store
 Thumbs.db
 
+.pgdata/
+
 # Downloaded raw data and derived analysis datasets
 data/raw/*
 !data/raw/.gitkeep

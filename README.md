@@ -69,7 +69,7 @@ pediastat/
 ├── sql/                     # Schema and ingestion metadata DDL
 ├── artifacts/               # metadata summaries from source audits
 ├── src/pediastat/           # Python package
-├── scripts/                 # Environment and reproducibility checks
+├── scripts/                 # Environment, audit, ingestion, reconciliation
 ├── analysis/                # Future R analysis scripts
 ├── reports/                 # Future Quarto reports
 └── tests/                   # Automated tests for infrastructure
@@ -99,10 +99,23 @@ The statistical analysis plan in `docs/statistical_analysis_plan.md` will be com
 
 ## Project Status
 
-Stage 1 — TARGET-AML source and clinical schema audit.
+Stage 2 — raw ingestion and clinical source reconciliation.
 
-The public GDC TARGET-AML Cases API and open clinical supplements have been
-inspected. Findings are in `docs/target_aml_source_audit.md`. No analysis
-cohort has been created. No descriptive tables, Kaplan–Meier estimates, Cox
-models, missing-data procedures, or investigator-facing results have been
-produced.
+GDC Cases API entities and open clinical supplements have been loaded into
+PostgreSQL `raw` and `staging` tables. Cross-source overlap and discordance
+are in `docs/target_aml_reconciliation_report.md`. No analysis cohort, OS
+endpoint, age cutoff, Kaplan–Meier estimate, Cox model, imputation, or
+investigator-facing results have been produced.
+
+## Stage 2 commands
+
+```bash
+python scripts/bootstrap_database.py --local-cluster
+python scripts/ingest_gdc_cases.py --local-cluster
+python scripts/ingest_target_aml_supplements.py --local-cluster
+python scripts/run_source_reconciliation.py --local-cluster
+```
+
+Or `make db-bootstrap` then `make ingest`. The local cluster uses `.pgdata`
+on port 5433 and is gitignored. Downloaded XLSX files remain under
+`data/raw/` and are gitignored.

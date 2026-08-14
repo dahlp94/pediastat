@@ -189,3 +189,87 @@ treatments are one-to-many. Raw/staging tables should preserve that
 cardinality. A one-row-per-patient analytics table will be built only
 after follow-up timepoint rules and supplement de-duplication are
 documented.
+
+## Decision 15 — Raw-source architecture (Stage 2)
+
+Date: 2026-08-14
+Status: accepted
+
+Raw GDC tables store typed join/QA columns plus the original entity JSON
+in `payload` JSONB. Raw supplements store one workbook/sheet/row with
+original column names in `cells` JSONB. Staging standardizes primitive
+types and missingness classes without merging sources. Analytics cohort
+tables were not created.
+
+## Decision 16 — Source registry and ingestion runs
+
+Date: 2026-08-14
+Status: accepted
+
+`raw.source_registry` catalogs every ingested dataset. `raw.ingestion_runs`
+records each load. Reloads replace rows for a source inside a transaction.
+
+## Decision 17 — Identifier normalization is join-only
+
+Date: 2026-08-14
+Status: accepted
+
+Original identifiers are retained. Join comparison trims whitespace and
+uppercases. `join_barcode` is the leading `TARGET-NN-TOKEN`. Suffixes such
+as `-Unsorted` stay on `normalized_identifier`. Short experimental
+`TARGET-20-D#` tokens are not patient keys.
+
+## Decision 18 — Missing-value policy
+
+Date: 2026-08-14
+Status: accepted
+
+Staging distinguishes structurally missing, not reported, unknown, not
+applicable, sentinel, and observed. Spreadsheet `NA`/`N/A` maps to unknown.
+Unknown/Not Reported vital status is not censoring. Raw values are kept.
+
+## Decision 19 — Supplements remain source-identifiable
+
+Date: 2026-08-14
+Status: accepted
+
+The seven XLSX files were not concatenated. Unique clinical-data USI union
+is 2144. 1630 patients appear in one file; 475 in two; 38 in three; 1 in
+four. AML1031 is largely disjoint from Discovery/Validation/LowDepth.
+
+## Decision 20 — OS discordance delays endpoint lock
+
+Date: 2026-08-14
+Status: accepted
+
+Vital status agrees closely across GDC and supplements. OS time does not:
+Validation vs GDC candidate 68.89% exact; LowDepth vs Validation 47.38%
+exact among 363 shared patients. No OS time source is implemented as
+canonical.
+
+## Decision 21 — Tentative source-precedence recommendations
+
+Date: 2026-08-14
+Status: provisional (not implemented)
+
+Recommended later: GDC for vital status, age, sex at birth; AML1031 for
+WBC/risk/FLT3/NPM/CEBPA where present; Discovery/Validation/LowDepth for
+FAB; OS time unresolved. See the Stage 2 reconciliation report.
+
+## Decision 22 — Age eligibility remains unresolved
+
+Date: 2026-08-14
+Status: provisional
+
+Among 2158 diagnoses with age: 2012 are <18 years, 2117 are ≤21, 33 are
+22–29. No cutoff was chosen to maximize N.
+
+## Decision 23 — Delay analytics cohort construction
+
+Date: 2026-08-14
+Status: accepted
+
+Stage 2 stops after raw/staging ingestion and reconciliation. No
+`analytics.patient_cohort`, survival dataset, Table 1, Kaplan–Meier, Cox
+model, imputation, Bayesian analysis, or power calculation was produced.
+
