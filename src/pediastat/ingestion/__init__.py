@@ -1,5 +1,5 @@
 """Load raw clinical source files into PostgreSQL.
 
-Clinical tables will be defined after the source data and documentation
-have been inspected. This package must not invent source variables.
+Stage 2 loads GDC Cases API entities and open clinical supplements into
+`raw` and `staging`. It does not build an analytics cohort.
 """
