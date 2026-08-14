@@ -67,6 +67,7 @@ pediastat/
 ├── data/                    # raw / interim / processed (not committed)
 ├── docs/                    # SAP template, data dictionary, decision log
 ├── sql/                     # Schema and ingestion metadata DDL
+├── artifacts/               # metadata summaries from source audits
 ├── src/pediastat/           # Python package
 ├── scripts/                 # Environment and reproducibility checks
 ├── analysis/                # Future R analysis scripts
@@ -98,6 +99,10 @@ The statistical analysis plan in `docs/statistical_analysis_plan.md` will be com
 
 ## Project Status
 
-Stage 0 — repository and reproducibility setup.
+Stage 1 — TARGET-AML source and clinical schema audit.
 
-No clinical data have been downloaded or ingested. No analysis cohort, descriptive tables, survival models, missing-data procedures, or investigator-facing results have been implemented.
+The public GDC TARGET-AML Cases API and open clinical supplements have been
+inspected. Findings are in `docs/target_aml_source_audit.md`. No analysis
+cohort has been created. No descriptive tables, Kaplan–Meier estimates, Cox
+models, missing-data procedures, or investigator-facing results have been
+produced.

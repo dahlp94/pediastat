@@ -44,6 +44,12 @@ Thumbs.db
 # Downloaded raw data and derived analysis datasets
 data/raw/*
 !data/raw/.gitkeep
+
+# Do not commit downloaded GDC files if they land under artifacts
+artifacts/**/*.xlsx
+artifacts/**/*.xls
+artifacts/**/*.tsv
+artifacts/**/*.txt.gz
 data/interim/*
 !data/interim/.gitkeep
 data/processed/*
