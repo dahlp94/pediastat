@@ -1,0 +1,17 @@
+{
+  "method": "reverse_kaplan_meier",
+  "interpretation": "Reverse Kaplan-Meier estimates potential follow-up by treating deaths as censored and treating originally censored observations as events. This is not median overall survival and is not the median of os_days.",
+  "median_followup_estimable": true,
+  "median_followup_years": 5.38809034907598,
+  "median_followup_lcl_years": 5.28952772073922,
+  "median_followup_ucl_years": 5.492128678987,
+  "q25_followup_years": 3.73716632443532,
+  "q75_followup_years": 6.51060917180014,
+  "statement": "Median potential follow-up by reverse KM: 5.39 years (95% CI 5.29 to 5.49).",
+  "observed_os_days_min": 1,
+  "observed_os_days_max": 4134,
+  "observed_os_days_median": 1303,
+  "observed_os_years_min": 0.0027378507871321,
+  "observed_os_years_max": 11.3182751540041,
+  "note_on_observed_median": "The median of observed os_days is retained only as a range descriptor. It must not be labeled median follow-up or Kaplan-Meier median survival."
+}

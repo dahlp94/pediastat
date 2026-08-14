@@ -1,0 +1,73 @@
+{
+  "km_1_3_5_year": [
+    {
+      "time_years": 1,
+      "n_risk": 1588,
+      "n_event": 336,
+      "survival": 0.82666005848026,
+      "surv_lcl": 0.809057553915361,
+      "surv_ucl": 0.842800840683187
+    },
+    {
+      "time_years": 3,
+      "n_risk": 1154,
+      "n_event": 299,
+      "survival": 0.667623464522261,
+      "surv_lcl": 0.645948303724603,
+      "surv_ucl": 0.688308184970448
+    },
+    {
+      "time_years": 5,
+      "n_risk": 715,
+      "n_event": 54,
+      "survival": 0.630949615566576,
+      "surv_lcl": 0.608297244022876,
+      "surv_ucl": 0.652687931828923
+    }
+  ],
+  "median_os": {
+    "estimable": false,
+    "median_os_years": null,
+    "median_os_lcl_years": null,
+    "median_os_ucl_years": null,
+    "statement": "Median OS not reached (Kaplan-Meier survival remains above 0.50 throughout supported follow-up)."
+  },
+  "n_risk": [
+    {
+      "time_years": 0,
+      "n_risk": 1978,
+      "n_event": 0,
+      "n_censor": 0,
+      "survival": 1
+    },
+    {
+      "time_years": 1,
+      "n_risk": 1588,
+      "n_event": 336,
+      "n_censor": 54,
+      "survival": 0.82666005848026
+    },
+    {
+      "time_years": 3,
+      "n_risk": 1154,
+      "n_event": 299,
+      "n_censor": 135,
+      "survival": 0.667623464522261
+    },
+    {
+      "time_years": 5,
+      "n_risk": 715,
+      "n_event": 54,
+      "n_censor": 385,
+      "survival": 0.630949615566576
+    },
+    {
+      "time_years": 10,
+      "n_risk": 16,
+      "n_event": 6,
+      "n_censor": 693,
+      "survival": 0.614696312212931
+    }
+  ],
+  "table1_has_pvalue": false
+}

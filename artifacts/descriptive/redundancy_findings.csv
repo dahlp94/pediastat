@@ -1,0 +1,6 @@
+"pair","status","rationale"
+"risk_group vs FLT3/ITD","POTENTIAL REDUNDANCY — REVIEW BEFORE MODEL SPECIFICATION","Risk group is defined from cytogenetics and biomarkers; FLT3/ITD is one input to that construct in pediatric AML protocols."
+"risk_group vs cytogenetic lesion flags","POTENTIAL REDUNDANCY — REVIEW BEFORE MODEL SPECIFICATION","Favorable lesions such as t(8;21) and inv(16) are used in risk assignment; dual inclusion needs a clinical coding rule."
+"primary_cytogenetic_code vs lesion flags","POTENTIAL REDUNDANCY — REVIEW BEFORE MODEL SPECIFICATION","The summary code is not assumed equivalent to lesion flags; Stage 3 classified it NEEDS REVIEW after source disagreement."
+"WBC vs peripheral blasts","POTENTIAL REDUNDANCY — REVIEW BEFORE MODEL SPECIFICATION","Both are diagnosis burden measures; correlation does not imply dropping either variable."
+"marrow blasts vs peripheral blasts","POTENTIAL REDUNDANCY — REVIEW BEFORE MODEL SPECIFICATION","Both are diagnosis burden measures on different compartments."

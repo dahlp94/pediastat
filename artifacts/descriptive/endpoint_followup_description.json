@@ -1,0 +1,14 @@
+{
+  "primary_cohort_n": 1978,
+  "deaths": 695,
+  "censored": 1283,
+  "crude_event_percent": 35.14,
+  "crude_event_percent_note": "Crude event percentage is deaths/N. It is not a cumulative mortality risk, because follow-up duration differs across persons. Use Kaplan-Meier for survival probability.",
+  "observed_os_days_min": 1,
+  "observed_os_days_max": 4134,
+  "observed_os_years_min": 0.0027378507871321,
+  "observed_os_years_max": 11.3182751540041,
+  "reverse_km_followup": "Median potential follow-up by reverse KM: 5.39 years (95% CI 5.29 to 5.49).",
+  "median_os": "Median OS not reached (Kaplan-Meier survival remains above 0.50 throughout supported follow-up).",
+  "index_date_missing_qa_flag_n": 7
+}

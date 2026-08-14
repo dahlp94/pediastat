@@ -1,20 +1,15 @@
 # Reports
 
-The final deliverable will be an investigator-facing Quarto report.
+Investigator-facing Quarto reports.
 
-The report is intended to contain:
+Stage 4:
 
-- Cohort definition, including inclusion and exclusion counts
-- Data-quality summary
-- Table 1 of baseline characteristics
-- Kaplan–Meier estimates
-- Cox regression results
-- Model diagnostics
-- Missing-data analysis
-- Sensitivity analysis
-- Study limitations
-- Scientific interpretation of associations (not causal claims)
+- Source: `reports/stage4_descriptive_analysis.qmd`
+- Rendered HTML is gitignored (`reports/**/*.html`)
 
-No report, tables, or figures are generated in Stage 0. Do not add
-placeholder results. Quarto documents will be written after the analysis
-plan is complete and the source data have been inspected.
+Render after `make descriptive` has written aggregate artifacts, or as
+part of that target when Quarto is available.
+
+The Stage 4 report describes the locked primary cohort and overall
+survival. It does not contain Cox models or predictor-stratified
+Kaplan–Meier curves.

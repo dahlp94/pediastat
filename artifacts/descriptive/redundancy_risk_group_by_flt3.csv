@@ -1,0 +1,29 @@
+"risk_group","flt3_itd","n","percent_of_row"
+"10","Missing",0,0
+"30","Missing",0,0
+"High Risk","Missing",0,0
+"Low Risk","Missing",0,0
+"Missing","Missing",7,30.4
+"Standard Risk","Missing",0,0
+"Unknown","Missing",0,0
+"10","No",2,100
+"30","No",1,100
+"High Risk","No",52,20.8
+"Low Risk","No",637,93.8
+"Missing","No",15,65.2
+"Standard Risk","No",871,93.2
+"Unknown","No",20,22.7
+"10","Unknown",0,0
+"30","Unknown",0,0
+"High Risk","Unknown",0,0
+"Low Risk","Unknown",1,0.1
+"Missing","Unknown",0,0
+"Standard Risk","Unknown",1,0.1
+"Unknown","Unknown",66,75
+"10","Yes",0,0
+"30","Yes",0,0
+"High Risk","Yes",198,79.2
+"Low Risk","Yes",41,6
+"Missing","Yes",1,4.3
+"Standard Risk","Yes",63,6.7
+"Unknown","Yes",2,2.3

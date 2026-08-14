@@ -1,0 +1,16 @@
+{
+  "original_gdc_cases": 2492,
+  "gdc_cases_valid_identity": 2354,
+  "unique_valid_analysis_persons": 2315,
+  "gdc_cases_ineligible_identity": 138,
+  "ineligible_identity_reasons": {
+    "ambiguous_experimental_construct": 6,
+    "ambiguous_experimental_d_token": 44,
+    "not_patient_identifier": 88
+  },
+  "cohort_eligibility_rows": 2453,
+  "cohort_eligibility_valid_persons": 2315,
+  "cohort_eligibility_ineligible_identity_records": 138,
+  "interpretation": "analytics.cohort_eligibility has 2453 rows because it stores 2315 valid analysis persons plus 138 deliberately retained ineligible identity records. Those 138 rows are not valid analysis persons.",
+  "primary_os_cohort_n": 1978
+}
