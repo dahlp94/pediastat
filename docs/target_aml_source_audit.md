@@ -8,7 +8,7 @@ does not invent variables that were not observed.
 Machine-readable companions:
 
 - `artifacts/source_audit/project_metadata.json`
-- `artifacts/source_audit/clinical_field_availability.csv`
+- `artifacts/source_audit/clinical_field_availability.csv` (identifier example lists omitted from the committed file)
 - `artifacts/source_audit/survival_field_audit.json`
 - `artifacts/source_audit/entity_cardinality.json`
 - `artifacts/source_audit/open_clinical_files.csv`
@@ -101,7 +101,7 @@ Identifiers:
 | Field | Role |
 | --- | --- |
 | `case_id` | GDC UUID. Stable internal identifier. |
-| `submitter_id` | TARGET barcode (for example `TARGET-20-PASFYF`). Human-readable / project identifier. |
+| `submitter_id` | TARGET barcode (pattern `TARGET-20-XXXXXX` or `TARGET-21-XXXXXX`). Human-readable / project identifier. |
 | `project.project_id` | Always `TARGET-AML` in this extract. |
 
 `case_id` should be the stable internal key. `submitter_id` is the join key

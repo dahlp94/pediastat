@@ -1,154 +1,258 @@
 # PediaStat
 
-PediaStat is an applied biostatistics portfolio project that demonstrates a collaborative biostatistician workflow for pediatric oncology data. The project will analyze pediatric acute myeloid leukemia (AML) clinical data, likely from the NCI TARGET-AML program, with emphasis on study definitions, data QA/QC, a written analysis plan, and investigator-facing reporting. The eventual scientific objective is to evaluate associations between baseline patient/disease characteristics and overall survival among pediatric AML patients while explicitly addressing censoring, missing data, statistical assumptions, and uncertainty.
+An end-to-end applied biostatistics study of overall survival in pediatric acute myeloid leukemia using NCI TARGET-AML clinical data.
 
-## Scientific Question
+PediaStat shows how a biostatistical analysis moves from a scientific question through source validation, data QA/QC, cohort construction, statistical analysis planning, survival analysis, missing-data handling, diagnostics, and investigator-facing interpretation. It is an observational prognostic association study, not a machine-learning platform, clinical decision tool, or validated prediction model.
 
-Among children and adolescents with acute myeloid leukemia, which baseline patient and disease characteristics are associated with overall survival, and how robust are those associations to missing-data and modeling assumptions?
+**Project status:** COMPLETE — Portfolio Version 1.0 (14 August 2026)
 
-This is an observational association question. Causal effects will not be claimed from the planned analysis.
+---
 
-## Project Goals
+## Why this project?
 
-- State the scientific question, cohort, and endpoints before modeling.
-- Keep raw clinical data immutable after ingestion and record transformations from raw to staging to analytics.
-- Perform clinical data QA/QC, including explicit handling of missingness.
-- Estimate associations with overall survival using standard, interpretable survival methods.
-- Quantify uncertainty and assess robustness through missing-data and sensitivity analyses.
-- Communicate findings in an investigator-facing statistical report.
+The goal was not simply to run Cox regression. The project was designed to demonstrate the workflow of an applied collaborative biostatistician:
 
-## Planned Statistical Workflow
+- formulating a scientific question before looking at predictor–survival associations
+- writing a prespecified statistical analysis plan
+- preparing messy, multi-source clinical data reproducibly
+- reasoning about missing data rather than dropping incomplete cases by default
+- fitting interpretable survival models
+- checking assumptions and sensitivity
+- communicating results and limitations to an investigator audience
 
-```text
-Scientific Question
-        ↓
-Statistical Analysis Plan
-        ↓
-Raw Clinical Data
-        ↓
-Data QA/QC
-        ↓
-Analysis Cohort
-        ↓
-Descriptive Statistics
-        ↓
-Survival Analysis
-        ↓
-Missing-Data Analysis
-        ↓
-Sensitivity Analysis
-        ↓
-Power / Sample-Size Analysis
-        ↓
-Investigator-Facing Report
+---
+
+## Scientific question
+
+> Among children and adolescents with acute myeloid leukemia, which baseline patient and disease characteristics are associated with overall survival?
+
+This is an observational prognostic association analysis. It does **not** estimate causal effects of intervening on a covariate, protocol, or treatment.
+
+---
+
+## Study workflow
+
+```mermaid
+flowchart TD
+    A[Scientific question] --> B[GDC / TARGET source audit]
+    B --> C[Raw data ingestion]
+    C --> D[QA/QC + source reconciliation]
+    D --> E[Cohort definition]
+    E --> F[Statistical analysis plan]
+    F --> G[Descriptive statistics]
+    G --> H[Multiple imputation]
+    H --> I[Cox regression]
+    I --> J[Diagnostics + sensitivity analyses]
+    J --> K[Investigator-facing results]
 ```
 
-## Technology Stack
+---
 
-| Layer | Tool | Role |
-| --- | --- | --- |
-| Ingestion, validation, data utilities | Python 3.12+ | Load source files, validate raw data, write to PostgreSQL |
-| Data storage | PostgreSQL | Separate `raw`, `staging`, and `analytics` schemas |
-| Statistical analysis | R | Descriptive statistics, survival models, missing-data and sensitivity analyses |
-| Investigator-facing report | Quarto | Cohort definition, tables, figures, interpretation, and limitations |
+## Data
 
-Predictive machine-learning models, dashboards, and cloud deployment are outside the initial scope.
+**Source:** NCI Genomic Data Commons [TARGET-AML](https://gdc.cancer.gov/content/target-aml-publication-summary) (open clinical data only).
 
-## Repository Structure
+| Item | Count |
+| --- | ---: |
+| Original GDC cases | 2,492 |
+| Primary analysis cohort | 1,978 patients diagnosed before age 18 |
+| Deaths | 695 |
+| Censored | 1,283 |
+
+Normalized GDC clinical data supplied survival and demographic information. Seven open TARGET clinical-supplement workbooks supplied AML-specific baseline characteristics that are sparsely populated in the GDC Cases API. Overlapping sources were reconciled with documented source-precedence rules. GDC was the primary source for the overall-survival endpoint after some supplement OS-time fields were found to be discordant.
+
+Patient-level raw files and analysis extracts are intentionally not committed. This repository does not use controlled-access data.
+
+Details: [source audit](docs/target_aml_source_audit.md), [reconciliation report](docs/target_aml_reconciliation_report.md), [covariate source rules](docs/baseline_covariate_source_rules.md).
+
+---
+
+## Cohort construction
+
+Ambiguous experimental, cell-line, and non-patient identifiers were excluded rather than guessed. Eighteen persons with multiple compatible GDC cases were deterministically consolidated. Predictor completeness was not used to determine cohort membership. Unknown or missing vital status was not coded as censoring.
 
 ```text
-pediastat/
-├── README.md
-├── pyproject.toml
-├── .gitignore
-├── .env.example
-├── Makefile
-├── config/                  # Non-secret project settings examples
-├── data/                    # raw / interim / processed (not committed)
-├── docs/                    # SAP template, data dictionary, decision log
-├── sql/                     # Schema and ingestion metadata DDL
-├── artifacts/               # metadata summaries from source audits
-├── src/pediastat/           # Python package
-├── scripts/                 # Environment, audit, ingestion, reconciliation
-├── analysis/                # Future R analysis scripts
-├── reports/                 # Future Quarto reports
-└── tests/                   # Automated tests for infrastructure
+2,492 GDC cases
+    ↓  exclude 138 experimental / non-patient / ambiguous identifiers
+2,354 valid patient-identity cases
+    ↓  consolidate biospecimen-level duplicates
+2,315 unique valid analysis persons
+    ↓
+2,152 with a GDC diagnosis
+    ↓
+2,121 with age at diagnosis
+    ↓
+1,978 diagnosed before age 18
+    ↓
+1,978 with a valid overall-survival endpoint
 ```
+
+Identity rules and endpoint definitions are in [primary cohort specification](docs/primary_cohort_specification.md).
+
+---
+
+## Statistical approach
+
+Full specification: [inferential model specification](docs/inferential_model_specification.md) and [statistical analysis plan](docs/statistical_analysis_plan.md).
+
+**Overall survival.** Kaplan–Meier estimation from initial pathologic diagnosis.
+
+**Follow-up.** Reverse Kaplan–Meier estimator of potential follow-up.
+
+**Primary clinical model.** Cox proportional hazards regression:
+
+```r
+Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + risk_group_std
+```
+
+Age is reported per 5-year increase. WBC is reported per doubling. Sex reference is Female. Risk-group reference is Low.
+
+**Secondary model.** Cox regression with molecular and cytogenetic indicators (FLT3/ITD, NPM, CEBPA, t(8;21), inv(16), MLL/KMT2A, monosomy 7), adjusted for age, sex, and WBC. Protocol risk group is omitted because it already incorporates some of the same biological information.
+
+**Missing data.** Thirty-fold multiple imputation with MICE. The imputation model included the event indicator and a Nelson–Aalen cumulative hazard. The survival outcome itself was not imputed.
+
+**Sensitivity and diagnostics.** Complete-case models; nonlinear age and WBC spline checks; proportional-hazards diagnostics using Schoenfeld residuals; influence diagnostics. No stepwise selection and no interactions.
+
+---
+
+## Key findings
+
+- Overall 5-year survival was approximately 63% (95% CI 60.8%–65.3%). Median overall survival was not reached. Reverse Kaplan–Meier median potential follow-up was 5.39 years (95% CI 5.29–5.49).
+- Both Standard and High protocol risk groups had substantially higher adjusted hazards than Low risk (global risk-group test *p* = 3.7×10⁻³²). The point estimates do not support describing a monotonic Standard < High progression.
+- Higher baseline WBC was associated with higher hazard (adjusted HR 1.08 per doubling; 95% CI 1.05–1.12).
+- Age showed a modest positive association with hazard (adjusted HR 1.12 per five years; 95% CI 1.05–1.20).
+- In the secondary model, NPM, CEBPA, t(8;21), and inv(16) were associated with lower adjusted hazard. Monosomy 7 was associated with higher adjusted hazard. FLT3/ITD was compatible with no association.
+
+These are prognostic associations, not causal effects.
+
+### Primary clinical model
+
+| Predictor | Adjusted HR | 95% CI |
+| --- | ---: | ---: |
+| Age per 5 years | 1.12 | 1.05–1.20 |
+| Male vs Female | 1.02 | 0.88–1.18 |
+| WBC per doubling | 1.08 | 1.05–1.12 |
+| Standard vs Low risk | 3.85 | 3.10–4.78 |
+| High vs Low risk | 3.50 | 2.71–4.53 |
+
+> Hazard ratios represent adjusted prognostic associations and should not be interpreted causally.
+
+Descriptive concordance for the primary model was 0.658. That statistic was not optimized and is not evidence of a validated prediction model.
+
+Secondary-model biological results, complete-case comparisons, and diagnostics are in the [Stage 6 inferential report](reports/stage6_inferential_analysis.qmd).
+
+---
+
+## Key figures
+
+**Overall survival, primary cohort**
+
+![Overall Kaplan–Meier curve](artifacts/descriptive/figures/overall_kaplan_meier.png)
+
+**Primary clinical Cox model**
+
+![Primary clinical-model forest plot](artifacts/inference/figures/forest_primary_clinical.png)
+
+**Secondary molecular/cytogenetic Cox model**
+
+![Secondary molecular-model forest plot](artifacts/inference/figures/forest_secondary_molecular.png)
+
+**Unadjusted survival by protocol risk group (descriptive only)**
+
+![Risk-group Kaplan–Meier](artifacts/inference/figures/km_risk_group.png)
+
+Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/inference/` and the Stage 6 report.
+
+---
+
+## Statistical integrity
+
+- The cohort and overall-survival endpoint were frozen before any predictor–survival analysis.
+- Primary and secondary model specifications were frozen before Cox fitting.
+- No stepwise selection was performed. No variable was added or removed because of a *p*-value.
+- Multiple imputation was the prespecified primary missing-data method; complete-case analysis was a sensitivity analysis.
+- The secondary-model FDR family was specified before results were seen.
+- Proportional-hazards remediation rules were specified before diagnostics. A minor WBC departure did not trigger remediation.
+- The one recorded SAP deviation (collapsed auxiliary race categories in the MICE model) occurred before hazard ratios were viewed and is documented in [stage6_sap_deviations.md](docs/stage6_sap_deviations.md).
+
+---
+
+## What this project demonstrates
+
+- Applied biostatistical study design
+- Survival analysis
+- Cox proportional hazards regression
+- Kaplan–Meier estimation
+- Reverse Kaplan–Meier follow-up estimation
+- Multiple imputation with MICE
+- Missing-data reasoning
+- Model diagnostics
+- Statistical sensitivity analysis
+- Clinical data QA/QC
+- PostgreSQL
+- R
+- Python
+- Reproducible analytical pipelines
+- Statistical reporting
+
+This project does **not** establish causal inference, clinical-trial experience, EHR analysis, machine learning, or MLOps.
+
+---
+
+## Limitations
+
+- Observational analysis; associations are not causal effects.
+- The public TARGET-AML population may not generalize to all pediatric AML populations.
+- Baseline clinical information came from multiple overlapping public supplements.
+- Some candidate covariates were missing. Multiple imputation uses a Missing At Random working assumption that was not proven.
+- Residual confounding is possible, including unmeasured disease biology and care access.
+- Molecular and cytogenetic analyses are secondary. Some categories are sparse (for example, 38 monosomy 7 cases).
+- No external validation was performed.
+- Concordance is descriptive and is not evidence of a validated prediction model.
+- The 10-year Kaplan–Meier risk set is small.
+
+---
 
 ## Reproducibility
 
-1. Create a Python 3.12+ virtual environment and install the package with development tools:
-
-   ```bash
-   python3.12 -m venv .venv
-   source .venv/bin/activate
-   pip install -e ".[dev]"
-   ```
-
-2. Copy `.env.example` to `.env` and replace placeholder credentials. Do not commit `.env`.
-
-3. Confirm the local environment:
-
-   ```bash
-   make check
-   ```
-
-PostgreSQL is required only when data are ingested. Stage 0 checks do not require a running database. Source data are not included in this repository; downloaded clinical files belong under `data/raw/` and are gitignored.
-
-The statistical analysis plan in `docs/statistical_analysis_plan.md` will be completed before primary modeling. Analysis choices should follow that plan rather than being selected after inspecting favorable results.
-
-## Project Status
-
-Stage 6 — frozen Stage 5 Cox models and multiple imputation have been
-executed. The primary cohort remains N = 1978 (695 deaths; 1283
-censored). Models were not redesigned from the observed associations.
-
-## Stage 6 commands
+The committed artifacts and reports are sufficient to read the finished analysis. Re-running the pipeline is optional and requires local Python, PostgreSQL, and the `pediastat-r` conda environment.
 
 ```bash
-make inference
+make check        # lint, pytest, and environment check (no database required)
+make descriptive  # Stage 4 Table 1, overall KM, reverse KM, Stage 4 report
+make inference    # MICE, Cox models, diagnostics, Stage 6 report
 ```
 
-This loads the locked PostgreSQL cohort, runs the frozen MICE
-specification, fits and pools the primary and secondary Cox models,
-writes aggregate artifacts under `artifacts/inference/`, and renders
-`reports/stage6_inferential_analysis.qmd` when Quarto is available.
-Person-level imputations under `data/interim/stage6/` are gitignored.
+`make check` confirms the Python package, tests, and configuration. `make descriptive` reads the locked cohort and writes aggregate descriptive artifacts. `make inference` runs the frozen MICE specification (*m* = 30), pools the primary and secondary Cox models, writes aggregate inferential artifacts, and renders the Stage 6 report.
 
-## Stage 5 commands
+Stack: Python, PostgreSQL (`raw` / `staging` / `analytics`), R, `survival`, `mice`.
 
-```bash
-make model-plan
-```
+Source data are not in the repository. Downloaded clinical files belong under `data/raw/` and are gitignored. See [analysis/R/README.md](analysis/R/README.md) for the R environment.
 
-This writes aggregate planning artifacts under `artifacts/model_plan/`
-and runs coding/preflight checks on the locked cohort. It does not fit
-Cox models or run multiple imputation.
+---
 
-## Stage 4 commands
+## Repository map
 
-```bash
-make descriptive
-```
+| Path | Role |
+| --- | --- |
+| `src/pediastat/` | Python package for audit, ingestion, validation, and cohort construction |
+| `analysis/R/` | R scripts for descriptive analysis, MICE, Cox models, and diagnostics |
+| `sql/` | PostgreSQL schema and analytics-layer DDL |
+| `docs/` | Analysis plan, cohort rules, decision log, and portfolio materials |
+| `reports/` | Investigator-facing Quarto reports |
+| `artifacts/` | Aggregate tables and figures (no patient-level extracts) |
 
-This reads the locked PostgreSQL cohort, writes aggregate artifacts under
-`artifacts/descriptive/`, and renders `reports/stage4_descriptive_analysis.qmd`
-when Quarto is available. It does not rebuild the cohort.
+---
 
-R is expected from the `pediastat-r` conda environment (see
-`analysis/R/README.md`). Person-level extracts under `data/interim/stage4/`
-are gitignored.
+## Portfolio materials
 
+| Document | Purpose |
+| --- | --- |
+| [Portfolio case study](docs/portfolio_case_study.md) | Narrative for hiring managers |
+| [Project pitch](docs/project_pitch.md) | 30- and 60-second summaries |
+| [Resume bullets](docs/resume_bullets.md) | Concise, technical, and biostatistics-targeted versions |
+| [Interview talking points](docs/interview_talking_points.md) | Defensible answers to likely questions |
 
-## Stage 2 commands
+Technical specification documents remain in `docs/`, including the [statistical analysis plan](docs/statistical_analysis_plan.md), [inferential model specification](docs/inferential_model_specification.md), and [project decisions](docs/project_decisions.md).
 
-```bash
-python scripts/bootstrap_database.py --local-cluster
-python scripts/ingest_gdc_cases.py --local-cluster
-python scripts/ingest_target_aml_supplements.py --local-cluster
-python scripts/run_source_reconciliation.py --local-cluster
-```
-
-Or `make db-bootstrap` then `make ingest`. The local cluster uses `.pgdata`
-on port 5433 and is gitignored. Downloaded XLSX files remain under
-`data/raw/` and are gitignored.
+Suggested local release tag: `v1.0.0`. This repository is a completed statistical analysis, not production software.

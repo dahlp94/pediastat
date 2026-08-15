@@ -1,6 +1,6 @@
 # Reports
 
-Investigator-facing Quarto reports.
+Investigator-facing Quarto reports for the completed analysis.
 
 Stage 4:
 

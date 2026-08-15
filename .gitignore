@@ -54,6 +54,11 @@ artifacts/**/*.xls
 artifacts/**/*.tsv
 artifacts/**/*.txt.gz
 
+# Person-level extracts and completed imputations
+**/*person_level*
+**/*patient_level*
+*.mids
+
 # Interim data
 data/interim/*
 !data/interim/.gitkeep

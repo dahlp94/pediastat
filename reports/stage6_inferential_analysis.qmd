@@ -1,6 +1,6 @@
 ---
 title: "PediaStat — Inferential Survival Analysis"
-subtitle: "Stage 6: execution of the frozen Cox and multiple-imputation plan"
+subtitle: "Prespecified Cox models, multiple imputation, and sensitivity analyses"
 author: "PediaStat"
 date: today
 format:
@@ -80,13 +80,17 @@ row_of <- function(tbl, term) tbl[tbl$term == term, ][1, ]
 fitv <- function(item) fit$value[fit$item == item]
 ```
 
+# How to read this report
+
+The **primary clinical model** estimates adjusted associations of age, sex, WBC, and protocol risk group with the hazard of death. The **secondary molecular/cytogenetic model** replaces risk group with mutation and lesion indicators. Hazard ratios and 95% confidence intervals are the main results. Nominal *p*-values and Benjamini–Hochberg *q*-values are reported where they were prespecified; they are not used to add or drop variables.
+
 # Executive summary
 
-- **Population.** Frozen primary TARGET-AML overall-survival cohort: **`r meta$cohort_n` analysis persons** younger than 18 years at diagnosis (**`r meta$deaths` deaths**, **`r meta$censored` censored**). Median potential follow-up by reverse Kaplan–Meier was `r sprintf("%.2f", followup$median_followup_years)` years.
+- **Population.** Locked primary TARGET-AML overall-survival cohort: **`r meta$cohort_n` analysis persons** younger than 18 years at diagnosis (**`r meta$deaths` deaths**, **`r meta$censored` censored**). Median potential follow-up by reverse Kaplan–Meier was `r sprintf("%.2f", followup$median_followup_years)` years.
 - **Primary prognostic variables.** Protocol risk group and log2 white-blood-cell count (WBC), with age and sex as adjustment variables.
-- **Strongest / most precisely estimated primary associations.** High vs Low risk: `r hr_line(row_of(primary, "risk_group_stdHigh"))`. WBC per doubling: `r hr_line(row_of(primary, "log2_wbc"))`.
+- **Strongest / most precisely estimated primary associations.** Both Standard and High risk had substantially higher adjusted hazards than Low risk. High vs Low: `r hr_line(row_of(primary, "risk_group_stdHigh"))`. Standard vs Low: `r hr_line(row_of(primary, "risk_group_stdStandard"))`. WBC per doubling: `r hr_line(row_of(primary, "log2_wbc"))`.
 - **Complete-case robustness.** The same formulas were fit on complete cases (primary N = `r primary_cc$n[1]`; secondary N = `r secondary_cc$n[1]`). Direction and magnitude are compared below; complete case is sensitivity, not the primary analysis.
-- **Proportional hazards.** Diagnostics used scaled Schoenfeld residuals (`cox.zph`). Remediation, if triggered, followed the frozen hierarchy and did not replace the primary model (remediation performed: `r isTRUE(meta$ph_remediation_performed)`).
+- **Proportional hazards.** Diagnostics used scaled Schoenfeld residuals (`cox.zph`). Remediation, if triggered, followed the prespecified hierarchy and did not replace the primary model (remediation performed: `r isTRUE(meta$ph_remediation_performed)`).
 - **Limitations investigators should keep in mind.** This is observational public TARGET data. Missing covariates were handled under a MAR working assumption. Residual confounding remains possible. The 10-year risk set is small. There is no external validation. Language throughout is **prognostic association**, not causal effect.
 
 # 1. Scientific Objective
@@ -97,7 +101,7 @@ The analysis is a prognostic association study. It does not estimate causal effe
 
 # 2. Prespecified Primary Cohort
 
-The unit of analysis is the **analysis person**. Eligibility was locked in Stage 3 and was **not** reconstructed in R.
+The unit of analysis is the **analysis person**. Eligibility was locked before any predictor–survival analysis and was **not** reconstructed in R.
 
 | Item | Frozen value |
 | --- | ---: |
@@ -128,7 +132,7 @@ Tied event times use the **Efron** approximation. Age is linear in `age5` (hazar
 
 Risk group is **absent**. Primary cytogenetic code and FAB are absent. Binary flags use No as the reference.
 
-These formulas were frozen in Stage 5 before any predictor–survival association was examined. Stage 6 did not add, drop, or recode predictors because of p-values or hazard ratios.
+These formulas were frozen before any predictor–survival association was examined. Predictors were not added, dropped, or recoded because of *p*-values or hazard ratios.
 
 # 4. Missing Data
 
@@ -171,6 +175,8 @@ knitr::kable(
 `r interpret(row_of(primary, "risk_group_stdHigh"), "age, sex, WBC, and risk group")`
 
 Pooled global test for risk group (2 df): `r notes$risk_group_global$method`. Statistic = `r fmt(notes$risk_group_global$statistic, 2)`; p = `r fmt_p(notes$risk_group_global$p_value)`.
+
+Both Standard and High protocol risk groups had substantially higher adjusted hazards than Low risk. The point estimates should not be described as a monotonic Standard < High progression.
 
 Descriptive concordance (mean across imputations): **`r sprintf("%.3f", notes$primary_concordance$mean)`**. This is not a prediction-model validation statistic and was not optimized.
 
@@ -227,7 +233,7 @@ Qualitative labels compare direction and magnitude. They are not a declaration t
 
 # 8. Functional-Form Sensitivity
 
-Restricted cubic splines used **frozen Stage 4 knots** (10th, 50th, 90th percentiles). Knots were not moved using AIC, p-values, or Stage 6 results. The primary linear `age5` and log2-linear WBC specifications were **not replaced**.
+Restricted cubic splines used **prespecified knots** (10th, 50th, 90th percentiles from the descriptive analysis). Knots were not moved using AIC, *p*-values, or model results. The primary linear `age5` and log2-linear WBC specifications were **not replaced**.
 
 ```{r}
 #| label: spline-table
@@ -238,7 +244,7 @@ knitr::kable(
 )
 ```
 
-Relative-hazard curves use the cohort median as the reference (age `r fmt(nl$reference[1])`; WBC median 26.7 ×10³/mcL). Those references were frozen from Stage 4, not chosen after seeing which reference made the figure look strongest.
+Relative-hazard curves use the cohort median as the reference (age `r fmt(nl$reference[1])`; WBC median 26.7 ×10³/mcL). Those references were taken from the descriptive analysis, not chosen after seeing which reference made the figure look strongest.
 
 ![Age spline relative hazard](`r file.path(fig, "age_spline_relative_hazard.png")`)
 
@@ -273,7 +279,7 @@ Deviance residuals, martingale residuals, and dfbeta were examined on complete-c
 
 # 11. Descriptive Kaplan–Meier Figures
 
-Stage 5 permitted only unadjusted curves for **risk group** and **FLT3/ITD**. Missing values are excluded from each figure. These plots are descriptive and were **not** used for variable selection. Log-rank tests were **not** computed.
+Unadjusted curves were prespecified only for **risk group** and **FLT3/ITD**. Missing values are excluded from each figure. These plots are descriptive and were **not** used for variable selection. Log-rank tests were **not** computed.
 
 ![Unadjusted KM by risk group](`r file.path(fig, "km_risk_group.png")`)
 
@@ -283,7 +289,7 @@ Stage 5 permitted only unadjusted curves for **risk group** and **FLT3/ITD**. Mi
 
 ## Primary clinical findings
 
-Emphasis remains on risk group and WBC, as frozen in Stage 5.
+Emphasis remains on risk group and WBC, as specified before model fitting. The Standard and High comparisons are each versus Low risk; they are not a ranked dose–response across three ordered categories.
 
 `r interpret(row_of(primary, "risk_group_stdHigh"), "age, sex, and WBC")`
 
@@ -308,11 +314,11 @@ Complete-case and multiply imputed estimates were compared for direction and mag
 - Observational study of public TARGET-AML data.
 - Prognostic associations, not causal effects.
 - Multiple integrated open clinical-supplement sources with documented provenance and some source conflicts.
-- Missing baseline covariates; multiple imputation relies on a MAR working assumption that Stage 4 did not prove. MNAR remains possible.
+- Missing baseline covariates; multiple imputation relies on a MAR working assumption that the descriptive analysis did not prove. MNAR remains possible.
 - Potential residual confounding, including unmeasured disease biology and care access.
 - Cox proportional-hazards assumptions; material departures, if classified, were handled as sensitivity analyses rather than silent model replacement.
 - Sparse categories exist (for example monosomy 7).
-- The 10-year Kaplan–Meier risk set is small (Stage 4: 16 persons).
+- The 10-year Kaplan–Meier risk set is small (16 persons).
 - No external validation and no train/test prediction split. Concordance is descriptive only.
 
 # 14. SAP Deviations
@@ -325,11 +331,11 @@ cat(deviations)
 
 # 15. Conclusions
 
-Stage 6 executed the frozen Stage 5 plan on the locked primary cohort. Adjusted associations are reported with confidence intervals and, for the secondary biological family, BH q-values. The primary clinical model remains the primary result. Sensitivity analyses (complete case, splines, PH remediation if triggered) inform robustness and do not rewrite the prespecified specification.
+The analysis executed the prespecified plan on the locked primary cohort. Adjusted associations are reported with hazard ratios and 95% confidence intervals and, for the secondary biological family, BH *q*-values. The primary clinical model remains the primary result. Sensitivity analyses (complete case, splines, and PH remediation if triggered) inform robustness and do not rewrite the prespecified specification.
 
-# 16. Next Steps
+# 16. Out of scope
 
-This stage stops after the prespecified frequentist survival analysis. Bayesian survival models, competing risks, time-dependent treatment effects beyond PH remediation, machine-learning prediction, external validation, and dashboards are out of scope here.
+This report stops after the prespecified frequentist survival analysis. Bayesian survival models, competing risks, time-dependent treatment effects beyond PH remediation, machine-learning prediction, external validation, and dashboards are outside the scope of this study.
 
 # Software
 

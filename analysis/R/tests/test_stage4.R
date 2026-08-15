@@ -68,7 +68,21 @@ test_that("only an overall KM figure is produced", {
 
 test_that("Stage 4 R scripts do not call Cox or log-rank", {
   r_dir <- file.path(root, "analysis", "R")
+  stage4_names <- c(
+    "00_setup.R",
+    "01_load_primary_cohort.R",
+    "02_baseline_descriptives.R",
+    "03_missingness.R",
+    "04_overall_survival.R",
+    "05_followup.R",
+    "06_generate_descriptive_outputs.R",
+    "07_render_report.R",
+    "run_stage4.R",
+    "test_stage4.R"
+  )
   scripts <- list.files(r_dir, pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
+  scripts <- scripts[basename(scripts) %in% stage4_names]
+  expect_true(length(scripts) >= 8)
   for (script in scripts) {
     txt <- paste(readLines(script, warn = FALSE), collapse = "\n")
     expect_false(grepl("coxph\\s*\\(", txt), info = script)

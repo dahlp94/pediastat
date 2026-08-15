@@ -221,6 +221,22 @@ def _write_json(path: Path, payload: Any) -> None:
     )
 
 
+_IDENTIFIER_FIELD_PATHS = frozenset(
+    {
+        "case_id",
+        "submitter_id",
+        "demographic.demographic_id",
+        "diagnoses.diagnosis_id",
+        "follow_ups.follow_up_id",
+        "diagnoses.treatments.treatment_id",
+    }
+)
+
+
+def _is_identifier_field(field_path: str) -> bool:
+    return field_path in _IDENTIFIER_FIELD_PATHS
+
+
 def _write_field_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
     fieldnames = [
         "field_path",
@@ -251,7 +267,11 @@ def _write_field_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
         for row in rows:
             serialized = dict(row)
             distinct = serialized.get("distinct_values")
-            if isinstance(distinct, list):
+            if _is_identifier_field(str(serialized.get("field_path", ""))):
+                serialized["distinct_values"] = (
+                    "unique identifiers omitted from committed artifact"
+                )
+            elif isinstance(distinct, list):
                 serialized["distinct_values"] = " | ".join(
                     str(item) for item in distinct
                 )

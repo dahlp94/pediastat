@@ -1,10 +1,10 @@
 # Inferential Model Specification
 
 Stage: 5 — freeze inferential models, coding, missing-data strategy, and diagnostics  
-Status: locked before any Cox fit or multiple imputation  
+Status: locked before any Cox fit or multiple imputation; subsequently executed without redesign  
 Companion: `config/model_spec.yaml`, `docs/statistical_analysis_plan.md`, `artifacts/model_plan/`
 
-This document is the collaborator-facing lock of Stage 5. It does not contain hazard ratios, p-values, or predictor-specific survival results. Stage 6 will execute the plan.
+This document is the collaborator-facing lock of the inferential plan. It does not contain hazard ratios, p-values, or predictor-specific survival results. The executed analysis is in `reports/stage6_inferential_analysis.qmd`.
 
 Language throughout is prognostic association, not causal effect.
 

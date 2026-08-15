@@ -2,7 +2,7 @@
 """Report whether the local PediaStat environment is usable.
 
 This check does not connect to PostgreSQL. A missing or stopped database
-is not a failure at Stage 0.
+is not a failure of the environment check.
 """
 
 from __future__ import annotations
