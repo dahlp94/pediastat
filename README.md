@@ -4,9 +4,7 @@ An end-to-end applied biostatistics study of overall survival in pediatric acute
 
 PediaStat is a self-directed analysis that follows a scientific question through source validation, data QA/QC, cohort construction, statistical analysis planning, survival analysis, missing-data handling, diagnostics, and interpretation. It is an observational prognostic association study, not a machine-learning platform, clinical decision tool, or validated prediction model.
 
-**Status:** Complete (14 August 2026)
 
----
 
 ## Study motivation
 
@@ -14,7 +12,6 @@ Pediatric AML is a useful setting for studying overall survival with heterogeneo
 
 The analysis therefore focuses on the full workflow required to move from heterogeneous public clinical sources to a prespecified, reproducible survival analysis: source audit and reconciliation, a frozen cohort and endpoint, a written analysis plan, Kaplan–Meier and Cox models, multiple imputation, and documented diagnostics and limitations.
 
----
 
 ## Scientific question
 
@@ -22,7 +19,6 @@ The analysis therefore focuses on the full workflow required to move from hetero
 
 This is an observational prognostic association analysis. It does **not** estimate causal effects of intervening on a covariate, protocol, or treatment.
 
----
 
 ## Study workflow
 
@@ -40,7 +36,6 @@ flowchart TD
     J --> K[Interpretation and reporting]
 ```
 
----
 
 ## Data
 
@@ -59,7 +54,6 @@ Patient-level raw files and analysis extracts are intentionally not committed. T
 
 Details: [source audit](docs/target_aml_source_audit.md), [reconciliation report](docs/target_aml_reconciliation_report.md), [covariate source rules](docs/baseline_covariate_source_rules.md).
 
----
 
 ## Cohort construction
 
@@ -83,7 +77,6 @@ Ambiguous experimental, cell-line, and non-patient identifiers were excluded rat
 
 Identity rules and endpoint definitions are in [primary cohort specification](docs/primary_cohort_specification.md).
 
----
 
 ## Statistical approach
 
@@ -109,7 +102,6 @@ Age is reported per 5-year increase. WBC is reported per doubling. Sex reference
 
 Ingestion, identifier validation, and cohort construction are implemented in Python with PostgreSQL (`raw` / `staging` / `analytics`). Descriptive and inferential analysis are implemented in R using `survival` and `mice`. Reports are written as Quarto documents.
 
----
 
 ## Key findings
 
@@ -137,7 +129,6 @@ Descriptive concordance for the primary model was 0.658. That statistic was not 
 
 Secondary-model biological results, complete-case comparisons, and diagnostics are in the [inferential report](reports/stage6_inferential_analysis.qmd).
 
----
 
 ## Key figures
 
@@ -159,7 +150,6 @@ Secondary-model biological results, complete-case comparisons, and diagnostics a
 
 Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/inference/` and the inferential report.
 
----
 
 ## Statistical integrity
 
@@ -171,7 +161,6 @@ Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/
 - Proportional-hazards remediation rules were specified before diagnostics. A minor WBC departure did not trigger remediation.
 - The one recorded SAP deviation (collapsed auxiliary race categories in the MICE model) occurred before hazard ratios were viewed and is documented in [stage6_sap_deviations.md](docs/stage6_sap_deviations.md).
 
----
 
 ## Limitations
 
@@ -185,7 +174,6 @@ Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/
 - Concordance is descriptive and is not evidence of a validated prediction model.
 - The 10-year Kaplan–Meier risk set is small.
 
----
 
 ## Reproducibility
 
@@ -203,7 +191,6 @@ Stack: Python, PostgreSQL (`raw` / `staging` / `analytics`), R, `survival`, `mic
 
 Source data are not in the repository. Downloaded clinical files belong under `data/raw/` and are gitignored. See [analysis/R/README.md](analysis/R/README.md) for the R environment.
 
----
 
 ## Repository map
 
