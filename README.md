@@ -1,24 +1,18 @@
 # PediaStat
 
-An end-to-end applied biostatistics study of overall survival in pediatric acute myeloid leukemia using NCI TARGET-AML clinical data.
+An end-to-end applied biostatistics study of overall survival in pediatric acute myeloid leukemia using public NCI TARGET-AML clinical data.
 
-PediaStat shows how a biostatistical analysis moves from a scientific question through source validation, data QA/QC, cohort construction, statistical analysis planning, survival analysis, missing-data handling, diagnostics, and investigator-facing interpretation. It is an observational prognostic association study, not a machine-learning platform, clinical decision tool, or validated prediction model.
+PediaStat is a self-directed analysis that follows a scientific question through source validation, data QA/QC, cohort construction, statistical analysis planning, survival analysis, missing-data handling, diagnostics, and interpretation. It is an observational prognostic association study, not a machine-learning platform, clinical decision tool, or validated prediction model.
 
-**Project status:** COMPLETE — Portfolio Version 1.0 (14 August 2026)
+**Status:** Complete (14 August 2026)
 
 ---
 
-## Why this project?
+## Study motivation
 
-The goal was not simply to run Cox regression. The project was designed to demonstrate the workflow of an applied collaborative biostatistician:
+Pediatric AML is a useful setting for studying overall survival with heterogeneous baseline clinical and molecular characteristics. Public TARGET-AML data contain those variables, but they are spread across the GDC Cases API and overlapping clinical supplements, with inconsistent identifiers and more than one representation of follow-up time.
 
-- formulating a scientific question before looking at predictor–survival associations
-- writing a prespecified statistical analysis plan
-- preparing messy, multi-source clinical data reproducibly
-- reasoning about missing data rather than dropping incomplete cases by default
-- fitting interpretable survival models
-- checking assumptions and sensitivity
-- communicating results and limitations to an investigator audience
+The analysis therefore focuses on the full workflow required to move from heterogeneous public clinical sources to a prespecified, reproducible survival analysis: source audit and reconciliation, a frozen cohort and endpoint, a written analysis plan, Kaplan–Meier and Cox models, multiple imputation, and documented diagnostics and limitations.
 
 ---
 
@@ -43,7 +37,7 @@ flowchart TD
     G --> H[Multiple imputation]
     H --> I[Cox regression]
     I --> J[Diagnostics + sensitivity analyses]
-    J --> K[Investigator-facing results]
+    J --> K[Interpretation and reporting]
 ```
 
 ---
@@ -113,6 +107,8 @@ Age is reported per 5-year increase. WBC is reported per doubling. Sex reference
 
 **Sensitivity and diagnostics.** Complete-case models; nonlinear age and WBC spline checks; proportional-hazards diagnostics using Schoenfeld residuals; influence diagnostics. No stepwise selection and no interactions.
 
+Ingestion, identifier validation, and cohort construction are implemented in Python with PostgreSQL (`raw` / `staging` / `analytics`). Descriptive and inferential analysis are implemented in R using `survival` and `mice`. Reports are written as Quarto documents.
+
 ---
 
 ## Key findings
@@ -139,7 +135,7 @@ These are prognostic associations, not causal effects.
 
 Descriptive concordance for the primary model was 0.658. That statistic was not optimized and is not evidence of a validated prediction model.
 
-Secondary-model biological results, complete-case comparisons, and diagnostics are in the [Stage 6 inferential report](reports/stage6_inferential_analysis.qmd).
+Secondary-model biological results, complete-case comparisons, and diagnostics are in the [inferential report](reports/stage6_inferential_analysis.qmd).
 
 ---
 
@@ -161,7 +157,7 @@ Secondary-model biological results, complete-case comparisons, and diagnostics a
 
 ![Risk-group Kaplan–Meier](artifacts/inference/figures/km_risk_group.png)
 
-Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/inference/` and the Stage 6 report.
+Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/inference/` and the inferential report.
 
 ---
 
@@ -174,28 +170,6 @@ Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/
 - The secondary-model FDR family was specified before results were seen.
 - Proportional-hazards remediation rules were specified before diagnostics. A minor WBC departure did not trigger remediation.
 - The one recorded SAP deviation (collapsed auxiliary race categories in the MICE model) occurred before hazard ratios were viewed and is documented in [stage6_sap_deviations.md](docs/stage6_sap_deviations.md).
-
----
-
-## What this project demonstrates
-
-- Applied biostatistical study design
-- Survival analysis
-- Cox proportional hazards regression
-- Kaplan–Meier estimation
-- Reverse Kaplan–Meier follow-up estimation
-- Multiple imputation with MICE
-- Missing-data reasoning
-- Model diagnostics
-- Statistical sensitivity analysis
-- Clinical data QA/QC
-- PostgreSQL
-- R
-- Python
-- Reproducible analytical pipelines
-- Statistical reporting
-
-This project does **not** establish causal inference, clinical-trial experience, EHR analysis, machine learning, or MLOps.
 
 ---
 
@@ -219,11 +193,11 @@ The committed artifacts and reports are sufficient to read the finished analysis
 
 ```bash
 make check        # lint, pytest, and environment check (no database required)
-make descriptive  # Stage 4 Table 1, overall KM, reverse KM, Stage 4 report
-make inference    # MICE, Cox models, diagnostics, Stage 6 report
+make descriptive  # Table 1, overall KM, reverse KM, descriptive report
+make inference    # MICE, Cox models, diagnostics, inferential report
 ```
 
-`make check` confirms the Python package, tests, and configuration. `make descriptive` reads the locked cohort and writes aggregate descriptive artifacts. `make inference` runs the frozen MICE specification (*m* = 30), pools the primary and secondary Cox models, writes aggregate inferential artifacts, and renders the Stage 6 report.
+`make check` confirms the Python package, tests, and configuration. `make descriptive` reads the locked cohort and writes aggregate descriptive artifacts. `make inference` runs the frozen MICE specification (*m* = 30), pools the primary and secondary Cox models, writes aggregate inferential artifacts, and renders the inferential report.
 
 Stack: Python, PostgreSQL (`raw` / `staging` / `analytics`), R, `survival`, `mice`.
 
@@ -238,21 +212,8 @@ Source data are not in the repository. Downloaded clinical files belong under `d
 | `src/pediastat/` | Python package for audit, ingestion, validation, and cohort construction |
 | `analysis/R/` | R scripts for descriptive analysis, MICE, Cox models, and diagnostics |
 | `sql/` | PostgreSQL schema and analytics-layer DDL |
-| `docs/` | Analysis plan, cohort rules, decision log, and portfolio materials |
-| `reports/` | Investigator-facing Quarto reports |
+| `docs/` | Analysis plan, cohort rules, source audit, and decision log |
+| `reports/` | Quarto reports |
 | `artifacts/` | Aggregate tables and figures (no patient-level extracts) |
 
----
-
-## Portfolio materials
-
-| Document | Purpose |
-| --- | --- |
-| [Portfolio case study](docs/portfolio_case_study.md) | Narrative for hiring managers |
-| [Project pitch](docs/project_pitch.md) | 30- and 60-second summaries |
-| [Resume bullets](docs/resume_bullets.md) | Concise, technical, and biostatistics-targeted versions |
-| [Interview talking points](docs/interview_talking_points.md) | Defensible answers to likely questions |
-
-Technical specification documents remain in `docs/`, including the [statistical analysis plan](docs/statistical_analysis_plan.md), [inferential model specification](docs/inferential_model_specification.md), and [project decisions](docs/project_decisions.md).
-
-Suggested local release tag: `v1.0.0`. This repository is a completed statistical analysis, not production software.
+Specification documents include the [statistical analysis plan](docs/statistical_analysis_plan.md), [inferential model specification](docs/inferential_model_specification.md), and [project decisions](docs/project_decisions.md).

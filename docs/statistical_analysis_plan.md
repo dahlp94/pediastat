@@ -211,7 +211,7 @@ For inferential covariates, Unknown / Not Reported / structural missing / unreso
 
 **Sensitivity:** complete-case Cox using the same specification.
 
-MAR is a working assumption conditional on the imputation model. Stage 4 did not prove MAR. MNAR remains possible. No MNAR sensitivity is required for the portfolio MVP unless later justified.
+MAR is a working assumption conditional on the imputation model. Stage 4 did not prove MAR. MNAR remains possible. No MNAR sensitivity is required unless later justified.
 
 **Executed in Stage 6.** Diagnostics: `artifacts/inference/mi/`. Completed person-level imputations are gitignored. No imputation was performed in Stages 3–5.
 

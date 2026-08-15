@@ -571,16 +571,15 @@ because sparse OMB cells are not stably estimated by polyreg; race is
 not a principal-model predictor. Details:
 `docs/stage6_sap_deviations.md`.
 
-## Decision 48 — Portfolio packaging (Version 1.0)
+## Decision 48 — Documentation finalization (Version 1.0)
 
 Date: 2026-08-14
 Status: accepted
 
-After Stage 6 execution, the repository was packaged as a finished
-applied-biostatistics portfolio. The README, case study, pitch, resume
-bullets, and interview notes describe the completed analysis. No new
-models, endpoints, or infrastructure were added. Identifier example
-lists were omitted from the committed source-audit field-availability
-table so that aggregate artifacts remain public-safe.
+After Stage 6 execution, repository documentation was finalized to
+describe the completed analysis. No new models, endpoints, or
+infrastructure were added. Identifier example lists were omitted from
+the committed source-audit field-availability table so that aggregate
+artifacts remain public-safe.
 
 
