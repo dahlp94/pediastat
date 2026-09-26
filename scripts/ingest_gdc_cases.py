@@ -12,16 +12,14 @@ SRC = Path(__file__).resolve().parents[1] / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from pediastat.audit.client import GDCClient
-from pediastat.audit.constants import (
-    CANDIDATE_FIELDS,
-    GDC_API_BASE_URL,
-    TARGET_AML_PROJECT_ID,
-)
-from pediastat.audit.extract import field_exists_in_mapping, mapping_field_names
-from pediastat.audit.run import fetch_all_cases, fetch_cases_mapping
 from pediastat.config import get_settings
 from pediastat.database.engine import create_db_engine
+from pediastat.gdc_api import (
+    GDC_API_BASE_URL,
+    GDC_CASE_FIELDS,
+    TARGET_AML_PROJECT_ID,
+    fetch_all_cases,
+)
 from pediastat.ingestion.gdc import parse_cases
 from pediastat.ingestion.loaders import (
     finish_ingestion_run,
@@ -44,15 +42,8 @@ def _main() -> int:
     else:
         settings = get_settings()
     engine = create_db_engine(settings)
-    client = GDCClient(timeout_seconds=120)
-    mapping = mapping_field_names(fetch_cases_mapping(client))
-    fields = [
-        field
-        for field in CANDIDATE_FIELDS
-        if field_exists_in_mapping(mapping, field)
-    ]
-    logging.info("Fetching TARGET-AML cases (%s fields)", len(fields))
-    cases, pagination = fetch_all_cases(client, fields)
+    logging.info("Fetching TARGET-AML cases (%s fields)", len(GDC_CASE_FIELDS))
+    cases, pagination = fetch_all_cases(GDC_CASE_FIELDS, timeout=120)
     logging.info(
         "Retrieved %s cases (pagination total %s)",
         len(cases),

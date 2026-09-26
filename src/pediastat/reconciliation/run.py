@@ -1,11 +1,10 @@
-"""Run Stage 2 source-reconciliation QA from staging tables."""
+"""Reconcile overlapping TARGET-AML clinical sources."""
 
 from __future__ import annotations
 
 import csv
 import json
 from collections import Counter, defaultdict
-from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -14,9 +13,8 @@ from sqlalchemy.engine import Engine
 
 from pediastat.config import PROJECT_ROOT
 from pediastat.ingestion.identifiers import summarize_identifiers
-from pediastat.ingestion.missingness import classify_missing, is_observed
 from pediastat.reconciliation.age import summarize_age_days
-from pediastat.reconciliation.concepts import CONCEPT_SOURCES, CYTOGENETIC_COLUMNS
+from pediastat.reconciliation.concepts import CYTOGENETIC_COLUMNS
 from pediastat.reconciliation.discordance import (
     categorical_agreement,
     numeric_discordance,
@@ -29,18 +27,13 @@ from pediastat.reconciliation.overlap import (
 
 DEFAULT_OUTPUT = PROJECT_ROOT / "artifacts" / "ingestion_audit"
 DETAIL_DIR = PROJECT_ROOT / "data" / "interim" / "ingestion_audit"
-NUMERIC_CONCEPTS = {
-    "os_time": "os_time_days",
-    "age_at_diagnosis": "age_at_diagnosis_days",
+
+NUMERIC_SUPPLEMENT_FIELDS = {
     "wbc": "wbc_raw",
     "marrow_blasts": "marrow_blasts_raw",
     "peripheral_blasts": "peripheral_blasts_raw",
 }
-CATEGORICAL_CONCEPTS = {
-    "vital_status": "vital_status_raw",
-    "sex": "sex_raw",
-    "race": "race_raw",
-    "ethnicity": "ethnicity_raw",
+CATEGORICAL_SUPPLEMENT_FIELDS = {
     "risk_group": "risk_group_raw",
     "flt3_itd": "flt3_itd_raw",
     "npm": "npm_raw",
@@ -48,429 +41,253 @@ CATEGORICAL_CONCEPTS = {
     "fab": "fab_raw",
     "cns_disease": "cns_disease_raw",
 }
-GDC_CONCEPT_VALUES = {
-    "demographic.vital_status": ("demographics", "vital_status_raw"),
-    "demographic.days_to_death": ("demographics", "days_to_death"),
-    "diagnoses.days_to_last_follow_up": ("diagnoses", "days_to_last_follow_up"),
-    "follow_ups.days_to_follow_up": ("follow_ups", "days_to_follow_up"),
-    "diagnoses.age_at_diagnosis": ("diagnoses", "age_at_diagnosis_days"),
-    "demographic.sex_at_birth": ("demographics", "sex_at_birth_raw"),
-    "demographic.race": ("demographics", "race_raw"),
-    "demographic.ethnicity": ("demographics", "ethnicity_raw"),
-}
+
+_OBSOLETE_ARTIFACTS = (
+    "age_distribution.json",
+    "clinical_concept_source_map.csv",
+    "entity_counts.json",
+    "missing_value_policy.json",
+    "missing_value_token_inventory.csv",
+    "supplement_identifier_quality.csv",
+    "supplement_overlap_distribution.csv",
+    "supplement_overlap_matrix.csv",
+    "supplement_sheet_summary.csv",
+    "unmatched_identifier_summary.csv",
+)
 
 
-def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
+def _write(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    if not rows:
-        path.write_text("", encoding="utf-8")
+    if path.suffix == ".csv":
+        rows = payload
+        if not rows:
+            path.write_text("", encoding="utf-8")
+            return
+        with path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+            writer.writeheader()
+            writer.writerows(rows)
         return
-    fieldnames = list(rows[0].keys())
-    with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def _write_json(path: Path, payload: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
     )
 
 
-def _cells(row: Mapping[str, Any]) -> dict[str, Any]:
+def _cells(row: dict[str, Any]) -> dict[str, Any]:
     value = row.get("cells")
     if isinstance(value, dict):
         return value
-    if isinstance(value, str):
-        return json.loads(value)
-    return {}
+    return json.loads(value) if isinstance(value, str) else {}
 
 
-def _pct_missing(values: list[Any]) -> float | None:
-    if not values:
-        return None
-    missing = sum(not is_observed(value) for value in values)
-    return round(missing / len(values) * 100.0, 2)
-
-
-def _concept_map_rows(data: dict[str, Any]) -> list[dict[str, Any]]:
-    """Expand concept templates onto actual workbooks and observed missingness."""
-    rows: list[dict[str, Any]] = []
-    supp_by_wb: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    for row in data["supplements"]:
-        supp_by_wb[row["workbook_name"]].append(dict(row))
-    sheet_by_wb: dict[str, str] = {}
-    for sheet in data["sheets"]:
-        if sheet["is_patient_level"]:
-            sheet_by_wb[sheet["workbook_name"]] = sheet["sheet_name"]
-    for item in CONCEPT_SOURCES:
-        if item["source_kind"] == "gdc_cases_api":
-            table_key, column = GDC_CONCEPT_VALUES.get(
-                item["source_column"], (None, None)
-            )
-            values = (
-                [row.get(column) for row in data[table_key]]
-                if table_key and column
-                else []
-            )
-            rows.append(
-                {
-                    "concept": item["concept"],
-                    "source_workbook": None,
-                    "source_sheet": None,
-                    "source_entity": item["source_entity"],
-                    "source_column": item["source_column"],
-                    "source_definition_if_known": item["source_definition"],
-                    "type": item["type"],
-                    "units": item["units"],
-                    "coding": item["coding"],
-                    "missing_percent": _pct_missing(values),
-                    "n_records": len(values),
-                    "notes": item["notes"],
-                }
-            )
-            continue
-        column = item["source_column"]
-        for workbook, recs in sorted(supp_by_wb.items()):
-            present = any(column in _cells(row) for row in recs)
-            if not present:
-                continue
-            values = [_cells(row).get(column) for row in recs]
-            rows.append(
-                {
-                    "concept": item["concept"],
-                    "source_workbook": workbook,
-                    "source_sheet": sheet_by_wb.get(workbook),
-                    "source_entity": "supplement_row",
-                    "source_column": column,
-                    "source_definition_if_known": item["source_definition"],
-                    "type": item["type"],
-                    "units": item["units"],
-                    "coding": item["coding"],
-                    "missing_percent": _pct_missing(values),
-                    "n_records": len(values),
-                    "notes": item["notes"],
-                }
-            )
-    return rows
-
-
-def _identifier_quality_rows(data: dict[str, Any]) -> list[dict[str, Any]]:
-    rows = []
-    gdc = summarize_identifiers([row["submitter_id"] for row in data["gdc_cases"]])
-    gdc["source"] = "gdc_cases"
-    gdc["workbook"] = None
-    gdc["shapes"] = json.dumps(gdc.pop("shapes"), sort_keys=True)
-    rows.append(gdc)
-    by_wb: dict[str, list[Any]] = defaultdict(list)
-    for row in data["supplements"]:
-        by_wb[row["workbook_name"]].append(row["original_identifier"])
-    for workbook, values in sorted(by_wb.items()):
-        summary = summarize_identifiers(values)
-        summary["source"] = "patient_level_supplement"
-        summary["workbook"] = workbook
-        summary["shapes"] = json.dumps(summary.pop("shapes"), sort_keys=True)
-        rows.append(summary)
-    return rows
-
-
-def _os_status_patterns(
-    pairs: list[tuple[Any, Any]],
-) -> dict[str, int]:
-    counts: Counter[str] = Counter()
-    for left, right in pairs:
-        left_key = (
-            str(left).strip().lower() if is_observed(left) else classify_missing(left)
-        )
-        right_key = (
-            str(right).strip().lower()
-            if is_observed(right)
-            else classify_missing(right)
-        )
-        counts[f"{left_key}|{right_key}"] += 1
-    return dict(counts)
-
-
-def _fetch_maps(engine: Engine) -> dict[str, Any]:
+def _fetch(engine: Engine) -> dict[str, list[dict[str, Any]]]:
+    queries = {
+        "cases": """
+            SELECT case_id, submitter_id, join_barcode
+            FROM staging.gdc_cases
+        """,
+        "demographics": "SELECT * FROM staging.gdc_demographics",
+        "diagnoses": "SELECT * FROM staging.gdc_diagnoses",
+        "follow_ups": "SELECT * FROM staging.gdc_follow_ups",
+        "supplements": """
+            SELECT * FROM staging.supplement_clinical_rows
+            WHERE sheet_name IN ('Clinical Data', 'Sheet1')
+        """,
+    }
     with engine.connect() as connection:
-        gdc_cases = list(
-            connection.execute(
-                text(
-                    """
-                    SELECT case_id, submitter_id, submitter_id_normalized, join_barcode
-                    FROM staging.gdc_cases
-                    """
-                )
-            ).mappings()
-        )
-        demographics = list(
-            connection.execute(
-                text("SELECT * FROM staging.gdc_demographics")
-            ).mappings()
-        )
-        diagnoses = list(
-            connection.execute(text("SELECT * FROM staging.gdc_diagnoses")).mappings()
-        )
-        follow_ups = list(
-            connection.execute(text("SELECT * FROM staging.gdc_follow_ups")).mappings()
-        )
-        treatments = list(
-            connection.execute(text("SELECT * FROM staging.gdc_treatments")).mappings()
-        )
-        supplements = list(
-            connection.execute(
-                text(
-                    """
-                    SELECT * FROM staging.supplement_clinical_rows
-                    WHERE sheet_name IN ('Clinical Data', 'Sheet1')
-                    """
-                )
-            ).mappings()
-        )
-        sheets = list(
-            connection.execute(text("SELECT * FROM raw.supplement_sheets")).mappings()
-        )
-        registry = list(
-            connection.execute(text("SELECT * FROM raw.source_registry")).mappings()
-        )
-        raw_counts = {
-            "gdc_cases": connection.execute(
-                text("SELECT COUNT(*) FROM raw.gdc_cases")
-            ).scalar_one(),
-            "gdc_demographics": connection.execute(
-                text("SELECT COUNT(*) FROM raw.gdc_demographics")
-            ).scalar_one(),
-            "gdc_diagnoses": connection.execute(
-                text("SELECT COUNT(*) FROM raw.gdc_diagnoses")
-            ).scalar_one(),
-            "gdc_follow_ups": connection.execute(
-                text("SELECT COUNT(*) FROM raw.gdc_follow_ups")
-            ).scalar_one(),
-            "gdc_treatments": connection.execute(
-                text("SELECT COUNT(*) FROM raw.gdc_treatments")
-            ).scalar_one(),
-            "supplement_rows": connection.execute(
-                text("SELECT COUNT(*) FROM raw.supplement_rows")
-            ).scalar_one(),
+        return {
+            name: [
+                dict(row)
+                for row in connection.execute(text(sql)).mappings()
+            ]
+            for name, sql in queries.items()
         }
+
+
+def _supplements_by_workbook(
+    rows: list[dict[str, Any]],
+) -> dict[str, dict[str, dict[str, Any]]]:
+    out: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
+    for row in rows:
+        if barcode := row.get("join_barcode"):
+            out[row["workbook_name"]][barcode] = row
+    return out
+
+
+def _identifier_overlap(
+    cases: list[dict[str, Any]],
+    supplements: dict[str, dict[str, dict[str, Any]]],
+) -> dict[str, Any]:
+    gdc_ids = {row["join_barcode"] for row in cases if row["join_barcode"]}
+    supplement_ids = set().union(
+        *(set(rows) for rows in supplements.values())
+    ) if supplements else set()
+    stats = universe_overlap(gdc_ids, supplement_ids)
     return {
-        "gdc_cases": gdc_cases,
-        "demographics": demographics,
-        "diagnoses": diagnoses,
-        "follow_ups": follow_ups,
-        "treatments": treatments,
-        "supplements": supplements,
-        "sheets": sheets,
-        "registry": registry,
-        "raw_counts": raw_counts,
+        "gdc_unique_join_barcodes": stats["n_left"],
+        "supplement_unique_join_barcodes": stats["n_right"],
+        "intersection": stats["n_intersection"],
+        "gdc_only": stats["n_left_only"],
+        "supplement_only": stats["n_right_only"],
+        "pct_gdc_matched": stats["pct_left_matched"],
+        "pct_supplement_matched": stats["pct_right_matched"],
+        "normalization_rule": (
+            "strip whitespace, uppercase; join_barcode is leading "
+            "TARGET-NN-TOKEN"
+        ),
     }
 
 
-def _gdc_os_index(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    demo = {
+def _gdc_index(data: dict[str, list[dict[str, Any]]]) -> dict[str, dict[str, Any]]:
+    demographics = {
         row["join_barcode"]: row
         for row in data["demographics"]
         if row["join_barcode"]
     }
-    dx = {row["join_barcode"]: row for row in data["diagnoses"] if row["join_barcode"]}
+    diagnoses = {
+        row["join_barcode"]: row
+        for row in data["diagnoses"]
+        if row["join_barcode"]
+    }
     last_contact: dict[str, list[float]] = defaultdict(list)
-    any_fu: dict[str, list[float]] = defaultdict(list)
     for row in data["follow_ups"]:
         barcode = row["join_barcode"]
-        time = row["days_to_follow_up"]
-        if barcode is None or time is None:
-            continue
-        any_fu[barcode].append(float(time))
-        if row["timepoint_category"] == "Last Contact":
-            last_contact[barcode].append(float(time))
-    index: dict[str, dict[str, Any]] = {}
-    for barcode, row in demo.items():
-        status = row["vital_status_analysis_class"]
-        death = row["days_to_death"]
-        follow = dx.get(barcode, {}).get("days_to_last_follow_up")
-        candidate = None
+        value = row["days_to_follow_up"]
+        if (
+            barcode
+            and value is not None
+            and row["timepoint_category"] == "Last Contact"
+        ):
+            last_contact[barcode].append(float(value))
+
+    out = {}
+    for barcode, demographic in demographics.items():
+        diagnosis = diagnoses.get(barcode, {})
+        status = demographic["vital_status_analysis_class"]
+        death = demographic["days_to_death"]
+        follow = diagnosis.get("days_to_last_follow_up")
+        os_days = None
         if status == "dead" and death is not None:
-            candidate = float(death)
+            os_days = float(death)
         elif status == "alive" and follow is not None:
-            candidate = float(follow)
-        index[barcode] = {
-            "vital_status_raw": row["vital_status_raw"],
-            "vital_status_class": status,
+            os_days = float(follow)
+
+        out[barcode] = {
+            "vital_status": demographic["vital_status_raw"],
+            "os_days": os_days,
             "days_to_death": death,
             "days_to_last_follow_up": follow,
             "last_contact_days": (
-                max(last_contact[barcode]) if last_contact[barcode] else None
+                max(last_contact[barcode])
+                if last_contact[barcode]
+                else None
             ),
-            "max_follow_up_days": max(any_fu[barcode]) if any_fu[barcode] else None,
-            "candidate_os_days": candidate,
-            "age_at_diagnosis_days": dx.get(barcode, {}).get("age_at_diagnosis_days"),
-            "sex_at_birth": row["sex_at_birth_raw"],
-            "race": row["race_raw"],
-            "ethnicity": row["ethnicity_raw"],
+            "age_at_diagnosis_days": diagnosis.get(
+                "age_at_diagnosis_days"
+            ),
+            "sex_at_birth": demographic["sex_at_birth_raw"],
         }
-    return index
+    return out
 
 
-def run_reconciliation(
-    engine: Engine,
-    output_dir: Path = DEFAULT_OUTPUT,
-    detail_dir: Path = DETAIL_DIR,
+def _compact_stats(
+    workbook: str,
+    concept: str,
+    stats: dict[str, Any],
+    *,
+    numeric: bool,
 ) -> dict[str, Any]:
-    data = _fetch_maps(engine)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    detail_dir.mkdir(parents=True, exist_ok=True)
-
-    gdc_ids = {
-        row["join_barcode"]
-        for row in data["gdc_cases"]
-        if row["join_barcode"]
-    }
-    supp_by_file: dict[str, set[str]] = defaultdict(set)
-    supp_rows_by_file: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
-    for row in data["supplements"]:
-        barcode = row["join_barcode"]
-        if not barcode:
-            continue
-        workbook = row["workbook_name"]
-        supp_by_file[workbook].add(barcode)
-        supp_rows_by_file[workbook][barcode] = dict(row)
-    all_supp = set().union(*supp_by_file.values()) if supp_by_file else set()
-
-    id_overlap = universe_overlap(gdc_ids, all_supp)
-    id_overlap_out = {
-        "gdc_unique_join_barcodes": id_overlap["n_left"],
-        "supplement_unique_join_barcodes": id_overlap["n_right"],
-        "intersection": id_overlap["n_intersection"],
-        "gdc_only": id_overlap["n_left_only"],
-        "supplement_only": id_overlap["n_right_only"],
-        "pct_gdc_matched": id_overlap["pct_left_matched"],
-        "pct_supplement_matched": id_overlap["pct_right_matched"],
-        "normalization_rule": (
-            "strip whitespace, uppercase; join_barcode is leading TARGET-NN-TOKEN; "
-            "suffixes such as -Unsorted are kept on normalized_identifier"
+    return {
+        "workbook": workbook,
+        "concept": concept,
+        "n_both_observed": stats["n_both_observed"],
+        "n_agreements": (
+            stats["n_exact_agreements"] if numeric else stats["n_agreements"]
         ),
+        "n_disagreements": stats["n_disagreements"],
+        "agreement_percent": stats["agreement_percent"],
+        "n_missing_a_only": stats["n_missing_a_only"],
+        "n_missing_b_only": stats["n_missing_b_only"],
+        "n_missing_both": stats["n_missing_both"],
     }
-    _write_json(output_dir / "source_identifier_overlap.json", id_overlap_out)
-    _write_csv(
-        output_dir / "unmatched_identifier_summary.csv",
-        [
-            {
-                "universe": "gdc_only",
-                "n_identifiers": id_overlap["n_left_only"],
-                "note": (
-                    "Present in GDC staging.gdc_cases, not in patient-level supplements"
-                ),
-            },
-            {
-                "universe": "supplement_only",
-                "n_identifiers": id_overlap["n_right_only"],
-                "note": "Present in patient-level supplements, not in GDC cases",
-            },
-            {
-                "universe": "intersection",
-                "n_identifiers": id_overlap["n_intersection"],
-                "note": "Matched on join_barcode",
-            },
-        ],
-    )
 
-    pair_rows = pairwise_overlap_counts(supp_by_file)
-    _write_csv(output_dir / "supplement_overlap_matrix.csv", pair_rows)
-    dist_rows = overlap_distribution(supp_by_file)
-    _write_csv(output_dir / "supplement_overlap_distribution.csv", dist_rows)
 
-    id_quality_rows = _identifier_quality_rows(data)
-    _write_csv(output_dir / "supplement_identifier_quality.csv", id_quality_rows)
-    gdc_id_summary = next(
-        row for row in id_quality_rows if row["source"] == "gdc_cases"
-    )
-    supp_id_summary = summarize_identifiers(
-        [row["original_identifier"] for row in data["supplements"]]
-    )
-    supp_id_summary["source"] = "patient_level_supplements"
+def _gdc_vs_supplement(
+    data: dict[str, list[dict[str, Any]]],
+    supplements: dict[str, dict[str, dict[str, Any]]],
+) -> tuple[
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+]:
+    gdc = _gdc_index(data)
+    os_rows = []
+    summary_rows = []
+    detail_rows = []
 
-    sheet_summary = []
-    for sheet in data["sheets"]:
-        sheet_summary.append(
-            {
-                "workbook": sheet["workbook_name"],
-                "sheet": sheet["sheet_name"],
-                "n_rows": sheet["n_rows"],
-                "n_columns": sheet["n_columns"],
-                "identifier_field": sheet["identifier_field"],
-                "is_patient_level": sheet["is_patient_level"],
-            }
-        )
-    _write_csv(output_dir / "supplement_sheet_summary.csv", sheet_summary)
+    for workbook, records in supplements.items():
+        shared = set(records) & set(gdc)
+        status_pairs = []
+        time_pairs = []
+        contact_pairs = []
+        age_pairs = []
+        sex_pairs = []
 
-    concept_rows = _concept_map_rows(data)
-    _write_csv(output_dir / "clinical_concept_source_map.csv", concept_rows)
-
-    gdc_os = _gdc_os_index(data)
-    os_rows: list[dict[str, Any]] = []
-    os_detail_rows: list[dict[str, Any]] = []
-    gdc_vs_supp_rows: list[dict[str, Any]] = []
-    for workbook, rows in supp_rows_by_file.items():
-        pairs_status = []
-        pairs_time = []
-        pairs_last_contact = []
-        pairs_age = []
-        pairs_sex = []
-        n_zero_os = 0
-        n_neg_os = 0
-        n_zero_gdc = 0
-        n_neg_gdc = 0
-        shared = set(rows) & set(gdc_os)
         for barcode in shared:
-            gdc = gdc_os[barcode]
-            supp = rows[barcode]
-            pairs_status.append((gdc["vital_status_raw"], supp.get("vital_status_raw")))
-            pairs_time.append((gdc["candidate_os_days"], supp.get("os_time_days")))
-            pairs_last_contact.append(
-                (gdc["last_contact_days"], supp.get("os_time_days"))
+            left = gdc[barcode]
+            right = records[barcode]
+            status_pair = (left["vital_status"], right.get("vital_status_raw"))
+            time_pair = (left["os_days"], right.get("os_time_days"))
+            status_pairs.append(status_pair)
+            time_pairs.append(time_pair)
+            contact_pairs.append(
+                (left["last_contact_days"], right.get("os_time_days"))
             )
-            pairs_age.append(
-                (gdc["age_at_diagnosis_days"], supp.get("age_at_diagnosis_days"))
+            age_pairs.append(
+                (
+                    left["age_at_diagnosis_days"],
+                    right.get("age_at_diagnosis_days"),
+                )
             )
-            pairs_sex.append((gdc["sex_at_birth"], supp.get("sex_raw")))
-            os_time = supp.get("os_time_days")
-            if os_time == 0:
-                n_zero_os += 1
-            if os_time is not None and os_time < 0:
-                n_neg_os += 1
-            gdc_time = gdc["candidate_os_days"]
-            if gdc_time == 0:
-                n_zero_gdc += 1
-            if gdc_time is not None and gdc_time < 0:
-                n_neg_gdc += 1
-            status_match = categorical_agreement(
-                [(gdc["vital_status_raw"], supp.get("vital_status_raw"))]
-            )
-            time_match = numeric_discordance(
-                [(gdc["candidate_os_days"], supp.get("os_time_days"))]
-            )
-            if status_match["n_disagreements"] or time_match["n_disagreements"]:
-                os_detail_rows.append(
+            sex_pairs.append((left["sex_at_birth"], right.get("sex_raw")))
+
+            status_one = categorical_agreement([status_pair])
+            time_one = numeric_discordance([time_pair])
+            if status_one["n_disagreements"] or time_one["n_disagreements"]:
+                detail_rows.append(
                     {
                         "join_barcode": barcode,
                         "workbook": workbook,
-                        "gdc_vital_status": gdc["vital_status_raw"],
-                        "supplement_vital_status": supp.get("vital_status_raw"),
-                        "gdc_candidate_os_days": gdc["candidate_os_days"],
-                        "gdc_days_to_death": gdc["days_to_death"],
-                        "gdc_days_to_last_follow_up": gdc["days_to_last_follow_up"],
-                        "gdc_last_contact_days": gdc["last_contact_days"],
-                        "supplement_os_time_days": supp.get("os_time_days"),
+                        "gdc_vital_status": left["vital_status"],
+                        "supplement_vital_status": right.get(
+                            "vital_status_raw"
+                        ),
+                        "gdc_candidate_os_days": left["os_days"],
+                        "gdc_days_to_death": left["days_to_death"],
+                        "gdc_days_to_last_follow_up": left[
+                            "days_to_last_follow_up"
+                        ],
+                        "gdc_last_contact_days": left["last_contact_days"],
+                        "supplement_os_time_days": right.get("os_time_days"),
                     }
                 )
-        status = categorical_agreement(pairs_status)
-        times = numeric_discordance(pairs_time)
-        last_contact = numeric_discordance(pairs_last_contact)
-        ages = numeric_discordance(pairs_age)
-        sex = categorical_agreement(pairs_sex)
-        patterns = _os_status_patterns(pairs_status)
+
+        status = categorical_agreement(status_pairs)
+        times = numeric_discordance(time_pairs)
+        contact = numeric_discordance(contact_pairs)
+        ages = numeric_discordance(age_pairs)
+        sex = categorical_agreement(sex_pairs)
+
+        patterns = Counter(
+            f"{str(left).strip().lower()}|{str(right).strip().lower()}"
+            for left, right in status_pairs
+        )
+        supplement_times = [
+            records[barcode].get("os_time_days") for barcode in shared
+        ]
+        gdc_times = [gdc[barcode]["os_days"] for barcode in shared]
+
         os_rows.append(
             {
                 "comparison": f"gdc_vs_{workbook}",
@@ -478,8 +295,13 @@ def run_reconciliation(
                 "vital_status_both_observed": status["n_both_observed"],
                 "vital_status_agreements": status["n_agreements"],
                 "vital_status_disagreements": status["n_disagreements"],
-                "vital_status_agreement_percent": status["agreement_percent"],
-                "vital_status_pair_patterns": json.dumps(patterns, sort_keys=True),
+                "vital_status_agreement_percent": status[
+                    "agreement_percent"
+                ],
+                "vital_status_pair_patterns": json.dumps(
+                    dict(patterns),
+                    sort_keys=True,
+                ),
                 "os_time_both_observed": times["n_both_observed"],
                 "os_time_exact_agreements": times["n_exact_agreements"],
                 "os_time_within_one_day": times["n_within_one"],
@@ -487,9 +309,11 @@ def run_reconciliation(
                 "os_time_diff_min": times["diff_min"],
                 "os_time_diff_max": times["diff_max"],
                 "os_time_abs_diff_median": times["abs_diff_median"],
-                "last_contact_vs_os_exact": last_contact["n_exact_agreements"],
-                "last_contact_vs_os_both_observed": last_contact["n_both_observed"],
-                "last_contact_vs_os_agreement_percent": last_contact[
+                "last_contact_vs_os_exact": contact["n_exact_agreements"],
+                "last_contact_vs_os_both_observed": contact[
+                    "n_both_observed"
+                ],
+                "last_contact_vs_os_agreement_percent": contact[
                     "agreement_percent"
                 ],
                 "age_exact_agreements": ages["n_exact_agreements"],
@@ -497,236 +321,236 @@ def run_reconciliation(
                 "age_agreement_percent": ages["agreement_percent"],
                 "sex_agreement_percent": sex["agreement_percent"],
                 "sex_disagreements": sex["n_disagreements"],
-                "supplement_zero_os_times_in_overlap": n_zero_os,
-                "supplement_negative_os_times_in_overlap": n_neg_os,
-                "gdc_zero_candidate_os_in_overlap": n_zero_gdc,
-                "gdc_negative_candidate_os_in_overlap": n_neg_gdc,
+                "supplement_zero_os_times_in_overlap": sum(
+                    value == 0 for value in supplement_times
+                ),
+                "supplement_negative_os_times_in_overlap": sum(
+                    value is not None and value < 0
+                    for value in supplement_times
+                ),
+                "gdc_zero_candidate_os_in_overlap": sum(
+                    value == 0 for value in gdc_times
+                ),
+                "gdc_negative_candidate_os_in_overlap": sum(
+                    value is not None and value < 0 for value in gdc_times
+                ),
             }
         )
-        gdc_vs_supp_rows.extend(
-            [
-                {
-                    "workbook": workbook,
-                    "concept": "vital_status",
-                    **{
-                        key: status[key]
-                        for key in (
-                            "n_both_observed",
-                            "n_agreements",
-                            "n_disagreements",
-                            "agreement_percent",
-                            "n_missing_a_only",
-                            "n_missing_b_only",
-                            "n_missing_both",
-                        )
-                    },
-                },
-                {
-                    "workbook": workbook,
-                    "concept": "os_time_gdc_candidate_vs_supplement",
-                    "n_both_observed": times["n_both_observed"],
-                    "n_agreements": times["n_exact_agreements"],
-                    "n_disagreements": times["n_disagreements"],
-                    "agreement_percent": times["agreement_percent"],
-                    "n_missing_a_only": times["n_missing_a_only"],
-                    "n_missing_b_only": times["n_missing_b_only"],
-                    "n_missing_both": times["n_missing_both"],
-                },
-                {
-                    "workbook": workbook,
-                    "concept": "age_at_diagnosis",
-                    "n_both_observed": ages["n_both_observed"],
-                    "n_agreements": ages["n_exact_agreements"],
-                    "n_disagreements": ages["n_disagreements"],
-                    "agreement_percent": ages["agreement_percent"],
-                    "n_missing_a_only": ages["n_missing_a_only"],
-                    "n_missing_b_only": ages["n_missing_b_only"],
-                    "n_missing_both": ages["n_missing_both"],
-                },
-                {
-                    "workbook": workbook,
-                    "concept": "sex_gdc_sex_at_birth_vs_supplement_gender",
-                    **{
-                        key: sex[key]
-                        for key in (
-                            "n_both_observed",
-                            "n_agreements",
-                            "n_disagreements",
-                            "agreement_percent",
-                            "n_missing_a_only",
-                            "n_missing_b_only",
-                            "n_missing_both",
-                        )
-                    },
-                },
-            ]
-        )
-    _write_csv(output_dir / "os_source_reconciliation.csv", os_rows)
-    _write_csv(output_dir / "gdc_vs_supplement_discordance.csv", gdc_vs_supp_rows)
-    if os_detail_rows:
-        _write_csv(detail_dir / "os_discordance_examples.csv", os_detail_rows)
-
-    unmatched_detail = []
-    for barcode in sorted(gdc_ids - all_supp):
-        unmatched_detail.append({"universe": "gdc_only", "join_barcode": barcode})
-    for barcode in sorted(all_supp - gdc_ids):
-        unmatched_detail.append(
-            {"universe": "supplement_only", "join_barcode": barcode}
-        )
-    if unmatched_detail:
-        _write_csv(detail_dir / "unmatched_identifiers.csv", unmatched_detail)
-
-    discordance_rows: list[dict[str, Any]] = []
-    workbooks = sorted(supp_rows_by_file)
-    for i, left_name in enumerate(workbooks):
-        for right_name in workbooks[i + 1 :]:
-            shared = set(supp_rows_by_file[left_name]) & set(
-                supp_rows_by_file[right_name]
+        summary_rows.extend(
+            (
+                _compact_stats(
+                    workbook,
+                    "vital_status",
+                    status,
+                    numeric=False,
+                ),
+                _compact_stats(
+                    workbook,
+                    "os_time_gdc_candidate_vs_supplement",
+                    times,
+                    numeric=True,
+                ),
+                _compact_stats(
+                    workbook,
+                    "age_at_diagnosis",
+                    ages,
+                    numeric=True,
+                ),
+                _compact_stats(
+                    workbook,
+                    "sex_gdc_sex_at_birth_vs_supplement_gender",
+                    sex,
+                    numeric=False,
+                ),
             )
-            comparisons: dict[str, tuple[str, str]] = {
-                **{
-                    concept: ("staging", column)
-                    for concept, column in CATEGORICAL_CONCEPTS.items()
-                },
-                **{
-                    concept: ("staging", column)
-                    for concept, column in NUMERIC_CONCEPTS.items()
-                },
-                **{
-                    f"cytogenetics:{column}": ("cells", column)
-                    for column in CYTOGENETIC_COLUMNS
-                },
-            }
-            for concept, (origin, column) in comparisons.items():
+        )
+    return os_rows, summary_rows, detail_rows
+
+
+def _supplement_discordance(
+    supplements: dict[str, dict[str, dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    comparisons = [
+        *(
+            (name, "staging", column, True)
+            for name, column in NUMERIC_SUPPLEMENT_FIELDS.items()
+        ),
+        *(
+            (name, "staging", column, False)
+            for name, column in CATEGORICAL_SUPPLEMENT_FIELDS.items()
+        ),
+        *(
+            (f"cytogenetics:{column}", "cells", column, False)
+            for column in CYTOGENETIC_COLUMNS
+        ),
+    ]
+    rows = []
+    workbooks = sorted(supplements)
+
+    for index, left_name in enumerate(workbooks):
+        for right_name in workbooks[index + 1 :]:
+            shared = set(supplements[left_name]) & set(
+                supplements[right_name]
+            )
+            for concept, origin, column, numeric in comparisons:
                 pairs = []
                 for barcode in shared:
-                    left_row = supp_rows_by_file[left_name][barcode]
-                    right_row = supp_rows_by_file[right_name][barcode]
+                    left = supplements[left_name][barcode]
+                    right = supplements[right_name][barcode]
                     if origin == "cells":
-                        left_val = _cells(left_row).get(column)
-                        right_val = _cells(right_row).get(column)
+                        pairs.append(
+                            (
+                                _cells(left).get(column),
+                                _cells(right).get(column),
+                            )
+                        )
                     else:
-                        left_val = left_row.get(column)
-                        right_val = right_row.get(column)
-                    pairs.append((left_val, right_val))
-                numeric = origin == "staging" and concept in NUMERIC_CONCEPTS
-                if numeric:
-                    stats = numeric_discordance(pairs)
-                    discordance_rows.append(
-                        {
-                            "file_a": left_name,
-                            "file_b": right_name,
-                            "concept": concept,
-                            "value_kind": "numeric",
-                            "n_shared_patients": len(shared),
-                            "n_both_observed": stats["n_both_observed"],
-                            "n_agreements": stats["n_exact_agreements"],
-                            "n_disagreements": stats["n_disagreements"],
-                            "agreement_percent": stats["agreement_percent"],
-                            "n_missing_a_only": stats["n_missing_a_only"],
-                            "n_missing_b_only": stats["n_missing_b_only"],
-                            "n_missing_both": stats["n_missing_both"],
-                            "diff_min": stats["diff_min"],
-                            "diff_max": stats["diff_max"],
-                            "abs_diff_median": stats["abs_diff_median"],
-                        }
-                    )
-                else:
-                    stats = categorical_agreement(pairs)
-                    discordance_rows.append(
-                        {
-                            "file_a": left_name,
-                            "file_b": right_name,
-                            "concept": concept,
-                            "value_kind": "categorical",
-                            "n_shared_patients": len(shared),
-                            "n_both_observed": stats["n_both_observed"],
-                            "n_agreements": stats["n_agreements"],
-                            "n_disagreements": stats["n_disagreements"],
-                            "agreement_percent": stats["agreement_percent"],
-                            "n_missing_a_only": stats["n_missing_a_only"],
-                            "n_missing_b_only": stats["n_missing_b_only"],
-                            "n_missing_both": stats["n_missing_both"],
-                            "diff_min": None,
-                            "diff_max": None,
-                            "abs_diff_median": None,
-                        }
-                    )
-    _write_csv(output_dir / "supplement_discordance_summary.csv", discordance_rows)
+                        pairs.append((left.get(column), right.get(column)))
 
-    ages = summarize_age_days(
-        [row["age_at_diagnosis_days"] for row in data["diagnoses"]]
-    )
-    _write_json(output_dir / "age_distribution.json", ages)
+                stats = (
+                    numeric_discordance(pairs)
+                    if numeric
+                    else categorical_agreement(pairs)
+                )
+                rows.append(
+                    {
+                        "file_a": left_name,
+                        "file_b": right_name,
+                        "concept": concept,
+                        "value_kind": (
+                            "numeric" if numeric else "categorical"
+                        ),
+                        "n_shared_patients": len(shared),
+                        "n_both_observed": stats["n_both_observed"],
+                        "n_agreements": (
+                            stats["n_exact_agreements"]
+                            if numeric
+                            else stats["n_agreements"]
+                        ),
+                        "n_disagreements": stats["n_disagreements"],
+                        "agreement_percent": stats["agreement_percent"],
+                        "n_missing_a_only": stats["n_missing_a_only"],
+                        "n_missing_b_only": stats["n_missing_b_only"],
+                        "n_missing_both": stats["n_missing_both"],
+                        "diff_min": stats["diff_min"] if numeric else None,
+                        "diff_max": stats["diff_max"] if numeric else None,
+                        "abs_diff_median": (
+                            stats["abs_diff_median"] if numeric else None
+                        ),
+                    }
+                )
+    return rows
 
-    missing_tokens: Counter[tuple[str, str, str, str]] = Counter()
-    for row in data["supplements"]:
-        workbook = row["workbook_name"]
-        for column, value in _cells(row).items():
-            missing_class = classify_missing(value)
-            if missing_class == "observed":
-                continue
-            token = "" if value is None else str(value).strip()
-            missing_tokens[(workbook, column, token, missing_class)] += 1
-    missing_token_rows = [
-        {
-            "workbook": workbook,
-            "column": column,
-            "token": token,
-            "missing_class": missing_class,
-            "n": count,
-        }
-        for (workbook, column, token, missing_class), count in sorted(
-            missing_tokens.items()
-        )
-        if count >= 5
-    ]
-    _write_csv(output_dir / "missing_value_token_inventory.csv", missing_token_rows)
-    missing_notes = {
-        "policy": (
-            "structurally_missing vs not_reported vs unknown vs not_applicable "
-            "vs sentinel vs observed. NA/N/A classified as unknown because "
-            "spreadsheet N/A is ambiguous. Unknown vital status is not censored."
-        ),
-        "token_inventory": "missing_value_token_inventory.csv",
-        "note": (
-            "Inventory is aggregated; tokens with fewer than 5 occurrences omitted."
-        ),
-    }
-    _write_json(output_dir / "missing_value_policy.json", missing_notes)
 
-    follow_up_counts = Counter(row["case_id"] for row in data["follow_ups"])
-    treatment_counts = Counter(row["case_id"] for row in data["treatments"])
-    entity_counts = {
-        "raw": data["raw_counts"],
-        "staging": {
-            "gdc_cases": len(data["gdc_cases"]),
-            "gdc_demographics": len(data["demographics"]),
-            "gdc_diagnoses": len(data["diagnoses"]),
-            "gdc_follow_ups": len(data["follow_ups"]),
-            "gdc_treatments": len(data["treatments"]),
-            "supplement_clinical_rows": len(data["supplements"]),
-        },
-        "follow_ups_per_case_max": max(follow_up_counts.values(), default=0),
-        "treatments_per_case_max": max(treatment_counts.values(), default=0),
-        "n_cases_with_multiple_follow_ups": sum(
-            count > 1 for count in follow_up_counts.values()
-        ),
-        "n_cases_with_multiple_treatments": sum(
-            count > 1 for count in treatment_counts.values()
-        ),
-    }
-    _write_json(output_dir / "entity_counts.json", entity_counts)
-
+def _source_decisions() -> dict[str, Any]:
     return {
-        "identifier_overlap": id_overlap_out,
-        "entity_counts": entity_counts,
-        "age": ages,
+        "overall_survival": {
+            "source": "GDC",
+            "event": "demographic.vital_status",
+            "time": (
+                "days_to_death for deaths; diagnoses.days_to_last_follow_up "
+                "for survivors"
+            ),
+            "reason": (
+                "Overlapping supplement OS fields are retained for QA but "
+                "are not treated as the primary endpoint source."
+            ),
+        },
+        "age_at_diagnosis": {
+            "source": "GDC diagnoses.age_at_diagnosis",
+            "reason": "Used for cohort eligibility and baseline age.",
+        },
+        "sex": {
+            "source": "GDC demographic.sex_at_birth",
+            "reason": "The supplement Gender field is not substituted.",
+        },
+        "aml_specific_baselines": {
+            "source": "TARGET clinical supplements",
+            "reason": (
+                "WBC, protocol risk, molecular markers, morphology, and "
+                "cytogenetic fields are primarily available in supplements."
+            ),
+            "precedence_note": (
+                "Per-variable workbook precedence is locked in "
+                "cohort/baseline.py and is not outcome-driven."
+            ),
+        },
+    }
+
+
+def _compatibility_summaries(
+    data: dict[str, list[dict[str, Any]]],
+    supplements: dict[str, dict[str, dict[str, Any]]],
+) -> dict[str, Any]:
+    supplement_sets = {
+        workbook: set(rows) for workbook, rows in supplements.items()
+    }
+    gdc_summary = summarize_identifiers(
+        [row["submitter_id"] for row in data["cases"]]
+    )
+    supplement_summary = summarize_identifiers(
+        [row["original_identifier"] for row in data["supplements"]]
+    )
+    return {
+        "entity_counts": {},
+        "age": summarize_age_days(
+            [row["age_at_diagnosis_days"] for row in data["diagnoses"]]
+        ),
+        "gdc_id_summary": gdc_summary,
+        "supp_id_summary": supplement_summary,
+        "overlap_distribution": overlap_distribution(supplement_sets),
+        "pairwise_overlap": pairwise_overlap_counts(supplement_sets),
+    }
+
+
+def _remove_obsolete(output_dir: Path) -> None:
+    for filename in _OBSOLETE_ARTIFACTS:
+        (output_dir / filename).unlink(missing_ok=True)
+
+
+def run_reconciliation(
+    engine: Engine,
+    output_dir: Path = DEFAULT_OUTPUT,
+    detail_dir: Path = DETAIL_DIR,
+) -> dict[str, Any]:
+    """Validate source linkage and concordance before cohort construction."""
+    data = _fetch(engine)
+    supplements = _supplements_by_workbook(data["supplements"])
+
+    identifier_overlap = _identifier_overlap(data["cases"], supplements)
+    os_rows, source_discordance, os_detail = _gdc_vs_supplement(
+        data,
+        supplements,
+    )
+    supplement_discordance = _supplement_discordance(supplements)
+    decisions = _source_decisions()
+
+    _remove_obsolete(output_dir)
+    _write(output_dir / "source_identifier_overlap.json", identifier_overlap)
+    _write(output_dir / "os_source_reconciliation.csv", os_rows)
+    _write(
+        output_dir / "gdc_vs_supplement_discordance.csv",
+        source_discordance,
+    )
+    _write(
+        output_dir / "supplement_discordance_summary.csv",
+        supplement_discordance,
+    )
+    _write(output_dir / "source_decisions.json", decisions)
+    if os_detail:
+        _write(detail_dir / "os_discordance_examples.csv", os_detail)
+
+    compatibility = _compatibility_summaries(data, supplements)
+    return {
+        "identifier_overlap": identifier_overlap,
+        "entity_counts": compatibility["entity_counts"],
+        "age": compatibility["age"],
         "os_rows": os_rows,
-        "discordance_rows": discordance_rows,
-        "gdc_id_summary": gdc_id_summary,
-        "supp_id_summary": supp_id_summary,
-        "sheet_summary": sheet_summary,
-        "overlap_distribution": dist_rows,
-        "pairwise_overlap": pair_rows,
+        "discordance_rows": supplement_discordance,
+        "gdc_id_summary": compatibility["gdc_id_summary"],
+        "supp_id_summary": compatibility["supp_id_summary"],
+        "sheet_summary": [],
+        "overlap_distribution": compatibility["overlap_distribution"],
+        "pairwise_overlap": compatibility["pairwise_overlap"],
+        "source_decisions": decisions,
     }

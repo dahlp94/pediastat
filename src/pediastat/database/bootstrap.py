@@ -12,7 +12,7 @@ from pediastat.config import PROJECT_ROOT, Settings
 from pediastat.database.engine import SQL_FILES, apply_sql_file, create_db_engine
 
 DEFAULT_DATA_DIR = PROJECT_ROOT / ".pgdata"
-DEFAULT_PORT = 5432
+DEFAULT_PORT = 5433
 DEFAULT_USER = "pediastat"
 DEFAULT_DB = "pediastat"
 
@@ -38,6 +38,26 @@ def _postgres_bin(name: str) -> str:
             return str(path)
     msg = f"Could not find {name}. Install PostgreSQL or set POSTGRES_BIN."
     raise FileNotFoundError(msg)
+
+
+
+def _ensure_trust_auth(data_dir: Path) -> None:
+    """Keep the project-local cluster passwordless on localhost."""
+    hba = data_dir / "pg_hba.conf"
+    if not hba.exists():
+        return
+
+    marker = "# PediaStat local trust authentication"
+    rules = (
+        f"{marker}\n"
+        "local   all   all                     trust\n"
+        "host    all   all   127.0.0.1/32      trust\n"
+        "host    all   all   ::1/128           trust\n"
+    )
+
+    current = hba.read_text(encoding="utf-8")
+    if marker not in current:
+        hba.write_text(rules + "\n" + current, encoding="utf-8")
 
 
 def cluster_is_running(data_dir: Path = DEFAULT_DATA_DIR) -> bool:
@@ -94,6 +114,9 @@ def bootstrap_cluster(
             "listen_addresses = 'localhost'\n"
         )
         config.write_text(config.read_text(encoding="utf-8") + extra, encoding="utf-8")
+
+    _ensure_trust_auth(data_dir)
+
     if not cluster_is_running(data_dir):
         log_file = data_dir / "pg.log"
         subprocess.run(
@@ -108,6 +131,11 @@ def bootstrap_cluster(
             check=True,
         )
         time.sleep(1.0)
+    else:
+        subprocess.run(
+            [pg_ctl, "-D", str(data_dir), "reload"],
+            check=True,
+        )
     env = os.environ.copy()
     env.update(
         {

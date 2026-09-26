@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from pediastat.audit.extract import as_records
+from pediastat.gdc_api import as_records
 from pediastat.ingestion.identifiers import join_barcode, normalize_identifier
 
 

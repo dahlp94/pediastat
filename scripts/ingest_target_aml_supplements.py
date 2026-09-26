@@ -15,15 +15,13 @@ SRC = Path(__file__).resolve().parents[1] / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from pediastat.audit.client import GDCClient
-from pediastat.audit.run import (
-    DEFAULT_DOWNLOAD_DIR,
+from pediastat.config import PROJECT_ROOT, get_settings
+from pediastat.database.engine import create_db_engine
+from pediastat.gdc_api import (
     fetch_clinical_files,
     flatten_clinical_file_row,
     md5_file,
 )
-from pediastat.config import PROJECT_ROOT, get_settings
-from pediastat.database.engine import create_db_engine
 from pediastat.ingestion.loaders import (
     finish_ingestion_run,
     replace_supplement_sheet,
@@ -32,6 +30,7 @@ from pediastat.ingestion.loaders import (
 )
 from pediastat.ingestion.supplements import profile_sheet, read_workbook_sheets
 
+DEFAULT_DOWNLOAD_DIR = PROJECT_ROOT / "data" / "raw" / "gdc_open_clinical_supplements"
 AUDIT_FILES = PROJECT_ROOT / "artifacts" / "source_audit" / "open_clinical_files.csv"
 STAGE1_AUDIT_DATE = "2026-08-14T01:24:42Z"
 
@@ -45,8 +44,7 @@ def _meta_from_audit_csv() -> dict[str, dict[str, str]]:
 
 def _meta_from_api() -> dict[str, dict[str, object]]:
     try:
-        client = GDCClient(timeout_seconds=60)
-        hits = fetch_clinical_files(client)
+        hits = fetch_clinical_files(timeout=60)
     except Exception as exc:
         logging.warning("Could not refresh GDC file metadata: %s", exc)
         return {}

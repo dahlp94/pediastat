@@ -1,0 +1,21 @@
+{
+  "age_at_diagnosis": {
+    "reason": "Used for cohort eligibility and baseline age.",
+    "source": "GDC diagnoses.age_at_diagnosis"
+  },
+  "aml_specific_baselines": {
+    "precedence_note": "Per-variable workbook precedence is locked in cohort/baseline.py and is not outcome-driven.",
+    "reason": "WBC, protocol risk, molecular markers, morphology, and cytogenetic fields are primarily available in supplements.",
+    "source": "TARGET clinical supplements"
+  },
+  "overall_survival": {
+    "event": "demographic.vital_status",
+    "reason": "Overlapping supplement OS fields are retained for QA but are not treated as the primary endpoint source.",
+    "source": "GDC",
+    "time": "days_to_death for deaths; diagnoses.days_to_last_follow_up for survivors"
+  },
+  "sex": {
+    "reason": "The supplement Gender field is not substituted.",
+    "source": "GDC demographic.sex_at_birth"
+  }
+}
