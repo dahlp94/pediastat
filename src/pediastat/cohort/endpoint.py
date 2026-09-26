@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from pediastat.audit.survival import classify_vital_status
+from pediastat.gdc_api import classify_vital_status
 from pediastat.reconciliation.age import DAYS_PER_YEAR, days_to_years
 
 EVENT_SOURCE = "gdc.demographic.vital_status"
