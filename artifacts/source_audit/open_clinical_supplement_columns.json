@@ -1,15 +1,10 @@
 [
   {
     "access": "open",
-    "api_endpoint": "https://api.gdc.cancer.gov/files",
     "checksum_match": true,
-    "checksum_md5_api": "1bbde9ecce2b02953fe3577b7e6a6afa",
-    "checksum_md5_downloaded": "1bbde9ecce2b02953fe3577b7e6a6afa",
-    "download_timestamp_utc": "2026-08-14T01:24:51+00:00",
     "downloaded": true,
     "file_id": "5f8b7137-c1e1-4191-aee5-a5ea55d32ca7",
     "file_name": "TARGET_AML_ClinicalData_Validation_20230720.xlsx",
-    "local_path": "data/raw/gdc_open_clinical_supplements/TARGET_AML_ClinicalData_Validation_20230720.xlsx",
     "sheets": [
       {
         "columns": [
@@ -78,8 +73,7 @@
           "Gemtuzumab ozogamicin treatment",
           "Refractory Timepoint sent for Induction Failure Project"
         ],
-        "n_columns": 64,
-        "n_data_rows": 627,
+        "n_rows": 627,
         "sheet": "Clinical Data"
       },
       {
@@ -87,24 +81,17 @@
           "Original file name",
           "Date"
         ],
-        "n_columns": 2,
-        "n_data_rows": 4,
+        "n_rows": 4,
         "sheet": "Original File"
       }
-    ],
-    "source_url": "https://api.gdc.cancer.gov/data/5f8b7137-c1e1-4191-aee5-a5ea55d32ca7"
+    ]
   },
   {
     "access": "open",
-    "api_endpoint": "https://api.gdc.cancer.gov/files",
     "checksum_match": true,
-    "checksum_md5_api": "8e20e0a20b5f89ec2f6b498fda94def5",
-    "checksum_md5_downloaded": "8e20e0a20b5f89ec2f6b498fda94def5",
-    "download_timestamp_utc": "2026-08-14T01:24:52+00:00",
     "downloaded": true,
     "file_id": "68170d63-c297-4d93-a21b-7bb43b451a96",
     "file_name": "TARGET_AML_ClinicalData_AML1031_20230720.xlsx",
-    "local_path": "data/raw/gdc_open_clinical_supplements/TARGET_AML_ClinicalData_AML1031_20230720.xlsx",
     "sheets": [
       {
         "columns": [
@@ -173,8 +160,7 @@
           "Gemtuzumab ozogamicin treatment",
           "Refractory Timepoint sent for Induction Failure Project"
         ],
-        "n_columns": 64,
-        "n_data_rows": 1069,
+        "n_rows": 1069,
         "sheet": "Clinical Data"
       },
       {
@@ -182,24 +168,17 @@
           "Original file name",
           "Date"
         ],
-        "n_columns": 2,
-        "n_data_rows": 2,
+        "n_rows": 2,
         "sheet": "Original File"
       }
-    ],
-    "source_url": "https://api.gdc.cancer.gov/data/68170d63-c297-4d93-a21b-7bb43b451a96"
+    ]
   },
   {
     "access": "open",
-    "api_endpoint": "https://api.gdc.cancer.gov/files",
     "checksum_match": true,
-    "checksum_md5_api": "bf0a4c8ca112b0b93cc11f3408b265de",
-    "checksum_md5_downloaded": "bf0a4c8ca112b0b93cc11f3408b265de",
-    "download_timestamp_utc": "2026-08-14T01:24:53+00:00",
     "downloaded": true,
     "file_id": "129e5399-6892-4cb7-99a8-1406309a2e4d",
     "file_name": "TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx",
-    "local_path": "data/raw/gdc_open_clinical_supplements/TARGET_AML_ClinicalData_LowDepthRNAseq_20230720.xlsx",
     "sheets": [
       {
         "columns": [
@@ -271,8 +250,7 @@
           "Blast count used for RNA seq",
           "Gene Fusion"
         ],
-        "n_columns": 67,
-        "n_data_rows": 449,
+        "n_rows": 449,
         "sheet": "Clinical Data"
       },
       {
@@ -280,24 +258,17 @@
           "Original file name",
           "Date"
         ],
-        "n_columns": 2,
-        "n_data_rows": 1,
+        "n_rows": 1,
         "sheet": "Original File"
       }
-    ],
-    "source_url": "https://api.gdc.cancer.gov/data/129e5399-6892-4cb7-99a8-1406309a2e4d"
+    ]
   },
   {
     "access": "open",
-    "api_endpoint": "https://api.gdc.cancer.gov/files",
     "checksum_match": true,
-    "checksum_md5_api": "e35eb99468b464e20bf51a088ef89899",
-    "checksum_md5_downloaded": "e35eb99468b464e20bf51a088ef89899",
-    "download_timestamp_utc": "2026-08-14T01:24:54+00:00",
     "downloaded": true,
     "file_id": "e58771ff-8501-4100-9c0a-c6dfa7dfb503",
     "file_name": "TARGET_AML_ClinicalData_Discovery_and_Validation_Tumor_Content_and_RIN_Supplement_20230720.xlsx",
-    "local_path": "data/raw/gdc_open_clinical_supplements/TARGET_AML_ClinicalData_Discovery_and_Validation_Tumor_Content_and_RIN_Supplement_20230720.xlsx",
     "sheets": [
       {
         "columns": [
@@ -335,8 +306,7 @@
           "",
           ""
         ],
-        "n_columns": 33,
-        "n_data_rows": 133,
+        "n_rows": 133,
         "sheet": "Sample Submission"
       },
       {
@@ -353,8 +323,7 @@
           "",
           "Read Type"
         ],
-        "n_columns": 11,
-        "n_data_rows": 11,
+        "n_rows": 11,
         "sheet": "Lists"
       },
       {
@@ -362,24 +331,17 @@
           "Sample Return Checkbox Status",
           ""
         ],
-        "n_columns": 2,
-        "n_data_rows": 2,
+        "n_rows": 2,
         "sheet": "Checkbox Status"
       }
-    ],
-    "source_url": "https://api.gdc.cancer.gov/data/e58771ff-8501-4100-9c0a-c6dfa7dfb503"
+    ]
   },
   {
     "access": "open",
-    "api_endpoint": "https://api.gdc.cancer.gov/files",
     "checksum_match": true,
-    "checksum_md5_api": "5e9562fe8e3cf7b5c2f55fe006dd75cc",
-    "checksum_md5_downloaded": "5e9562fe8e3cf7b5c2f55fe006dd75cc",
-    "download_timestamp_utc": "2026-08-14T01:24:55+00:00",
     "downloaded": true,
     "file_id": "3bf97830-865d-4e66-aaf1-d5bac81f119a",
     "file_name": "TARGET_AML_ClinicalData_Discovery_20230720.xlsx",
-    "local_path": "data/raw/gdc_open_clinical_supplements/TARGET_AML_ClinicalData_Discovery_20230720.xlsx",
     "sheets": [
       {
         "columns": [
@@ -448,8 +410,7 @@
           "Gemtuzumab ozogamicin treatment",
           "Refractory Timepoint sent for Induction Failure Project"
         ],
-        "n_columns": 64,
-        "n_data_rows": 466,
+        "n_rows": 466,
         "sheet": "Clinical Data"
       },
       {
@@ -457,24 +418,17 @@
           "Original file name",
           "Date"
         ],
-        "n_columns": 2,
-        "n_data_rows": 5,
+        "n_rows": 5,
         "sheet": "Original File"
       }
-    ],
-    "source_url": "https://api.gdc.cancer.gov/data/3bf97830-865d-4e66-aaf1-d5bac81f119a"
+    ]
   },
   {
     "access": "open",
-    "api_endpoint": "https://api.gdc.cancer.gov/files",
     "checksum_match": true,
-    "checksum_md5_api": "fc5b42f89b1ac84699b8b10dafed02dc",
-    "checksum_md5_downloaded": "fc5b42f89b1ac84699b8b10dafed02dc",
-    "download_timestamp_utc": "2026-08-14T01:24:56+00:00",
     "downloaded": true,
     "file_id": "52fd584b-9ca3-4f7e-bdd5-fd9dce3d630b",
     "file_name": "TARGET_AML_CDE_20230524.xlsx",
-    "local_path": "data/raw/gdc_open_clinical_supplements/TARGET_AML_CDE_20230524.xlsx",
     "sheets": [
       {
         "columns": [
@@ -490,24 +444,17 @@
           "",
           ""
         ],
-        "n_columns": 11,
-        "n_data_rows": 65,
+        "n_rows": 65,
         "sheet": "Data Elements"
       }
-    ],
-    "source_url": "https://api.gdc.cancer.gov/data/52fd584b-9ca3-4f7e-bdd5-fd9dce3d630b"
+    ]
   },
   {
     "access": "open",
-    "api_endpoint": "https://api.gdc.cancer.gov/files",
     "checksum_match": true,
-    "checksum_md5_api": "d15e2dcb4e5b0e4b3392550693307a1f",
-    "checksum_md5_downloaded": "d15e2dcb4e5b0e4b3392550693307a1f",
-    "download_timestamp_utc": "2026-08-14T01:24:56+00:00",
     "downloaded": true,
     "file_id": "727dbb38-32fc-4444-9db2-13c8eb427fa2",
     "file_name": "TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx",
-    "local_path": "data/raw/gdc_open_clinical_supplements/TARGET_AML_ClinicalData_AAML1031_AAML0631_additionalCasesForSortedCellsAndCBExperiment_20230720.xlsx",
     "sheets": [
       {
         "columns": [
@@ -576,11 +523,9 @@
           "Gemtuzumab ozogamicin treatment",
           "Refractory Timepoint sent for Induction Failure Project"
         ],
-        "n_columns": 64,
-        "n_data_rows": 89,
+        "n_rows": 89,
         "sheet": "Sheet1"
       }
-    ],
-    "source_url": "https://api.gdc.cancer.gov/data/727dbb38-32fc-4444-9db2-13c8eb427fa2"
+    ]
   }
 ]

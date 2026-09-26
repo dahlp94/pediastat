@@ -16,7 +16,7 @@ def _main() -> int:
     src_dir = Path(__file__).resolve().parents[1] / "src"
     if str(src_dir) not in sys.path:
         sys.path.insert(0, str(src_dir))
-    from pediastat.audit.run import main
+    from pediastat.audit import main
 
     return main()
 
