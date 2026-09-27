@@ -1,16 +1,26 @@
-# Stage 5 preflight: coding and design-matrix checks. No Cox fit. No MI run.
+# Stage 5 preflight: validate coding and planned design matrices. No Cox or MI.
 
-primary_terms <- function() {
-  c("age5", "sex_std", "log2_wbc", "risk_group_std")
+model_formula <- function(spec, model = c("primary", "secondary")) {
+  model <- match.arg(model)
+  stats::as.formula(spec[[paste0(model, "_model")]]$formula)
 }
 
-secondary_terms <- function() {
-  c(
-    "age5", "sex_std", "log2_wbc",
-    "flt3_itd_std", "npm_std", "cebpa_std",
-    "cytogenetics_t821_std", "cytogenetics_inv16_std",
-    "cytogenetics_mll_std", "cytogenetics_monosomy7_std"
-  )
+model_terms <- function(spec, model = c("primary", "secondary")) {
+  attr(stats::terms(model_formula(spec, match.arg(model))), "term.labels")
+}
+
+primary_terms <- function(spec = NULL) {
+  spec <- spec %||% load_model_spec_yaml()
+  model_terms(spec, "primary")
+}
+
+secondary_terms <- function(spec = NULL) {
+  spec <- spec %||% load_model_spec_yaml()
+  model_terms(spec, "secondary")
+}
+
+model_variables <- function(formula) {
+  all.vars(stats::delete.response(stats::terms(formula)))
 }
 
 complete_for <- function(cohort, terms) {
@@ -19,13 +29,11 @@ complete_for <- function(cohort, terms) {
 }
 
 design_matrix_rank <- function(data, formula) {
-  mm <- stats::model.matrix(formula, data = data)
+  mm <- stats::model.matrix(stats::delete.response(stats::terms(formula)), data = data)
+  rank <- qr(mm)$rank
   list(
-    n_rows = nrow(mm),
-    n_cols = ncol(mm),
-    rank = qr(mm)$rank,
-    full_rank = qr(mm)$rank == ncol(mm),
-    colnames = colnames(mm)
+    n_rows = nrow(mm), n_cols = ncol(mm), rank = rank,
+    full_rank = rank == ncol(mm), colnames = colnames(mm)
   )
 }
 
@@ -34,12 +42,30 @@ lesion_cooccurrence <- function(cohort) {
     "cytogenetics_t821_std", "cytogenetics_inv16_std",
     "cytogenetics_mll_std", "cytogenetics_monosomy7_std"
   )
-  yes <- lapply(lesions, function(nm) as.integer(cohort[[nm]] == "Yes"))
-  mat <- as.data.frame(yes, optional = TRUE)
+  mat <- as.data.frame(
+    lapply(lesions, function(nm) as.integer(cohort[[nm]] == "Yes")),
+    optional = TRUE
+  )
   names(mat) <- lesions
-  n_yes <- colSums(mat, na.rm = TRUE)
-  n_multi <- sum(rowSums(mat, na.rm = TRUE) >= 2)
-  list(n_yes = as.list(n_yes), n_two_or_more_lesions = n_multi)
+  list(
+    n_yes = as.list(colSums(mat, na.rm = TRUE)),
+    n_two_or_more_lesions = sum(rowSums(mat, na.rm = TRUE) >= 2)
+  )
+}
+
+validate_model_structure <- function(spec) {
+  primary <- primary_terms(spec)
+  secondary <- secondary_terms(spec)
+  if (!"risk_group_std" %in% primary ||
+      any(grepl("flt3|npm|cebpa|cytogenetics", primary))) {
+    stop("Primary model composition does not match the prespecified clinical model.", call. = FALSE)
+  }
+  if ("risk_group_std" %in% secondary) {
+    stop("Secondary molecular model must not include risk_group.", call. = FALSE)
+  }
+  if (length(spec$primary_model$interactions) || length(spec$secondary_model$interactions)) {
+    stop("Stage 5 expects no prespecified interactions.", call. = FALSE)
+  }
 }
 
 preflight_coded_cohort <- function(cohort, spec = NULL) {
@@ -50,6 +76,7 @@ preflight_coded_cohort <- function(cohort, spec = NULL) {
   if (any(!is.finite(cohort$age5))) {
     stop("age5 has non-finite values.", call. = FALSE)
   }
+
   observed_wbc <- !is.na(cohort$wbc_at_diagnosis_num)
   if (any(cohort$wbc_at_diagnosis_num[observed_wbc] <= 0, na.rm = TRUE)) {
     stop("Nonpositive observed WBC cannot be log2-transformed.", call. = FALSE)
@@ -61,38 +88,31 @@ preflight_coded_cohort <- function(cohort, spec = NULL) {
     stop("Unknown sex should not remain as an inferential level.", call. = FALSE)
   }
   if (any(as.character(cohort$risk_group_std) %in% c("10", "30", "Unknown"))) {
-    stop("Unresolved or unknown risk-group tokens leaked into the standardized factor.", call. = FALSE)
+    stop("Unresolved risk-group tokens leaked into the standardized factor.", call. = FALSE)
   }
 
-  primary_cc <- complete_for(cohort, primary_terms())
-  secondary_cc <- complete_for(cohort, secondary_terms())
-  primary_mm <- design_matrix_rank(primary_cc, ~ age5 + sex_std + log2_wbc + risk_group_std)
-  secondary_mm <- design_matrix_rank(
-    secondary_cc,
-    ~ age5 + sex_std + log2_wbc + flt3_itd_std + npm_std + cebpa_std +
-      cytogenetics_t821_std + cytogenetics_inv16_std + cytogenetics_mll_std +
-      cytogenetics_monosomy7_std
+  validate_model_structure(spec)
+  primary_formula <- model_formula(spec, "primary")
+  secondary_formula <- model_formula(spec, "secondary")
+  primary_cc <- complete_for(cohort, model_variables(primary_formula))
+  secondary_cc <- complete_for(cohort, model_variables(secondary_formula))
+  primary_mm <- design_matrix_rank(primary_cc, primary_formula)
+  secondary_mm <- design_matrix_rank(secondary_cc, secondary_formula)
+
+  if (!primary_mm$full_rank || !secondary_mm$full_rank) {
+    stop("A prespecified complete-case design matrix is rank-deficient.", call. = FALSE)
+  }
+  primary_df <- primary_mm$n_cols - 1L
+  secondary_df <- secondary_mm$n_cols - 1L
+  if (primary_df != spec$primary_model$df || secondary_df != spec$secondary_model$df) {
+    stop("Design-matrix df does not match model_spec.yaml.", call. = FALSE)
+  }
+
+  n_unresolved <- sum(
+    cohort$risk_group_mapping_action == "unresolved_set_missing", na.rm = TRUE
   )
-  if (!primary_mm$full_rank) {
-    stop("Primary complete-case design matrix is rank-deficient.", call. = FALSE)
-  }
-  if (!secondary_mm$full_rank) {
-    stop("Secondary complete-case design matrix is rank-deficient.", call. = FALSE)
-  }
-
-  primary_has_risk <- "risk_group_std" %in% primary_terms()
-  primary_has_lesion <- any(grepl("flt3|npm|cebpa|cytogenetics", primary_terms()))
-  secondary_has_risk <- "risk_group_std" %in% secondary_terms()
-  if (!primary_has_risk || primary_has_lesion) {
-    stop("Primary terms must include risk group and exclude molecular/lesion components.", call. = FALSE)
-  }
-  if (secondary_has_risk) {
-    stop("Secondary molecular model must not include risk_group.", call. = FALSE)
-  }
-
-  n_unresolved <- sum(cohort$risk_group_mapping_action == "unresolved_set_missing", na.rm = TRUE)
   if (n_unresolved != 3L) {
-    stop("Expected 3 unresolved risk-group tokens (10/30) in the primary cohort.", call. = FALSE)
+    stop("Expected 3 unresolved risk-group tokens (10/30).", call. = FALSE)
   }
 
   list(
@@ -111,24 +131,40 @@ preflight_coded_cohort <- function(cohort, spec = NULL) {
     lesion_cooccurrence = lesion_cooccurrence(cohort),
     expected_primary_df = spec$primary_model$df,
     expected_secondary_df = spec$secondary_model$df,
-    primary_mm_nonintercept_cols = primary_mm$n_cols - 1L,
-    secondary_mm_nonintercept_cols = secondary_mm$n_cols - 1L
+    primary_mm_nonintercept_cols = primary_df,
+    secondary_mm_nonintercept_cols = secondary_df
   )
 }
 
+write_json_artifact_to <- function(data, path) {
+  dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
+  jsonlite::write_json(
+    data, path, pretty = TRUE, auto_unbox = TRUE, na = "null", digits = NA
+  )
+  path
+}
+
+write_model_plan_json <- function(data, filename) {
+  write_json_artifact_to(data, file.path(MODEL_PLAN_DIR, filename))
+}
+
+write_preflight_artifact <- function(preflight) {
+  write_model_plan_json(preflight, "preflight_validation.json")
+}
+
 write_risk_token_resolution <- function(cohort) {
-  unresolved <- cohort[cohort$risk_group_mapping_action == "unresolved_set_missing", ]
+  unresolved <- cohort[
+    cohort$risk_group_mapping_action == "unresolved_set_missing",
+  ]
   payload <- list(
     decision = "set_inferential_value_missing",
     guessed_mapping = FALSE,
     cde_permissible_values = c("High Risk", "Low Risk", "Standard Risk"),
     rationale = paste(
-      "TARGET AML CDE Data Elements row for Risk group lists only High Risk,",
-      "Low Risk, and Standard Risk. Tokens 10 and 30 appear only in the",
-      "Validation clinical-data workbook, have no overlapping alternative",
-      "source, and have no documented mapping. Numeric order was not used."
+      "TARGET AML CDE Data Elements list only High Risk, Low Risk, and Standard Risk.",
+      "Tokens 10 and 30 have no documented mapping, so numeric order was not guessed."
     ),
-    n_primary_cohort = 3L,
+    n_primary_cohort = nrow(unresolved),
     original_values = as.character(unresolved$risk_group_original),
     source_workbook = if ("risk_group_source_workbook" %in% names(unresolved)) {
       as.character(unresolved$risk_group_source_workbook)
@@ -138,49 +174,24 @@ write_risk_token_resolution <- function(cohort) {
     standardized_value = NA_character_,
     qa_flag = "unresolved_risk_group_token"
   )
-  write_json_artifact_to(
-    payload,
-    file.path(MODEL_PLAN_DIR, "risk_group_token_resolution.json")
-  )
-}
-
-write_json_artifact_to <- function(data, path) {
-  dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
-  jsonlite::write_json(
-    data,
-    path,
-    pretty = TRUE,
-    auto_unbox = TRUE,
-    na = "null",
-    digits = NA
-  )
-  path
-}
-
-write_preflight_artifact <- function(preflight) {
-  write_json_artifact_to(preflight, file.path(MODEL_PLAN_DIR, "preflight_validation.json"))
+  write_model_plan_json(payload, "risk_group_token_resolution.json")
 }
 
 write_lesion_verification <- function(preflight) {
   payload <- list(
     included = c(
-      "flt3_itd",
-      "npm",
-      "cebpa",
-      "cytogenetics_t821",
-      "cytogenetics_inv16",
-      "cytogenetics_mll",
-      "cytogenetics_monosomy7"
+      "flt3_itd", "npm", "cebpa", "cytogenetics_t821",
+      "cytogenetics_inv16", "cytogenetics_mll", "cytogenetics_monosomy7"
     ),
     omitted = list(),
     primary_cytogenetic_code = "NOT INCLUDED IN PRESPECIFIED MODELS",
     baseline_status = "CDE-defined diagnostic/baseline lesion and mutation indicators.",
-    coding = "Yes/No after mixed-case harmonization; Unknown/Not Reported/Not Done/Not Applicable/structural missing become missing.",
+    coding = "Yes/No after mixed-case harmonization; source-missing values remain missing.",
     cooccurrence = preflight$lesion_cooccurrence,
     note = paste(
-      "Rare co-occurrence of distinct lesion flags does not create a structurally",
-      "singular dummy design. Primary cytogenetic code is not substituted for flags."
+      "Rare lesion co-occurrence does not create a singular design.",
+      "Primary cytogenetic code is not substituted for lesion flags."
     )
   )
-  write_json_artifact_to(payload, file.path(MODEL_PLAN_DIR, "lesion_verification.json"))
+  write_model_plan_json(payload, "lesion_verification.json")
 }

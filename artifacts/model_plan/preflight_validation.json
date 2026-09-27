@@ -37,5 +37,5 @@
   "nelson_aalen_n_finite": 1978,
   "nelson_aalen_min": 0.00353892821031345,
   "nelson_aalen_max": 0.486259434896754,
-  "note": "Nelson-Aalen is a planned MI auxiliary. Person-level values are not committed. No Cox prognostic model was fit. No multiply imputed datasets were created."
+  "note": "Model coding and design matrices were validated. Nelson-Aalen is retained only as the planned MI auxiliary. No Cox model or multiple imputation was run."
 }

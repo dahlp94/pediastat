@@ -17,7 +17,7 @@ if str(SRC) not in sys.path:
 
 from pediastat.config import PROJECT_ROOT, get_settings
 from pediastat.database.engine import create_db_engine
-from pediastat.gdc_api import (
+from pediastat.gdc import (
     fetch_clinical_files,
     flatten_clinical_file_row,
     md5_file,

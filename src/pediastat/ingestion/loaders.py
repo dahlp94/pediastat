@@ -11,7 +11,7 @@ from uuid import UUID, uuid4
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
-from pediastat.gdc_api import classify_vital_status
+from pediastat.gdc import classify_vital_status
 from pediastat.ingestion.missingness import classify_missing
 
 

@@ -40,9 +40,7 @@ n_risk <- read_desc("number_at_risk.csv")
 cont <- read_desc("continuous_distribution_summary.csv")
 miss <- read_desc("missingness_by_variable.csv")
 prov <- read_desc("baseline_source_provenance.csv")
-readiness <- read_desc("core_candidate_readiness.csv")
-redundancy <- read_desc("redundancy_findings.csv")
-patterns <- read_desc("missingness_patterns_top15.csv")
+patterns <- utils::head(read_desc("missingness_patterns.csv"), 15)
 ```
 
 # 1. Scientific Objective
@@ -57,7 +55,6 @@ The aims of this stage are to:
 - describe baseline characteristics of the locked cohort
 - quantify missingness and source provenance
 - estimate overall Kaplan–Meier survival and reverse Kaplan–Meier follow-up
-- record analysis-readiness issues that Stage 5 must resolve before modeling
 
 # 2. Prespecified Study Population
 
@@ -243,28 +240,15 @@ The median of observed OS times (`r followup$observed_os_days_median` days) is a
 
 Observed OS range: `r endpoint$observed_os_days_min`–`r endpoint$observed_os_days_max` days (`r round(endpoint$observed_os_years_min, 2)`–`r round(endpoint$observed_os_years_max, 2)` years).
 
-# 10. Analysis-Readiness Assessment
+# 10. Scope of Stage 4
 
-CORE CANDIDATE review uses definition, coding, missingness, sparsity, and source quality. Survival association was not used.
+Stage 4 is intentionally descriptive. It characterizes the frozen cohort,
+summarizes baseline data and missingness, estimates overall Kaplan–Meier
+survival, and estimates potential follow-up with reverse Kaplan–Meier.
 
-```{r}
-#| label: readiness
-gt(readiness) |>
-  tab_header(title = "CORE CANDIDATE analysis-readiness")
-```
-
-Predictor-to-predictor redundancy was examined without `os_event` or `os_days`:
-
-```{r}
-#| label: redundancy
-gt(redundancy) |>
-  tab_header(title = "Potential redundancy to review before model specification")
-```
-
-These findings are not automatic exclusions.
-
-Stage 5 locked the inferential models, coding, missing-data strategy, and
-diagnostics before any Cox fit. See `docs/inferential_model_specification.md`.
+Predictor coding, redundancy decisions, transformation choices, missing-data
+strategy, and model specification belong to the subsequent modeling stages and
+are not decided from this descriptive workflow.
 
 # 11. Limitations
 

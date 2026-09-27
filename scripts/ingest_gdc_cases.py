@@ -14,7 +14,7 @@ if str(SRC) not in sys.path:
 
 from pediastat.config import get_settings
 from pediastat.database.engine import create_db_engine
-from pediastat.gdc_api import (
+from pediastat.gdc import (
     GDC_API_BASE_URL,
     GDC_CASE_FIELDS,
     TARGET_AML_PROJECT_ID,

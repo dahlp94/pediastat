@@ -1,4 +1,4 @@
-"""Tests for the study-focused TARGET-AML source validation."""
+"""Tests for TARGET-AML GDC access and source validation."""
 
 from __future__ import annotations
 
@@ -7,19 +7,17 @@ from unittest.mock import Mock
 import pytest
 import requests
 
-from pediastat.audit import (
-    audit_survival_fields,
-    get_values_at_path,
-    summarize_field,
-)
-from pediastat.gdc_api import (
+from pediastat.gdc import (
     TARGET_AML_CASES_FILTER,
     TARGET_AML_CLINICAL_FILES_FILTER,
     GDCAPIError,
+    audit_survival_fields,
     classify_vital_status,
     download_open_file,
     get_json,
+    get_values_at_path,
     post_json,
+    summarize_field,
 )
 
 
@@ -38,9 +36,7 @@ def test_nested_values_are_not_collapsed() -> None:
             {"days_to_last_follow_up": 20},
         ]
     }
-    assert get_values_at_path(
-        case, "diagnoses.days_to_last_follow_up"
-    ) == [10, 20]
+    assert get_values_at_path(case, "diagnoses.days_to_last_follow_up") == [10, 20]
 
 
 def test_study_field_summary_tracks_missingness_and_disagreement() -> None:

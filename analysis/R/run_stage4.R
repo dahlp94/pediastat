@@ -45,9 +45,12 @@ missingness <- run_missingness(loaded$cohort, loaded$long_baseline)
 km_result <- run_overall_survival(loaded$cohort)
 followup <- run_followup(loaded$cohort, km_result)
 provenance <- source_provenance_table(loaded$long_baseline)
-redundancy <- run_redundancy(loaded$cohort)
 outputs <- run_stage4_outputs(
-  loaded, descriptives, missingness, km_result, followup, provenance, redundancy
+  loaded,
+  descriptives,
+  km_result,
+  followup,
+  provenance
 )
 
 test_file <- file.path(script_dir, "tests", "test_stage4.R")

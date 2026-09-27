@@ -1,9 +1,10 @@
 # Stage 5 analysis-variable coding. Does not fit Cox models or run MI.
 
 load_model_spec_yaml <- function() {
-  spec_path <- file.path(PROJECT_ROOT, "config", "model_spec.yaml")
-  yaml::read_yaml(spec_path)
+  yaml::read_yaml(file.path(PROJECT_ROOT, "config", "model_spec.yaml"))
 }
+
+`%||%` <- function(x, y) if (is.null(x)) y else x
 
 age5 <- function(age_years, divisor = 5) {
   out <- as.numeric(age_years) / divisor
@@ -21,132 +22,107 @@ log2_wbc <- function(wbc) {
 
 standardize_sex <- function(x, spec = NULL) {
   spec <- spec %||% load_model_spec_yaml()
-  mapping <- spec$coding$sex$map
-  missing_tokens <- spec$coding$sex$missing_tokens
   raw <- trimws(as.character(x))
+  mapping <- unlist(spec$coding$sex$map, use.names = TRUE)
+  index <- match(tolower(raw), tolower(names(mapping)))
   out <- rep(NA_character_, length(raw))
-  for (i in seq_along(raw)) {
-    token <- raw[[i]]
-    if (is.na(token) || !nzchar(token) || token %in% missing_tokens) {
-      next
-    }
-    mapped <- mapping[[token]]
-    if (is.null(mapped)) {
-      hit <- names(mapping)[tolower(names(mapping)) == tolower(token)]
-      if (length(hit)) mapped <- mapping[[hit[[1]]]]
-    }
-    if (!is.null(mapped)) out[[i]] <- mapped
-  }
+  hit <- !is.na(index)
+  out[hit] <- unname(mapping[index[hit]])
+  missing <- is.na(raw) | !nzchar(raw) | raw %in% spec$coding$sex$missing_tokens
+  out[missing] <- NA_character_
   factor(out, levels = c(spec$coding$sex$reference, "Male"))
 }
 
 standardize_yes_no <- function(x, spec = NULL) {
   spec <- spec %||% load_model_spec_yaml()
-  yes_tokens <- spec$coding$yes_no$yes_tokens
-  no_tokens <- spec$coding$yes_no$no_tokens
-  missing_tokens <- spec$coding$yes_no$missing_tokens
   raw <- trimws(as.character(x))
   out <- rep(NA_character_, length(raw))
-  out[raw %in% yes_tokens | toupper(raw) == "YES"] <- "Yes"
-  out[raw %in% no_tokens | toupper(raw) == "NO"] <- "No"
-  out[raw %in% missing_tokens | raw %in% c("", "NA")] <- NA_character_
-  out[is.na(raw)] <- NA_character_
+  out[raw %in% spec$coding$yes_no$yes_tokens | toupper(raw) == "YES"] <- "Yes"
+  out[raw %in% spec$coding$yes_no$no_tokens | toupper(raw) == "NO"] <- "No"
+  missing <- is.na(raw) | raw %in% spec$coding$yes_no$missing_tokens | raw %in% c("", "NA")
+  out[missing] <- NA_character_
   factor(out, levels = c(spec$coding$yes_no$reference, "Yes"))
 }
 
 standardize_risk_group <- function(x, spec = NULL) {
   spec <- spec %||% load_model_spec_yaml()
-  mapping <- spec$coding$risk_group$map
-  unresolved <- spec$coding$risk_group$unresolved_tokens
-  missing_tokens <- spec$coding$risk_group$missing_tokens
   raw <- trimws(as.character(x))
-  std <- rep(NA_character_, length(raw))
-  qa <- rep(NA_character_, length(raw))
+  std <- qa <- rep(NA_character_, length(raw))
   action <- rep("missing", length(raw))
   for (i in seq_along(raw)) {
     token <- raw[[i]]
-    if (is.na(token) || !nzchar(token) || token %in% c("NA")) {
-      action[[i]] <- "missing"
-      next
-    }
-    if (token %in% unresolved) {
+    if (is.na(token) || !nzchar(token) || token == "NA") next
+    if (token %in% spec$coding$risk_group$unresolved_tokens) {
       qa[[i]] <- "unresolved_risk_group_token"
       action[[i]] <- "unresolved_set_missing"
       next
     }
-    if (token %in% missing_tokens) {
+    if (token %in% spec$coding$risk_group$missing_tokens) {
       action[[i]] <- "source_missing"
       next
     }
-    mapped <- mapping[[token]]
-    if (!is.null(mapped)) {
-      std[[i]] <- mapped
-      action[[i]] <- "mapped"
-    } else {
+    mapped <- spec$coding$risk_group$map[[token]]
+    if (is.null(mapped)) {
       qa[[i]] <- "unresolved_risk_group_token"
       action[[i]] <- "unrecognized_set_missing"
+    } else {
+      std[[i]] <- mapped
+      action[[i]] <- "mapped"
     }
   }
   list(
     original = ifelse(is.na(raw) | raw == "", NA_character_, raw),
-    standardized = factor(std, levels = c(spec$coding$risk_group$reference, "Standard", "High")),
+    standardized = factor(
+      std, levels = c(spec$coding$risk_group$reference, "Standard", "High")
+    ),
     qa_flag = qa,
     mapping_action = action
   )
 }
 
 nelson_aalen_cumulative_hazard <- function(time, event) {
-  # Nonparametric Fleming-Harrington / Nelson-Aalen estimator.
-  # This is not a Cox model and is not used for predictor screening.
+  # Retained for Stage 6 compatibility; this is an MI auxiliary, not a model fit.
   fit <- survival::survfit(
-    survival::Surv(time, event) ~ 1,
-    type = "fleming-harrington"
+    survival::Surv(time, event) ~ 1, type = "fleming-harrington"
   )
-  times <- fit$time
-  haz <- fit$cumhaz
-  idx <- findInterval(time, times)
-  out <- rep(NA_real_, length(time))
-  positive <- idx > 0
-  out[positive] <- haz[idx[positive]]
-  out[idx == 0] <- 0
+  idx <- findInterval(time, fit$time)
+  out <- rep(0, length(time))
+  out[idx > 0] <- fit$cumhaz[idx[idx > 0]]
   out
-}
-
-`%||%` <- function(x, y) {
-  if (is.null(x)) y else x
 }
 
 code_inferential_cohort <- function(cohort, spec = NULL) {
   spec <- spec %||% load_model_spec_yaml()
   out <- cohort
   out$age5 <- age5(out$age_at_diagnosis_years, spec$coding$age5_divisor)
-  wbc_num <- suppressWarnings(as.numeric(out$wbc_at_diagnosis))
+
+  wbc <- suppressWarnings(as.numeric(out$wbc_at_diagnosis))
   if ("wbc_at_diagnosis_missingness" %in% names(out)) {
-    wbc_num[out$wbc_at_diagnosis_missingness != "observed"] <- NA_real_
+    wbc[out$wbc_at_diagnosis_missingness != "observed"] <- NA_real_
   }
-  out$wbc_at_diagnosis_num <- wbc_num
-  out$log2_wbc <- log2_wbc(wbc_num)
+  out$wbc_at_diagnosis_num <- wbc
+  out$log2_wbc <- log2_wbc(wbc)
   out$sex_std <- standardize_sex(out$sex_at_birth, spec)
-  rg <- standardize_risk_group(out$risk_group, spec)
-  out$risk_group_original <- rg$original
-  out$risk_group_std <- rg$standardized
-  out$risk_group_qa_flag <- rg$qa_flag
-  out$risk_group_mapping_action <- rg$mapping_action
-  yn_vars <- c(
-    "flt3_itd", "npm", "cebpa",
-    "cytogenetics_t821", "cytogenetics_inv16",
-    "cytogenetics_mll", "cytogenetics_monosomy7",
-    "cns_disease"
+
+  risk <- standardize_risk_group(out$risk_group, spec)
+  out$risk_group_original <- risk$original
+  out$risk_group_std <- risk$standardized
+  out$risk_group_qa_flag <- risk$qa_flag
+  out$risk_group_mapping_action <- risk$mapping_action
+
+  yes_no <- c(
+    "flt3_itd", "npm", "cebpa", "cytogenetics_t821", "cytogenetics_inv16",
+    "cytogenetics_mll", "cytogenetics_monosomy7", "cns_disease"
   )
-  for (nm in yn_vars) {
-    if (nm %in% names(out)) {
-      out[[paste0(nm, "_std")]] <- standardize_yes_no(out[[nm]], spec)
-    }
+  for (nm in intersect(yes_no, names(out))) {
+    out[[paste0(nm, "_std")]] <- standardize_yes_no(out[[nm]], spec)
   }
+
   if ("wbc_at_diagnosis_source_workbook" %in% names(out)) {
+    workbook <- out$wbc_at_diagnosis_source_workbook
     out$source_family_aml1031 <- as.integer(
-      grepl("AML1031", out$wbc_at_diagnosis_source_workbook, ignore.case = TRUE) &
-        !grepl("additional|sorted", out$wbc_at_diagnosis_source_workbook, ignore.case = TRUE)
+      grepl("AML1031", workbook, ignore.case = TRUE) &
+        !grepl("additional|sorted", workbook, ignore.case = TRUE)
     )
   }
   out

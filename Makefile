@@ -19,7 +19,7 @@ check: lint test
 	$(PYTHON) scripts/check_environment.py
 
 audit:
-	$(PYTHON) scripts/audit_target_aml_source.py
+	$(PYTHON) -m pediastat.gdc
 
 db-bootstrap:
 	$(PYTHON) scripts/bootstrap_database.py --local-cluster

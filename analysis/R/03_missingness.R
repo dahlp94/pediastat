@@ -104,7 +104,6 @@ run_missingness <- function(cohort, long_baseline) {
   write_csv_artifact(by_var, "missingness_by_variable.csv")
   patterns <- missingness_pattern_summary(cohort)
   write_csv_artifact(patterns, "missingness_patterns.csv")
-  write_csv_artifact(utils::head(patterns, 15), "missingness_patterns_top15.csv")
   save_missingness_heatmap(cohort)
   n_complete <- sum(patterns$n_variables_missing == 0)
   list(

@@ -3,7 +3,7 @@
   "deaths": 695,
   "censored": 1283,
   "crude_event_percent": 35.14,
-  "crude_event_percent_note": "Crude event percentage is deaths/N. It is not a cumulative mortality risk, because follow-up duration differs across persons. Use Kaplan-Meier for survival probability.",
+  "crude_event_percent_note": "Crude event percentage is deaths/N, not cumulative mortality risk. Use Kaplan-Meier for survival probability.",
   "observed_os_days_min": 1,
   "observed_os_days_max": 4134,
   "observed_os_years_min": 0.0027378507871321,

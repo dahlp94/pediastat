@@ -89,3 +89,19 @@ test_that("Stage 4 R scripts do not call Cox or log-rank", {
     expect_false(grepl("survdiff\\s*\\(", txt), info = script)
   }
 })
+
+
+test_that("Stage 4 does not produce model-planning artifacts", {
+  model_plan_artifacts <- c(
+    "core_candidate_readiness.csv",
+    "redundancy_continuous_spearman.csv",
+    "redundancy_findings.csv",
+    "redundancy_primary_code_by_inv16.csv",
+    "redundancy_primary_code_by_mll.csv",
+    "redundancy_primary_code_by_monosomy7.csv",
+    "redundancy_primary_code_by_t821.csv",
+    "redundancy_risk_group_by_flt3.csv",
+    "redundancy_risk_group_by_t821.csv"
+  )
+  expect_false(any(file.exists(file.path(desc_dir, model_plan_artifacts))))
+})
