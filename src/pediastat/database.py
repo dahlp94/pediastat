@@ -1,18 +1,276 @@
-"""Load parsed source rows into PostgreSQL with replace-in-transaction semantics."""
+"""Database, local PostgreSQL bootstrap, and ingestion persistence helpers."""
 
 from __future__ import annotations
 
 import json
+import os
+import shutil
+import subprocess
+import time
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
+from urllib.parse import quote_plus
 from uuid import UUID, uuid4
 
-from sqlalchemy import text
+from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
+from pediastat.config import PROJECT_ROOT, Settings, get_settings
 from pediastat.gdc import classify_vital_status
-from pediastat.ingestion.missingness import classify_missing
+from pediastat.ingest import classify_missing
+
+SQL_FILES = (
+    "01_create_schemas.sql",
+    "02_create_ingestion_tables.sql",
+    "03_create_source_registry.sql",
+    "04_create_gdc_raw_tables.sql",
+    "05_create_supplement_raw_tables.sql",
+    "06_create_staging_tables.sql",
+    "07_create_analytics_tables.sql",
+    "08_create_stage4_extract_view.sql",
+)
+
+
+def sqlalchemy_url(settings: Settings | None = None) -> str:
+    settings = settings or get_settings()
+    password = settings.postgres_password.get_secret_value()
+    user = quote_plus(settings.postgres_user)
+    host = settings.postgres_host
+    port = settings.postgres_port
+    database = quote_plus(settings.postgres_db)
+    if password:
+        secret = quote_plus(password)
+        return f"postgresql+psycopg://{user}:{secret}@{host}:{port}/{database}"
+    return f"postgresql+psycopg://{user}@{host}:{port}/{database}"
+
+
+def create_db_engine(settings: Settings | None = None) -> Engine:
+    return create_engine(sqlalchemy_url(settings), pool_pre_ping=True)
+
+
+def apply_sql_file(engine: Engine, sql_text: str) -> None:
+    """Apply a SQL file. PostgreSQL DDL is executed statement-by-statement."""
+    statements = _split_sql(sql_text)
+    with engine.begin() as connection:
+        for statement in statements:
+            connection.execute(text(statement))
+
+
+def _split_sql(sql_text: str) -> list[str]:
+    statements: list[str] = []
+    current: list[str] = []
+
+    for line in sql_text.splitlines():
+        stripped = line.strip()
+
+        if not stripped and not current:
+            continue
+
+        if stripped.startswith("--") and not current:
+            continue
+
+        current.append(line)
+
+        if stripped.endswith(";"):
+            chunk = "\n".join(current).strip()
+            if chunk:
+                statements.append(chunk)
+            current = []
+
+    trailing = "\n".join(current).strip()
+    if trailing:
+        statements.append(trailing)
+
+    return statements
+
+
+DEFAULT_DATA_DIR = PROJECT_ROOT / ".pgdata"
+
+
+DEFAULT_PORT = 5433
+
+
+DEFAULT_USER = "pediastat"
+
+
+DEFAULT_DB = "pediastat"
+
+
+def _postgres_bin(name: str) -> str:
+    env_dir = os.environ.get("POSTGRES_BIN")
+    candidates = []
+    if env_dir:
+        candidates.append(Path(env_dir) / name)
+    which = shutil.which(name)
+    if which:
+        candidates.append(Path(which))
+    candidates.extend(
+        [
+            Path("/Library/PostgreSQL/18/bin") / name,
+            Path("/Library/PostgreSQL/17/bin") / name,
+            Path("/usr/local/opt/postgresql@18/bin") / name,
+            Path("/opt/homebrew/opt/postgresql@18/bin") / name,
+        ]
+    )
+    for path in candidates:
+        if path.is_file():
+            return str(path)
+    msg = f"Could not find {name}. Install PostgreSQL or set POSTGRES_BIN."
+    raise FileNotFoundError(msg)
+
+
+def _ensure_trust_auth(data_dir: Path) -> None:
+    """Keep the project-local cluster passwordless on localhost."""
+    hba = data_dir / "pg_hba.conf"
+    if not hba.exists():
+        return
+
+    marker = "# PediaStat local trust authentication"
+    rules = (
+        f"{marker}\n"
+        "local   all   all                     trust\n"
+        "host    all   all   127.0.0.1/32      trust\n"
+        "host    all   all   ::1/128           trust\n"
+    )
+
+    current = hba.read_text(encoding="utf-8")
+    if marker not in current:
+        hba.write_text(rules + "\n" + current, encoding="utf-8")
+
+
+def cluster_is_running(data_dir: Path = DEFAULT_DATA_DIR) -> bool:
+    pg_ctl = _postgres_bin("pg_ctl")
+    result = subprocess.run(
+        [pg_ctl, "-D", str(data_dir), "status"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
+def bootstrap_cluster(
+    data_dir: Path = DEFAULT_DATA_DIR,
+    port: int = DEFAULT_PORT,
+    user: str = DEFAULT_USER,
+    database: str = DEFAULT_DB,
+) -> Settings:
+    """Initialize a local trust-auth cluster if needed and apply DDL."""
+    data_dir.mkdir(parents=True, exist_ok=True)
+    pg_ctl = _postgres_bin("pg_ctl")
+    initdb = _postgres_bin("initdb")
+    createdb = _postgres_bin("createdb")
+    marker = data_dir / "PG_VERSION"
+    if not marker.exists():
+        init_cmd = [
+            initdb,
+            "-D",
+            str(data_dir),
+            "-U",
+            user,
+            "--auth-local=trust",
+            "--auth-host=trust",
+            "--encoding=UTF8",
+        ]
+        result = subprocess.run(
+            [*init_cmd, "--locale=C"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            for child in list(data_dir.iterdir()):
+                if child.is_dir():
+                    shutil.rmtree(child)
+                else:
+                    child.unlink()
+            subprocess.run(init_cmd, check=True)
+        config = data_dir / "postgresql.conf"
+        extra = (
+            f"\nport = {port}\n"
+            f"unix_socket_directories = '{data_dir}'\n"
+            "listen_addresses = 'localhost'\n"
+        )
+        config.write_text(config.read_text(encoding="utf-8") + extra, encoding="utf-8")
+
+    _ensure_trust_auth(data_dir)
+
+    if not cluster_is_running(data_dir):
+        log_file = data_dir / "pg.log"
+        subprocess.run(
+            [
+                pg_ctl,
+                "-D",
+                str(data_dir),
+                "-l",
+                str(log_file),
+                "start",
+            ],
+            check=True,
+        )
+        time.sleep(1.0)
+    else:
+        subprocess.run(
+            [pg_ctl, "-D", str(data_dir), "reload"],
+            check=True,
+        )
+    env = os.environ.copy()
+    env.update(
+        {
+            "PGHOST": "localhost",
+            "PGPORT": str(port),
+            "PGUSER": user,
+        }
+    )
+    exists = subprocess.run(
+        [
+            _postgres_bin("psql"),
+            "-h",
+            "localhost",
+            "-p",
+            str(port),
+            "-U",
+            user,
+            "-d",
+            "postgres",
+            "-tAc",
+            f"SELECT 1 FROM pg_database WHERE datname = '{database}'",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    if exists.stdout.strip() != "1":
+        subprocess.run(
+            [
+                createdb,
+                "-h",
+                "localhost",
+                "-p",
+                str(port),
+                "-U",
+                user,
+                database,
+            ],
+            check=True,
+            env=env,
+        )
+    settings = Settings(
+        postgres_host="localhost",
+        postgres_port=port,
+        postgres_db=database,
+        postgres_user=user,
+        postgres_password="",
+        _env_file=None,
+    )
+    engine = create_db_engine(settings)
+    sql_dir = PROJECT_ROOT / "sql"
+    for name in SQL_FILES:
+        apply_sql_file(engine, (sql_dir / name).read_text(encoding="utf-8"))
+    return settings
 
 
 def utc_now() -> datetime:
@@ -200,10 +458,7 @@ def replace_gdc_entities(
                 columns = list(payload)
                 placeholders = ", ".join(f":{name}" for name in columns)
                 colsql = ", ".join(columns)
-                insert = text(
-                    f"INSERT INTO {table} ({colsql}) "
-                    f"VALUES ({placeholders})"
-                )
+                insert = text(f"INSERT INTO {table} ({colsql}) VALUES ({placeholders})")
                 if "payload" in payload:
                     insert = text(
                         f"INSERT INTO {table} ({colsql}) "

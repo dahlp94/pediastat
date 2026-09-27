@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any
 
-from pediastat.ingestion.missingness import classify_missing, is_observed
+from pediastat.ingest import classify_missing, is_observed
 
 
 def _as_number(value: Any) -> float | None:

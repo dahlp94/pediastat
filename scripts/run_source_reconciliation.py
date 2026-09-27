@@ -13,7 +13,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from pediastat.config import get_settings
-from pediastat.database.engine import create_db_engine
+from pediastat.database import create_db_engine
 from pediastat.reconciliation.run import DEFAULT_OUTPUT, run_reconciliation
 
 
@@ -24,7 +24,7 @@ def _main() -> int:
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     if args.local_cluster:
-        from pediastat.database.bootstrap import bootstrap_cluster
+        from pediastat.database import bootstrap_cluster
 
         settings = bootstrap_cluster()
     else:

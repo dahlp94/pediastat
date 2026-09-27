@@ -12,7 +12,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from pediastat.config import PROJECT_ROOT
-from pediastat.ingestion.identifiers import summarize_identifiers
+from pediastat.ingest import summarize_identifiers
 from pediastat.reconciliation.age import summarize_age_days
 from pediastat.reconciliation.concepts import CYTOGENETIC_COLUMNS
 from pediastat.reconciliation.discordance import (

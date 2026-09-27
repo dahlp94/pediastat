@@ -16,19 +16,19 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from pediastat.config import PROJECT_ROOT, get_settings
-from pediastat.database.engine import create_db_engine
-from pediastat.gdc import (
-    fetch_clinical_files,
-    flatten_clinical_file_row,
-    md5_file,
-)
-from pediastat.ingestion.loaders import (
+from pediastat.database import (
+    create_db_engine,
     finish_ingestion_run,
     replace_supplement_sheet,
     start_ingestion_run,
     upsert_source,
 )
-from pediastat.ingestion.supplements import profile_sheet, read_workbook_sheets
+from pediastat.gdc import (
+    fetch_clinical_files,
+    flatten_clinical_file_row,
+    md5_file,
+)
+from pediastat.ingest import profile_sheet, read_workbook_sheets
 
 DEFAULT_DOWNLOAD_DIR = PROJECT_ROOT / "data" / "raw" / "gdc_open_clinical_supplements"
 AUDIT_FILES = PROJECT_ROOT / "artifacts" / "source_audit" / "open_clinical_files.csv"
@@ -62,7 +62,7 @@ def _main() -> int:
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     if args.local_cluster:
-        from pediastat.database.bootstrap import bootstrap_cluster
+        from pediastat.database import bootstrap_cluster
 
         settings = bootstrap_cluster()
     else:

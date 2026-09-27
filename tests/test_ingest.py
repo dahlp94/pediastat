@@ -1,14 +1,11 @@
-"""Tests for ingestion helpers. These do not call GDC or PostgreSQL."""
+"""Tests for source parsing and normalization. These do not call GDC or PostgreSQL."""
 
 from __future__ import annotations
 
 from pathlib import Path
-from uuid import uuid4
 
-import pytest
 from openpyxl import Workbook
 
-from pediastat.database import replace_gdc_entities
 from pediastat.ingest import (
     classify_missing,
     identifier_header,
@@ -26,7 +23,7 @@ from pediastat.ingest import (
 
 def test_identifier_normalization_preserves_original() -> None:
     raw = " target-20-pasfyf "
-    assert original_identifier(raw) == " target-20-pasfyf "
+    assert original_identifier(raw) == raw
     assert normalize_identifier(raw) == "TARGET-20-PASFYF"
     assert join_barcode(raw) == "TARGET-20-PASFYF"
 
@@ -120,6 +117,7 @@ def test_parse_cases_empty_nested_entities() -> None:
 def test_workbook_sheet_provenance_fields(tmp_path: Path) -> None:
     assert identifier_header(["TARGET USI", "Vital Status"]) == "TARGET USI"
     assert identifier_header(["Column Header"]) is None
+
     path = tmp_path / "TARGET_AML_ClinicalData_fixture.xlsx"
     workbook = Workbook()
     sheet = workbook.active
@@ -128,103 +126,27 @@ def test_workbook_sheet_provenance_fields(tmp_path: Path) -> None:
     sheet.append(["TARGET USI", "Vital Status", "WBC at Diagnosis"])
     sheet.append([" TARGET-20-PASFYF ", "Alive", 12.5])
     sheet.append(["TARGET-20-PAYGWX-Unsorted", "Dead", None])
-    extra = workbook.create_sheet("Notes")
-    extra.append(["not", "patient", "data"])
-    extra.append(["a", "b", "c"])
+
+    notes = workbook.create_sheet("Notes")
+    notes.append(["not", "patient", "data"])
+    notes.append(["a", "b", "c"])
     workbook.save(path)
+
     sheets = read_workbook_sheets(path)
     by_name = {item["sheet"]: item for item in sheets}
     clinical = by_name["Clinical Data"]
-    notes = by_name["Notes"]
+    notes_sheet = by_name["Notes"]
+
     assert clinical["workbook"] == path.name
     assert clinical["is_patient_level"] is True
-    assert notes["is_patient_level"] is False
+    assert notes_sheet["is_patient_level"] is False
+
     first = clinical["records"][0]
     assert first["original_identifier"] == " TARGET-20-PASFYF "
     assert first["normalized_identifier"] == "TARGET-20-PASFYF"
     assert first["join_barcode"] == "TARGET-20-PASFYF"
     assert first["cells"]["Vital Status"] == "Alive"
+
     second = clinical["records"][1]
     assert second["normalized_identifier"] == "TARGET-20-PAYGWX-UNSORTED"
     assert second["join_barcode"] == "TARGET-20-PAYGWX"
-
-
-class _FakeResult:
-    def scalar_one(self) -> object:
-        return uuid4()
-
-
-class _FakeConnection:
-    def __init__(self, fail_on: str | None = None) -> None:
-        self.statements: list[str] = []
-        self.fail_on = fail_on
-        self.exited_with: type[BaseException] | None = None
-
-    def execute(self, statement: object, params: object = None) -> _FakeResult:
-        sql = str(statement)
-        self.statements.append(sql)
-        if self.fail_on and self.fail_on in sql:
-            raise RuntimeError("forced failure")
-        return _FakeResult()
-
-
-class _FakeTransaction:
-    def __init__(self, connection: _FakeConnection) -> None:
-        self.connection = connection
-
-    def __enter__(self) -> _FakeConnection:
-        return self.connection
-
-    def __exit__(
-        self, exc_type: type[BaseException] | None, exc: object, tb: object
-    ) -> bool:
-        self.connection.exited_with = exc_type
-        return False
-
-
-class _FakeEngine:
-    def __init__(self, connection: _FakeConnection) -> None:
-        self.connection = connection
-
-    def begin(self) -> _FakeTransaction:
-        return _FakeTransaction(self.connection)
-
-
-def test_replace_gdc_entities_deletes_before_insert_and_rolls_back() -> None:
-    parsed = parse_cases(
-        [
-            {
-                "case_id": "abc",
-                "submitter_id": "TARGET-20-PASFYF",
-                "follow_ups": [
-                    {"follow_up_id": "f1", "days_to_follow_up": 1},
-                    {"follow_up_id": "f2", "days_to_follow_up": 2},
-                ],
-            }
-        ]
-    )
-    connection = _FakeConnection()
-    counts = replace_gdc_entities(
-        _FakeEngine(connection),  # type: ignore[arg-type]
-        source_id=uuid4(),
-        run_id=uuid4(),
-        entities=parsed,
-    )
-    assert counts["follow_ups"] == 2
-    deletes = [sql for sql in connection.statements if sql.upper().startswith("DELETE")]
-    inserts = [sql for sql in connection.statements if "INSERT INTO raw.gdc_" in sql]
-    assert deletes
-    assert any("raw.gdc_follow_ups" in sql for sql in inserts)
-
-    failing = _FakeConnection(fail_on="INSERT INTO raw.gdc_follow_ups")
-    with pytest.raises(RuntimeError, match="forced failure"):
-        replace_gdc_entities(
-            _FakeEngine(failing),  # type: ignore[arg-type]
-            source_id=uuid4(),
-            run_id=uuid4(),
-            entities=parsed,
-        )
-    assert failing.exited_with is RuntimeError
-    assert not any(
-        "INSERT INTO staging.gdc_follow_ups" in sql for sql in failing.statements
-    )

@@ -13,20 +13,20 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from pediastat.config import get_settings
-from pediastat.database.engine import create_db_engine
+from pediastat.database import (
+    create_db_engine,
+    finish_ingestion_run,
+    replace_gdc_entities,
+    start_ingestion_run,
+    upsert_source,
+)
 from pediastat.gdc import (
     GDC_API_BASE_URL,
     GDC_CASE_FIELDS,
     TARGET_AML_PROJECT_ID,
     fetch_all_cases,
 )
-from pediastat.ingestion.gdc import parse_cases
-from pediastat.ingestion.loaders import (
-    finish_ingestion_run,
-    replace_gdc_entities,
-    start_ingestion_run,
-    upsert_source,
-)
+from pediastat.ingest import parse_cases
 
 
 def _main() -> int:
@@ -36,7 +36,7 @@ def _main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
     if args.local_cluster:
-        from pediastat.database.bootstrap import bootstrap_cluster
+        from pediastat.database import bootstrap_cluster
 
         settings = bootstrap_cluster()
     else:

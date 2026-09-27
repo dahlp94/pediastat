@@ -23,7 +23,7 @@ def _main() -> int:
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     if args.local_cluster:
-        from pediastat.database.bootstrap import bootstrap_cluster
+        from pediastat.database import bootstrap_cluster
 
         settings = bootstrap_cluster()
         logging.info(
@@ -36,7 +36,7 @@ def _main() -> int:
         return 0
 
     from pediastat.config import PROJECT_ROOT, get_settings
-    from pediastat.database.engine import SQL_FILES, apply_sql_file, create_db_engine
+    from pediastat.database import SQL_FILES, apply_sql_file, create_db_engine
 
     settings = get_settings()
     engine = create_db_engine(settings)

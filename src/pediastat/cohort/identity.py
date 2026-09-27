@@ -7,8 +7,7 @@ from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from pediastat.ingestion.identifiers import join_barcode, normalize_identifier
-from pediastat.ingestion.missingness import is_observed
+from pediastat.ingest import is_observed, join_barcode, normalize_identifier
 
 PATIENT_USI = re.compile(r"^TARGET-(20|21)-[A-Z0-9]{6}$")
 EXTENDED_PATIENT = re.compile(r"^(TARGET-(?:20|21)-[A-Z0-9]{6})-(.+)$")

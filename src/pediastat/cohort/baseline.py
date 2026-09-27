@@ -9,7 +9,7 @@ from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from pediastat.ingestion.missingness import classify_missing, is_observed
+from pediastat.ingest import classify_missing, is_observed
 from pediastat.reconciliation.discordance import _as_number, _norm_category
 
 MOLECULAR_ORDER = ("AML1031", "Discovery", "Validation", "LowDepth", "additional")

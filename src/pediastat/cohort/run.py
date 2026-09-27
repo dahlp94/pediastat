@@ -23,7 +23,7 @@ from pediastat.cohort.endpoint import EVENT_SOURCE
 from pediastat.cohort.gdc_definitions import verify_time_origin
 from pediastat.cohort.identity import build_identity_crosswalk, summarize_identity
 from pediastat.config import PROJECT_ROOT
-from pediastat.database.engine import apply_sql_file
+from pediastat.database import apply_sql_file
 from pediastat.reconciliation.discordance import (
     categorical_agreement,
     numeric_discordance,
