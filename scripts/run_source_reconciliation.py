@@ -14,7 +14,7 @@ if str(SRC) not in sys.path:
 
 from pediastat.config import get_settings
 from pediastat.database import create_db_engine
-from pediastat.reconciliation.run import DEFAULT_OUTPUT, run_reconciliation
+from pediastat.ingest import DEFAULT_OUTPUT, run_reconciliation
 
 
 def _main() -> int:

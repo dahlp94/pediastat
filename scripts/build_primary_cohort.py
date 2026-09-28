@@ -12,7 +12,7 @@ SRC = Path(__file__).resolve().parents[1] / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from pediastat.cohort.run import DEFAULT_OUTPUT, build_primary_cohort
+from pediastat.cohort import DEFAULT_OUTPUT, build_primary_cohort
 from pediastat.config import get_settings
 from pediastat.database import create_db_engine
 
