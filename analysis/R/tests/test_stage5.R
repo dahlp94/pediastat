@@ -9,8 +9,7 @@ root <- find_root()
 if (!exists("PROJECT_ROOT", inherits = TRUE)) PROJECT_ROOT <- root
 spec <- yaml::read_yaml(file.path(root, "config", "model_spec.yaml"))
 
-source(file.path(root, "analysis", "R", "10_model_coding.R"), local = FALSE)
-source(file.path(root, "analysis", "R", "11_preflight.R"), local = FALSE)
+source(file.path(root, "analysis", "R", "model_setup.R"), local = FALSE)
 
 test_that("continuous coding is prespecified", {
   expect_equal(age5(c(0, 5, 10, 15)), c(0, 1, 2, 3))
@@ -84,8 +83,7 @@ test_that("MI and multiplicity decisions remain frozen in the spec", {
 
 test_that("Stage 5 remains preflight rather than inference", {
   scripts <- c(
-    file.path(root, "analysis", "R", "10_model_coding.R"),
-    file.path(root, "analysis", "R", "11_preflight.R"),
+    file.path(root, "analysis", "R", "model_setup.R"),
     file.path(root, "analysis", "R", "run_stage5.R"),
     file.path(root, "analysis", "R", "tests", "test_stage5.R")
   )

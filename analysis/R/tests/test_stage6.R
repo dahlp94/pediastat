@@ -14,8 +14,7 @@ if (!exists("PROJECT_ROOT", inherits = TRUE)) {
 
 spec <- yaml::read_yaml(file.path(root, "config", "model_spec.yaml"))
 inf_dir <- file.path(root, "artifacts", "inference")
-source(file.path(root, "analysis", "R", "10_model_coding.R"), local = FALSE)
-source(file.path(root, "analysis", "R", "11_preflight.R"), local = FALSE)
+source(file.path(root, "analysis", "R", "model_setup.R"), local = FALSE)
 source(file.path(root, "analysis", "R", "25_nonlinear_sensitivity.R"), local = FALSE)
 
 test_that("frozen cohort accounting is unchanged", {

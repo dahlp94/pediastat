@@ -4,12 +4,9 @@
 
 stage6_scripts <- c(
   "setup.R",
-  "10_model_coding.R",
-  "11_preflight.R",
-  "20_prepare_inferential_data.R",
-  "21_mi_specification.R",
-  "22_run_multiple_imputation.R",
-  "23_fit_cox_models.R",
+  "model_setup.R",
+  "imputation.R",
+  "models.R",
   "25_nonlinear_sensitivity.R",
   "26_ph_diagnostics.R",
   "27_influence_diagnostics.R",

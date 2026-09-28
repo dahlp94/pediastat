@@ -3,8 +3,7 @@
 
 stage5_scripts <- c(
   "setup.R",
-  "10_model_coding.R",
-  "11_preflight.R"
+  "model_setup.R"
 )
 
 locate_script_dir <- function() {

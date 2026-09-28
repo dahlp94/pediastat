@@ -29,8 +29,7 @@ investigator narrative source remains `reports/stage4_descriptive_analysis.qmd`.
 ## Stage 5 scripts
 
 ```text
-10_model_coding.R
-11_preflight.R
+model_setup.R
 run_stage5.R
 tests/test_stage5.R
 ```
@@ -46,10 +45,9 @@ make model-plan
 ## Stage 6 scripts
 
 ```text
-20_prepare_inferential_data.R
-21_mi_specification.R
-22_run_multiple_imputation.R
-23_fit_cox_models.R
+model_setup.R
+imputation.R
+models.R
 25_nonlinear_sensitivity.R
 26_ph_diagnostics.R
 27_influence_diagnostics.R
@@ -62,7 +60,7 @@ tests/test_stage6.R
 
 These scripts reuse Stage 5 coding and preflight. They do not rebuild
 cohort eligibility. Complete-case sensitivity uses the same formulas as
-the multiply imputed fits (`23_fit_cox_models.R`).
+the multiply imputed fits (`models.R`).
 
 ```bash
 make inference

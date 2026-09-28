@@ -77,8 +77,7 @@ def test_events_per_df_are_recorded() -> None:
 
 def test_stage5_r_scripts_do_not_fit_cox_or_run_mice() -> None:
     stage5 = [
-        R_DIR / "10_model_coding.R",
-        R_DIR / "11_preflight.R",
+        R_DIR / "model_setup.R",
         R_DIR / "run_stage5.R",
         R_DIR / "tests" / "test_stage5.R",
     ]
