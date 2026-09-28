@@ -8,8 +8,11 @@ from pathlib import Path
 
 import pytest
 
-from pediastat.config import PROJECT_ROOT
-from pediastat.model_plan.spec import load_model_spec
+from pediastat.config import (
+    PROJECT_ROOT,
+    assert_spec_has_no_results,
+    load_model_spec,
+)
 
 R_DIR = PROJECT_ROOT / "analysis" / "R"
 INF_DIR = PROJECT_ROOT / "artifacts" / "inference"
@@ -37,8 +40,6 @@ def test_stage6_scripts_exist() -> None:
 
 
 def test_frozen_spec_still_has_no_results() -> None:
-    from pediastat.model_plan.spec import assert_spec_has_no_results
-
     assert_spec_has_no_results(SPEC)
     assert SPEC["missing_data"]["m"] == 30
     assert SPEC["missing_data"]["seed"] == 20260814

@@ -4,7 +4,43 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pediastat.config import PROJECT_ROOT, Settings, load_yaml_config
+from pediastat.config import (
+    PROJECT_ROOT,
+    Settings,
+    assert_spec_has_no_results,
+    load_model_spec,
+    load_yaml_config,
+)
+
+
+def test_model_spec_loads() -> None:
+    spec = load_model_spec()
+
+    assert spec["locked"] is True
+    assert spec["cohort"]["n"] == 1978
+    assert spec["cohort"]["deaths"] == 695
+    assert spec["primary_model"]["df"] == 5
+    assert spec["secondary_model"]["df"] == 10
+
+
+def test_model_spec_contains_no_results() -> None:
+    assert_spec_has_no_results(load_model_spec())
+
+
+def test_model_spec_result_keys_are_rejected() -> None:
+    bad_spec = {
+        "primary_model": {
+            "formula": "Surv(os_days, os_event) ~ age5",
+            "hazard_ratio": 1.25,
+        }
+    }
+
+    try:
+        assert_spec_has_no_results(bad_spec)
+    except ValueError as exc:
+        assert "hazard_ratio" in str(exc)
+    else:
+        raise AssertionError("Expected result key to be rejected.")
 
 
 def test_settings_load_successfully() -> None:

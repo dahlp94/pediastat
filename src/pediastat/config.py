@@ -19,6 +19,21 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_YAML_PATH = PROJECT_ROOT / "config" / "settings.yaml"
 EXAMPLE_YAML_PATH = PROJECT_ROOT / "config" / "settings.example.yaml"
 
+MODEL_SPEC_PATH = PROJECT_ROOT / "config" / "model_spec.yaml"
+
+FORBIDDEN_RESULT_KEYS = {
+    "hazard_ratio",
+    "hazard_ratios",
+    "hr",
+    "coef",
+    "coefficient",
+    "p_value",
+    "pvalue",
+    "q_value",
+    "qvalue",
+    "logrank",
+    "concordance_result",
+}
 
 class Settings(BaseSettings):
     """Environment-backed application settings."""
@@ -90,6 +105,37 @@ def load_yaml_config(path: Path | None = None) -> dict[str, Any]:
     if isinstance(database, dict):
         database.pop("password", None)
     return loaded
+
+def load_model_spec(path: Path | None = None) -> dict[str, Any]:
+    """Load the frozen inferential model specification."""
+    spec_path = path or MODEL_SPEC_PATH
+
+    with spec_path.open(encoding="utf-8") as handle:
+        loaded = yaml.safe_load(handle)
+
+    if not isinstance(loaded, dict):
+        msg = f"Model spec at {spec_path} must be a mapping."
+        raise ValueError(msg)
+
+    return loaded
+
+
+def assert_spec_has_no_results(spec: dict[str, Any] | None = None) -> None:
+    """Ensure the frozen model specification contains no fitted results."""
+    payload = spec if spec is not None else load_model_spec()
+    _walk_for_result_keys(payload, "root")
+
+
+def _walk_for_result_keys(node: object, prefix: str) -> None:
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if str(key).lower() in FORBIDDEN_RESULT_KEYS:
+                msg = f"Model spec unexpectedly contains result key {prefix}.{key}."
+                raise ValueError(msg)
+            _walk_for_result_keys(value, f"{prefix}.{key}")
+    elif isinstance(node, list):
+        for index, item in enumerate(node):
+            _walk_for_result_keys(item, f"{prefix}[{index}]")
 
 
 @lru_cache(maxsize=1)

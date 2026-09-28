@@ -50,7 +50,6 @@ descriptive:
 
 model-plan:
 	$(PYTHON) scripts/check_environment.py
-	$(PYTHON) scripts/export_model_plan.py
 	$(RSCRIPT) analysis/R/run_stage5.R
 
 inference:
