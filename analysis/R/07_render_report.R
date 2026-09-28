@@ -9,7 +9,7 @@ script_dir <- (function() {
   }
   file.path(getwd(), "analysis", "R")
 })()
-source(file.path(script_dir, "00_setup.R"), local = FALSE)
+source(file.path(script_dir, "setup.R"), local = FALSE)
 load_stage4_packages()
 
 root <- PROJECT_ROOT

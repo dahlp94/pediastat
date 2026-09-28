@@ -3,8 +3,7 @@
 # Does not rebuild eligibility. Does not redesign models from results.
 
 stage6_scripts <- c(
-  "00_setup.R",
-  "01_load_primary_cohort.R",
+  "setup.R",
   "10_model_coding.R",
   "11_preflight.R",
   "20_prepare_inferential_data.R",

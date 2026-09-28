@@ -2,13 +2,8 @@
 # Stage 4 descriptive workflow. Reads the frozen cohort. Does not fit Cox models.
 
 stage4_scripts <- c(
-  "00_setup.R",
-  "01_load_primary_cohort.R",
-  "02_baseline_descriptives.R",
-  "03_missingness.R",
-  "04_overall_survival.R",
-  "05_followup.R",
-  "06_generate_descriptive_outputs.R"
+  "setup.R",
+  "descriptive.R"
 )
 
 locate_script_dir <- function() {

@@ -2,8 +2,7 @@
 # Stage 5 model-plan preflight. Reads the frozen cohort; fits no Cox model or MI.
 
 stage5_scripts <- c(
-  "00_setup.R",
-  "01_load_primary_cohort.R",
+  "setup.R",
   "10_model_coding.R",
   "11_preflight.R"
 )
