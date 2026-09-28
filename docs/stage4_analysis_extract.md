@@ -26,8 +26,8 @@ FROM analytics.stage4_primary_cohort_extract
 ORDER BY analysis_person_id;
 ```
 
-If the view is missing, `analysis/R/01_load_primary_cohort.R` applies the
-SQL file and then runs the same SELECT.
+If the view is missing, `analysis/R/setup.R` applies the SQL file and then
+runs the same SELECT.
 
 Baseline provenance used for source-conflict QA is also read in long form:
 

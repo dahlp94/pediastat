@@ -6,19 +6,21 @@ the Python/PostgreSQL cohort is frozen.
 ## Stage 4 scripts
 
 ```text
-00_setup.R
-01_load_primary_cohort.R
-02_baseline_descriptives.R
-03_missingness.R
-04_overall_survival.R
-05_followup.R
-06_generate_descriptive_outputs.R
+setup.R
+descriptive.R
 run_stage4.R
+tests/test_stage4.R
 ```
 
-These scripts read `analytics.stage4_primary_cohort_extract`. They do not
-reimplement identity, age eligibility, event, or censoring rules. They do
-not fit Cox models or compare predictors with survival.
+`setup.R` provides the shared analysis setup, frozen-cohort validation,
+database connection, and cohort-loading functions. `descriptive.R` contains
+the Stage 4 baseline summaries, missingness analysis, overall Kaplan-Meier
+analysis, reverse-Kaplan-Meier follow-up, provenance, and descriptive output
+generation.
+
+Stage 4 reads `analytics.stage4_primary_cohort_extract`. It does not
+reimplement identity, age eligibility, event, or censoring rules, fit Cox
+models, or compare predictors with survival.
 
 `07_render_report.R` writes `reports/stage4_descriptive_analysis.html` from
 aggregate artifacts when a complete Quarto CLI is not available. The
