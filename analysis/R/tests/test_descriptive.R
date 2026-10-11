@@ -1,4 +1,4 @@
-# Stage 4 validation. These tests inspect artifacts and analysis objects.
+# Descriptive-analysis validation. These tests inspect artifacts and analysis objects.
 # They do not fit Cox models or compare predictors to survival.
 
 EXPECTED_N <- 1978L
@@ -15,7 +15,7 @@ find_root <- function() {
 root <- find_root()
 desc_dir <- file.path(root, "artifacts", "descriptive")
 
-test_that("population accounting matches frozen Stage 3 identity counts", {
+test_that("population accounting matches frozen cohort identity counts", {
   acc <- jsonlite::fromJSON(file.path(desc_dir, "population_accounting.json"))
   expect_equal(acc$original_gdc_cases, 2492)
   expect_equal(acc$gdc_cases_valid_identity, 2354)
@@ -66,17 +66,17 @@ test_that("only an overall KM figure is produced", {
   expect_false(any(stratified))
 })
 
-test_that("Stage 4 R scripts do not call Cox or log-rank", {
+test_that("descriptive R scripts do not call Cox or log-rank", {
   r_dir <- file.path(root, "analysis", "R")
-  stage4_names <- c(
+  descriptive_names <- c(
   "setup.R",
   "descriptive.R",
-  "07_render_report.R",
-  "run_stage4.R",
-  "test_stage4.R"
+  "render_descriptive_report.R",
+  "run_descriptive.R",
+  "test_descriptive.R"
   )
   scripts <- list.files(r_dir, pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
-  scripts <- scripts[basename(scripts) %in% stage4_names]
+  scripts <- scripts[basename(scripts) %in% descriptive_names]
   expect_true(length(scripts) >= 4)
   for (script in scripts) {
     txt <- paste(readLines(script, warn = FALSE), collapse = "\n")
@@ -86,7 +86,7 @@ test_that("Stage 4 R scripts do not call Cox or log-rank", {
 })
 
 
-test_that("Stage 4 does not produce model-planning artifacts", {
+test_that("descriptive analysis does not produce model-planning artifacts", {
   model_plan_artifacts <- c(
     "core_candidate_readiness.csv",
     "redundancy_continuous_spearman.csv",

@@ -1,6 +1,6 @@
 ---
 title: "PediaStat — Descriptive Analysis of the Primary Pediatric AML Cohort"
-subtitle: "Stage 4: cohort characterization and overall survival summary"
+subtitle: "Cohort characterization and overall survival summary"
 author: "PediaStat"
 date: today
 format:
@@ -47,11 +47,11 @@ patterns <- utils::head(read_desc("missingness_patterns.csv"), 15)
 
 This report describes the prespecified primary pediatric acute myeloid leukemia (AML) cohort in public TARGET-AML data and estimates the **overall** survival distribution.
 
-The scientific question remains observational: which baseline patient and disease characteristics are associated with overall survival? That inferential question is **not** answered here. Stage 4 does not compare survival across baseline subgroups, does not fit Cox models, and does not use p-values to screen covariates.
+The scientific question remains observational: which baseline patient and disease characteristics are associated with overall survival? That inferential question is **not** answered here. This descriptive analysis does not compare survival across baseline subgroups, does not fit Cox models, and does not use p-values to screen covariates.
 
-The aims of this stage are to:
+The aims of this report are to:
 
-- confirm the frozen Stage 3 population accounting
+- confirm the frozen primary-cohort population accounting
 - describe baseline characteristics of the locked cohort
 - quantify missingness and source provenance
 - estimate overall Kaplan–Meier survival and reverse Kaplan–Meier follow-up
@@ -60,7 +60,7 @@ The aims of this stage are to:
 
 The unit of analysis is the **analysis person**, identified by a canonical TARGET USI (`TARGET-20-XXXXXX` or `TARGET-21-XXXXXX`), not a raw GDC case.
 
-A person is in the primary overall-survival (OS) cohort if all of the following locked Stage 3 rules hold:
+A person is in the primary overall-survival (OS) cohort if all of the following locked primary-cohort rules hold:
 
 1. Unambiguous analysis-person identity
 2. GDC diagnosis entity present
@@ -75,7 +75,7 @@ Candidate covariates (WBC, risk group, FLT3/ITD, NPM, CEBPA, FAB, race, ethnicit
 
 # 3. Cohort Construction Summary
 
-Stage 3 is frozen. Descriptive findings in this report do not change eligibility.
+The primary cohort is frozen. Descriptive findings in this report do not change eligibility.
 
 ```{r}
 #| label: attrition-accounting
@@ -185,7 +185,7 @@ No multiple imputation was performed.
 
 # 7. Data Source / Provenance Summary
 
-AML-specific covariates are taken from overlapping open clinical supplements using the frozen Stage 3 precedence rules. Conflicts keep the precedence winner and a flag; values are not averaged.
+AML-specific covariates are taken from overlapping open clinical supplements using the frozen source-precedence rules. Conflicts keep the precedence winner and a flag; values are not averaged.
 
 ```{r}
 #| label: provenance
@@ -240,14 +240,14 @@ The median of observed OS times (`r followup$observed_os_days_median` days) is a
 
 Observed OS range: `r endpoint$observed_os_days_min`–`r endpoint$observed_os_days_max` days (`r round(endpoint$observed_os_years_min, 2)`–`r round(endpoint$observed_os_years_max, 2)` years).
 
-# 10. Scope of Stage 4
+# 10. Scope of this report
 
-Stage 4 is intentionally descriptive. It characterizes the frozen cohort,
+This report is intentionally descriptive. It characterizes the frozen cohort,
 summarizes baseline data and missingness, estimates overall Kaplan–Meier
 survival, and estimates potential follow-up with reverse Kaplan–Meier.
 
 Predictor coding, redundancy decisions, transformation choices, missing-data
-strategy, and model specification belong to the subsequent modeling stages and
+strategy, and model specification belong to the inferential specification and
 are not decided from this descriptive workflow.
 
 # 11. Limitations
@@ -255,19 +255,19 @@ are not decided from this descriptive workflow.
 - Public TARGET-AML data are observational and incomplete relative to controlled-access clinical files.
 - Baseline AML characteristics come from overlapping supplements with a frozen precedence rule; residual source conflict remains flagged rather than overwritten.
 - Missing baseline values are common for FAB and non-negligible for several molecular and cytogenetic fields.
-- Seven primary-cohort persons have an `index_date` QA flag; they were retained under the locked Stage 3 rule.
+- Seven primary-cohort persons have an `index_date` QA flag; they were retained under the locked cohort rule.
 - Crude death percentage (`r endpoint$crude_event_percent`%) is not a cumulative mortality risk because follow-up differs across persons.
 - No causal interpretation is offered.
 - No multivariable inference, missing-data method, or sensitivity survival analysis has been performed.
 
 # 12. Subsequent Inferential Plan
 
-Stage 5 froze the inferential plan before regression. The locked specification is `docs/inferential_model_specification.md`. In brief:
+Model preflight froze the inferential plan before regression. The locked specification is `docs/inferential_model_specification.md`. In brief:
 
 - Primary clinical Cox model: age5 + sex + log2(WBC) + risk group
 - Secondary molecular/cytogenetic Cox model without risk group
 - Multiple imputation is primary; complete case is sensitivity
-- No Cox model, hazard ratio, or predictor-specific survival analysis is contained in this Stage 4 report
+- No Cox model, hazard ratio, or predictor-specific survival analysis is contained in this descriptive report
 
 # Appendix
 

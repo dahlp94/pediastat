@@ -1,4 +1,4 @@
-# Stage 6 multiple-imputation diagnostics
+# Multiple-imputation diagnostics
 
 - Software: mice 3.19.0
 - m = 30

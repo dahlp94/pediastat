@@ -1,14 +1,14 @@
 # Statistical Analysis Plan
 
-Version: 0.6 (Stage 6 executed the frozen Stage 5 Cox + multiple-imputation plan)
-Status: population, primary endpoint, descriptive conventions, and inferential analysis rules remain locked. Stage 6 executed those rules. Changes after inspecting survival associations are SAP deviations (`docs/stage6_sap_deviations.md`).
+Version: 0.6 (inferential analysis executed the frozen Cox + multiple-imputation plan)
+Status: population, primary endpoint, descriptive conventions, and inferential analysis rules remain locked. The inferential analysis executed those rules. Changes after inspecting survival associations are SAP deviations (`docs/analysis_deviations.md`).
 
 Companion documents:
 
 - `docs/primary_cohort_specification.md`
 - `docs/baseline_covariate_source_rules.md`
-- `docs/stage4_variable_definitions.md`
-- `docs/stage4_analysis_extract.md`
+- `docs/baseline_variable_definitions.md`
+- `docs/descriptive_cohort_extract.md`
 - `docs/inferential_model_specification.md`
 - `config/model_spec.yaml`
 - `docs/target_aml_reconciliation_report.md`
@@ -112,11 +112,11 @@ Zero OS times, if present, are reported and not automatically dropped. Negative 
 
 ## 8. Secondary Endpoints
 
-TBD — event-free survival or relapse will be included only if they can be defined unambiguously. They are not defined in Stage 3.
+TBD — event-free survival or relapse will be included only if they can be defined unambiguously. They are not defined in the locked cohort.
 
 ## 9. Candidate Covariates
 
-Locked for the principal inferential models in Stage 5. Details: `docs/inferential_model_specification.md`.
+Locked for the principal inferential models before fitting. Details: `docs/inferential_model_specification.md`.
 
 **Primary clinical model:** age5, sex at birth, log2(WBC), risk group (Low / Standard / High).
 
@@ -139,7 +139,7 @@ File precedence remains `docs/baseline_covariate_source_rules.md`. Association w
 
 ## 10. Descriptive Analysis
 
-Locked in Stage 4. Produced for the overall primary cohort only.
+Locked in the descriptive analysis. Produced for the overall primary cohort only.
 
 - Cohort size and exclusion counts, including identity accounting
 - Table 1 of baseline characteristics for the full locked cohort (N = 1978)
@@ -153,11 +153,11 @@ Locked in Stage 4. Produced for the overall primary cohort only.
 - Follow-up duration by reverse Kaplan–Meier (deaths treated as censored)
 - The median of observed `os_days` is not reported as median follow-up or as median OS
 
-Stage 6 may add unadjusted KM curves for risk group and FLT3/ITD only. Those plots are descriptive, not variable-selection tools. Log-rank tests are not required; if shown they are unadjusted and secondary. Univariable survival screening is not used to include or exclude covariates.
+The inferential analysis may add unadjusted KM curves for risk group and FLT3/ITD only. Those plots are descriptive, not variable-selection tools. Log-rank tests are not required; if shown they are unadjusted and secondary. Univariable survival screening is not used to include or exclude covariates.
 
 ## 11. Primary Statistical Analysis
 
-Locked. Cox proportional hazards regression with Efron ties. **Executed in Stage 6** (`artifacts/inference/`, `reports/stage6_inferential_analysis.qmd`). The specification below is unchanged.
+Locked. Cox proportional hazards regression with Efron ties. **Executed in the inferential analysis** (`artifacts/inference/`, `reports/inferential_analysis.qmd`). The specification below is unchanged.
 
 Primary formula:
 
@@ -180,11 +180,11 @@ Complexity descriptor (not power): 695 deaths; primary df = 5 (139 events/df); s
 
 ## 12. Model Assumptions and Diagnostics
 
-Locked for Stage 6 execution. **Executed in Stage 6** (`artifacts/inference/ph/`, `artifacts/inference/nonlinear_sensitivity_summary.csv`). Diagnostic rules below are unchanged.
+Locked for inferential execution. **Executed in the inferential analysis** (`artifacts/inference/ph/`, `artifacts/inference/nonlinear_sensitivity_summary.csv`). Diagnostic rules below are unchanged.
 
 Proportional hazards: scaled Schoenfeld residuals, covariate-specific and global `cox.zph` tests, and plots. A p-value alone is not proof of a material violation.
 
-Functional form: primary linear age5 and log2 WBC; spline sensitivities with 3 knots at Stage 4 10th/50th/90th percentiles.
+Functional form: primary linear age5 and log2 WBC; spline sensitivities with 3 knots at the descriptive-analysis 10th/50th/90th percentiles.
 
 Influence: deviance residuals, martingale residuals where useful, dfbeta. Concordance is descriptive. Influential observations are not deleted automatically.
 
@@ -211,22 +211,22 @@ For inferential covariates, Unknown / Not Reported / structural missing / unreso
 
 **Sensitivity:** complete-case Cox using the same specification.
 
-MAR is a working assumption conditional on the imputation model. Stage 4 did not prove MAR. MNAR remains possible. No MNAR sensitivity is required unless later justified.
+MAR is a working assumption conditional on the imputation model. Descriptive missingness summaries did not prove MAR. MNAR remains possible. No MNAR sensitivity is required unless later justified.
 
-**Executed in Stage 6.** Diagnostics: `artifacts/inference/mi/`. Completed person-level imputations are gitignored. No imputation was performed in Stages 3–5.
+**Executed in the inferential analysis.** Diagnostics: `artifacts/inference/mi/`. Completed person-level imputations are gitignored. No imputation was performed during cohort construction, the descriptive analysis, or model preflight.
 
 ## 14. Sensitivity Analyses
 
-Prespecified population sensitivities (eligibility flags only in Stage 3; not analyzed):
+Prespecified population sensitivities (eligibility flags recorded with the locked cohort; not analyzed):
 
 - Age at diagnosis ≤ 21 years, otherwise the same identity and OS rules
 - No age restriction, otherwise the same identity, diagnosis, and OS rules
 - Supplement OS time comparison if later justified by the documented discordance; the primary endpoint will not be switched to maximize N or event count
 
-Locked analysis sensitivities (Stage 6; **executed**):
+Locked analysis sensitivities (inferential analysis; **executed**):
 
 - Complete-case Cox vs primary MI, same formulas
-- Restricted cubic splines for age and log2 WBC (3 knots; Stage 4 quantiles)
+- Restricted cubic splines for age and log2 WBC (3 knots; descriptive-analysis quantiles)
 - PH remediation models only if diagnostics indicate a material violation, following the hierarchy in Section 12
 
 Bayesian models, if used, will be secondary unless later justified in this plan.
@@ -239,7 +239,7 @@ Bayesian models, if used, will be secondary unless later justified in this plan.
 
 ## 16. Sample Size / Power
 
-This is a secondary use of an existing clinical dataset. Available sample size and event counts are described from the locked cohort in Stage 4. Any post-hoc precision or power calculations will be labeled as such and will not be presented as prospective trial design. Formal power analysis is not part of Stage 4.
+This is a secondary use of an existing clinical dataset. Available sample size and event counts are described from the locked cohort in the descriptive analysis. Any post-hoc precision or power calculations will be labeled as such and will not be presented as prospective trial design. Formal power analysis is not part of the descriptive analysis.
 
 ## 17. Statistical Software
 
@@ -252,13 +252,13 @@ Package versions used for the locked inferential analysis are recorded in `artif
 
 ## 18. Deviations From the Analysis Plan
 
-Stage 3 implemented the prespecified primary rules (age <18; GDC vital status; GDC death / diagnosis last-follow-up time; no covariate-completeness gate) without switching the endpoint after seeing survival associations.
+Cohort construction implemented the prespecified primary rules (age <18; GDC vital status; GDC death / diagnosis last-follow-up time; no covariate-completeness gate) without switching the endpoint after seeing survival associations.
 
-No deviation from those prescribed Stage 3 rules was required by the GDC field definitions. Time origin was verified from official GDC/caDSR definitions and extract metadata before the endpoint table was created.
+No deviation from those prescribed cohort rules was required by the GDC field definitions. Time origin was verified from official GDC/caDSR definitions and extract metadata before the endpoint table was created.
 
 Later changes to the locked population or endpoint must be dated, described, and justified here.
 
-Stage 4 descriptive findings that affected Stage 5 planning, but did **not** change frozen eligibility and were **not** chosen by survival association:
+Descriptive findings that affected model-preflight planning, but did **not** change frozen eligibility and were **not** chosen by survival association:
 
 - WBC at diagnosis is strongly right-skewed → primary log2(WBC); spline sensitivity of log2(WBC)
 - Risk-group tokens `10` and `30` (n = 3) have no CDE mapping → inferential missing plus QA flag
@@ -267,4 +267,4 @@ Stage 4 descriptive findings that affected Stage 5 planning, but did **not** cha
 - Risk group is potentially redundant with FLT3/ITD and cytogenetic lesion flags → separate primary vs secondary models
 - Primary cytogenetic code remains NEEDS REVIEW versus lesion flags → excluded from both principal models
 
-Stage 5 locked the inferential plan without fitting Cox models, running mice(), or examining predictor-specific survival. Stage 6 executed that plan. Deviations, including implementation details that do not change estimands, are recorded in `docs/stage6_sap_deviations.md`. Any later change after seeing survival associations must be recorded there and here.
+Model preflight locked the inferential plan without fitting Cox models, running mice(), or examining predictor-specific survival. The inferential analysis executed that plan. Deviations, including implementation details that do not change estimands, are recorded in `docs/analysis_deviations.md`. Any later change after seeing survival associations must be recorded there and here.

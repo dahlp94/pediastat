@@ -32,7 +32,7 @@ from pediastat.ingest import profile_sheet, read_workbook_sheets
 
 DEFAULT_DOWNLOAD_DIR = PROJECT_ROOT / "data" / "raw" / "gdc_open_clinical_supplements"
 AUDIT_FILES = PROJECT_ROOT / "artifacts" / "source_audit" / "open_clinical_files.csv"
-STAGE1_AUDIT_DATE = "2026-08-14T01:24:42Z"
+SOURCE_AUDIT_TIMESTAMP = "2026-08-14T01:24:42Z"
 
 
 def _meta_from_audit_csv() -> dict[str, dict[str, str]]:
@@ -111,7 +111,7 @@ def _main() -> int:
             project_id="TARGET-AML",
             access_level=str(meta.get("access") or "open"),
             checksum=local_md5,
-            source_release_or_audit_date=STAGE1_AUDIT_DATE,
+            source_release_or_audit_date=SOURCE_AUDIT_TIMESTAMP,
             row_count=n_rows,
             notes=(
                 "Workbook ingested separately; original columns stored in cells JSONB."

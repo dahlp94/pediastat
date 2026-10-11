@@ -63,13 +63,13 @@ artifacts/**/*.txt.gz
 data/interim/*
 !data/interim/.gitkeep
 
-# Stage 4 contains generated person-level/intermediate analysis data
+# Descriptive analysis contains generated person-level/intermediate analysis data
 data/interim/stage4/
 
-# Stage 5 contains person-level / generated intermediate data only
+# Model preflight contains person-level / generated intermediate data only
 data/interim/stage5/
 
-# Stage 6 contains person-level imputations, residuals, and model matrices
+# Inference contains person-level imputations, residuals, and model matrices
 data/interim/stage6/
 artifacts/inference/**/*.rds
 artifacts/inference/**/*patient*

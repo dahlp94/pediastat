@@ -1,4 +1,4 @@
-"""Stage 6 inferential-execution checks. No live database required."""
+"""Inferential-execution checks. No live database required."""
 
 from __future__ import annotations
 
@@ -20,15 +20,15 @@ GITIGNORE = PROJECT_ROOT / ".gitignore"
 SPEC = load_model_spec()
 
 
-def test_stage6_scripts_exist() -> None:
+def test_inference_scripts_exist() -> None:
     expected = [
         "model_setup.R",
         "imputation.R",
         "models.R",
         "diagnostics.R",
-        "render_stage6_report.R",
-        "run_stage6.R",
-        "tests/test_stage6.R",
+        "render_inference_report.R",
+        "run_inference.R",
+        "tests/test_inference.R",
     ]
     for name in expected:
         assert (R_DIR / name).is_file(), name
@@ -54,7 +54,7 @@ def test_fdr_family_unchanged() -> None:
     ]
 
 
-def test_gitignore_excludes_stage6_patient_level_files() -> None:
+def test_gitignore_excludes_inference_patient_level_files() -> None:
     text = GITIGNORE.read_text(encoding="utf-8")
     assert "data/interim/stage6/" in text
     assert "artifacts/inference/**/*.rds" in text
@@ -85,7 +85,7 @@ def test_no_committed_patient_level_inference_files() -> None:
 
 @pytest.mark.skipif(
     not (INF_DIR / "model_metadata.json").exists(),
-    reason="Stage 6 artifacts have not been generated",
+    reason="Inference artifacts have not been generated",
 )
 def test_metadata_matches_frozen_cohort_and_mi() -> None:
     payload = json.loads((INF_DIR / "model_metadata.json").read_text(encoding="utf-8"))
@@ -100,7 +100,7 @@ def test_metadata_matches_frozen_cohort_and_mi() -> None:
 
 @pytest.mark.skipif(
     not (INF_DIR / "primary_cox_mi.csv").exists(),
-    reason="Stage 6 artifacts have not been generated",
+    reason="Inference artifacts have not been generated",
 )
 def test_primary_result_terms_and_no_patient_ids() -> None:
     text = (INF_DIR / "primary_cox_mi.csv").read_text(encoding="utf-8")
@@ -114,7 +114,7 @@ def test_primary_result_terms_and_no_patient_ids() -> None:
 
 @pytest.mark.skipif(
     not (INF_DIR / "stratified_km_estimates.csv").exists(),
-    reason="Stage 6 artifacts have not been generated",
+    reason="Inference artifacts have not been generated",
 )
 def test_km_limited_to_frozen_predictors() -> None:
     text = (INF_DIR / "stratified_km_estimates.csv").read_text(encoding="utf-8")

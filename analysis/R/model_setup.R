@@ -1,4 +1,4 @@
-# Stage 5 analysis-variable coding. Does not fit Cox models or run MI.
+# Analysis-variable coding and preflight validation. Does not fit Cox models or run MI.
 
 load_model_spec_yaml <- function() {
   yaml::read_yaml(file.path(PROJECT_ROOT, "config", "model_spec.yaml"))
@@ -81,7 +81,7 @@ standardize_risk_group <- function(x, spec = NULL) {
 }
 
 nelson_aalen_cumulative_hazard <- function(time, event) {
-  # Retained for Stage 6 compatibility; this is an MI auxiliary, not a model fit.
+  # Retained for inference; this is an MI auxiliary, not a model fit.
   fit <- survival::survfit(
     survival::Surv(time, event) ~ 1, type = "fleming-harrington"
   )
@@ -127,7 +127,7 @@ code_inferential_cohort <- function(cohort, spec = NULL) {
   }
   out
 }
-# Stage 5 preflight: validate coding and planned design matrices. No Cox or MI.
+# Preflight: validate coding and planned design matrices. No Cox or MI.
 
 model_formula <- function(spec, model = c("primary", "secondary")) {
   model <- match.arg(model)
@@ -193,7 +193,7 @@ validate_model_structure <- function(spec) {
     stop("Secondary molecular model must not include risk_group.", call. = FALSE)
   }
   if (length(spec$primary_model$interactions) || length(spec$secondary_model$interactions)) {
-    stop("Stage 5 expects no prespecified interactions.", call. = FALSE)
+    stop("The frozen specification expects no prespecified interactions.", call. = FALSE)
   }
 }
 
@@ -324,10 +324,10 @@ write_lesion_verification <- function(preflight) {
   )
   write_model_plan_json(payload, "lesion_verification.json")
 }
-# Stage 6: load frozen cohort, apply Stage 5 coding, preflight.
+# Load the frozen cohort, apply coding, and run preflight.
 # Does not rebuild eligibility. Does not fit Cox models.
 
-init_stage6_paths <- function() {
+init_inference_paths <- function() {
   INFERENCE_DIR <<- file.path(PROJECT_ROOT, "artifacts", "inference")
   INFERENCE_MI_DIR <<- file.path(INFERENCE_DIR, "mi")
   INFERENCE_PH_DIR <<- file.path(INFERENCE_DIR, "ph")
@@ -341,13 +341,13 @@ init_stage6_paths <- function() {
   invisible(INFERENCE_DIR)
 }
 
-load_stage6_packages <- function() {
-  load_stage4_packages()
+load_inference_packages <- function() {
+  load_analysis_packages()
   extra <- c("mice")
   missing <- extra[!vapply(extra, requireNamespace, logical(1), quietly = TRUE)]
   if (length(missing)) {
     stop(
-      "Missing Stage 6 R packages: ", paste(missing, collapse = ", "),
+      "Missing inference R packages: ", paste(missing, collapse = ", "),
       ". Install r-mice in the pediastat-r conda environment.",
       call. = FALSE
     )
@@ -448,7 +448,7 @@ assert_no_post_baseline <- function(names_in_use) {
   invisible(TRUE)
 }
 
-stage6_preflight_invariants <- function(coded, spec) {
+model_preflight_invariants <- function(coded, spec) {
   checks <- validate_frozen_cohort(coded)
   preflight <- preflight_coded_cohort(coded, spec)
   if (anyNA(coded$os_event)) {
@@ -458,7 +458,7 @@ stage6_preflight_invariants <- function(coded, spec) {
     stop("Missing or negative os_days in coded inferential cohort.", call. = FALSE)
   }
   if (any(coded$os_days == 0, na.rm = TRUE)) {
-    stop("Zero os_days found; Stage 3 frozen cohort had none.", call. = FALSE)
+    stop("Zero os_days found; the frozen cohort had none.", call. = FALSE)
   }
   needed <- unique(c(primary_terms(), secondary_terms(), "os_days", "os_event", "age5"))
   missing_vars <- setdiff(needed, names(coded))
@@ -508,6 +508,6 @@ prepare_inferential_cohort <- function(loaded, spec = NULL) {
     coded$source_family_aml1031 <- 0L
   }
   coded$source_family_aml1031[is.na(coded$source_family_aml1031)] <- 0L
-  preflight <- stage6_preflight_invariants(coded, spec)
+  preflight <- model_preflight_invariants(coded, spec)
   list(coded = coded, spec = spec, preflight = preflight, loaded = loaded)
 }

@@ -1,6 +1,6 @@
-# Stage 4 analysis extract
+# Descriptive cohort extract
 
-The descriptive analysis reads the frozen Stage 3 tables. It does not
+The descriptive analysis reads the frozen primary-cohort tables. It does not
 reimplement patient identity, age eligibility, OS event, or OS time.
 
 ## Database view

@@ -155,15 +155,15 @@ from `primary_os_cohort`.
 2453 rows: 2315 valid analysis persons plus 138 ineligible identity
 records retained for audit. Do not describe every row as a patient.
 
-Stage 4 descriptive analysis reads `analytics.stage4_primary_cohort_extract`,
+Descriptive analysis reads `analytics.stage4_primary_cohort_extract`,
 a view over the frozen primary OS cohort. It does not redefine eligibility.
 
-Stage 5 analysis variables (`age5`, `log2_wbc`, `sex_std`, `risk_group_std`,
+Model-preflight analysis variables (`age5`, `log2_wbc`, `sex_std`, `risk_group_std`,
 and standardized Yes/No molecular and lesion flags) are defined in
 `docs/inferential_model_specification.md` and `config/model_spec.yaml`.
 They do not change cohort membership.
 
-Stage 6 executes those variables in Cox models after multiple imputation.
+The inferential analysis executes those variables in Cox models after multiple imputation.
 The Nelson–Aalen auxiliary `nelson_aalen` is used only in the imputation
 model. Aggregate inferential output is in `artifacts/inference/`.
 Person-level imputations are not committed.

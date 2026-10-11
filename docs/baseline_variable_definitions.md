@@ -1,15 +1,15 @@
-# Stage 4 baseline variable definitions
+# Baseline variable definitions
 
 Verified against `docs/baseline_covariate_source_rules.md`,
 `docs/data_dictionary.md`, `artifacts/ingestion_audit/clinical_concept_source_map.csv`,
-and GDC/CDE wording. Stage 4 does not change these definitions.
+and GDC/CDE wording. The descriptive analysis does not change these definitions.
 
 Unknown and structurally missing remain distinguishable. Values are never
 averaged across sources.
 
 | Concept | Timing | Units | Coding | Precedence | Unknown / missing |
 | --- | --- | --- | --- | --- | --- |
-| Age at diagnosis | Diagnosis | days (years = days / 365.25 for description) | GDC numeric | GDC only | Missing age is a Stage 3 exclusion, not a Table 1 missingness class in the primary cohort |
+| Age at diagnosis | Diagnosis | days (years = days / 365.25 for description) | GDC numeric | GDC only | Missing age is a cohort-eligibility exclusion, not a Table 1 missingness class in the primary cohort |
 | Sex at birth | Baseline demographic | none | male / female / unknown | GDC | GDC unknown remains unknown; not replaced by supplement Gender |
 | Race | Baseline demographic | none | GDC OMB-style groups | GDC | Unknown / not reported remain explicit |
 | Ethnicity | Baseline demographic | none | GDC Hispanic/Latino grouping | GDC | Unknown / not reported remain explicit |
@@ -25,4 +25,4 @@ averaged across sources.
 | t(8;21), inv(16), MLL, monosomy 7 | Baseline cytogenetic lesion flags | none | Yes / No / Unknown | same as WBC | Not collapsed into a composite karyotype |
 | Primary cytogenetic code | Baseline summary code | none | source labels (Normal, MLL, t(8;21), inv(16), PML-RARA, Other, Unknown) | Discovery > Validation > AML1031 > LowDepth > additional | **NEEDS REVIEW**; not assumed equivalent to lesion flags |
 
-OS event and time are locked in Stage 3 and are not baseline covariates.
+OS event and time are locked in the primary cohort and are not baseline covariates.

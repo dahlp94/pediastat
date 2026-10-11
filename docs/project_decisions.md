@@ -569,7 +569,7 @@ Models were not redesigned from observed associations. Auxiliary race
 for MICE was collapsed to four levels before viewing hazard ratios
 because sparse OMB cells are not stably estimated by polyreg; race is
 not a principal-model predictor. Details:
-`docs/stage6_sap_deviations.md`.
+`docs/analysis_deviations.md`.
 
 ## Decision 48 — Documentation finalization (Version 1.0)
 

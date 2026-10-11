@@ -1,4 +1,4 @@
--- Stage 4 analysis extract view.
+-- Primary cohort extract view.
 -- Joins the frozen primary OS cohort to reconciled baseline covariates.
 -- Does not reimplement identity, age eligibility, event, or censoring rules.
 

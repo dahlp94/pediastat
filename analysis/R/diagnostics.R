@@ -1,10 +1,10 @@
 # Restricted cubic spline sensitivity for age and log2 WBC.
-# Knots are frozen Stage 4 quantiles. They are not moved using AIC or p-values.
+# Knots are frozen descriptive-analysis quantiles. They are not moved using AIC or p-values.
 
 rcs_basis <- function(x, knots) {
   k <- as.numeric(knots)
   if (length(k) != 3L) {
-    stop("Stage 5 froze exactly 3 knots.", call. = FALSE)
+    stop("The model specification froze exactly 3 knots.", call. = FALSE)
   }
   k1 <- k[[1]]
   k2 <- k[[2]]
@@ -777,7 +777,7 @@ run_stratified_km <- function(coded) {
 }
 
 
-# Aggregate Stage 6 tables, forest plots, metadata, and MI vs complete-case comparison.
+# Aggregate inference tables, forest plots, metadata, and MI vs complete-case comparison.
 
 mi_cc_comparison <- function(mi_tbl, cc_tbl) {
   merged <- merge(
@@ -882,7 +882,7 @@ write_model_metadata <- function(spec, primary_cc, secondary_cc, primary_conc,
   write_inference_json(payload, "model_metadata.json")
 }
 
-stage6_session_info <- function() {
+inference_session_info <- function() {
   info <- utils::sessionInfo()
   pkgs <- c("survival", "mice", "ggplot2", "broom", "yaml", "jsonlite", "dplyr")
   versions <- lapply(pkgs, function(p) {
@@ -897,7 +897,7 @@ stage6_session_info <- function() {
   )
 }
 
-write_stage6_outputs <- function(spec, primary_mi, secondary_mi, primary_cc, secondary_cc,
+write_inference_outputs <- function(spec, primary_mi, secondary_mi, primary_cc, secondary_cc,
                                  primary_conc, secondary_conc, ph, influence, km, mi_diag) {
   write_inference_csv(primary_mi, "primary_cox_mi.csv")
   write_inference_csv(secondary_mi, "secondary_cox_mi.csv")
@@ -925,12 +925,10 @@ write_stage6_outputs <- function(spec, primary_mi, secondary_mi, primary_cc, sec
     primary_conc, secondary_conc, ph, influence, km, mi_diag
   )
   write_inference_csv(fit_sum, "model_fit_summary.csv")
-  session <- stage6_session_info()
+  session <- inference_session_info()
   write_inference_json(session, "r_session_info.json")
   write_model_metadata(
     spec, primary_cc, secondary_cc, primary_conc, secondary_conc, ph, mi_diag, session
   )
   list(primary_comparison = primary_cmp, secondary_comparison = secondary_cmp, session = session)
 }
-
-

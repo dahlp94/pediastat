@@ -1,4 +1,4 @@
-"""Stage 5 inferential-plan tests. No Cox fits. No mice execution."""
+"""Model-preflight tests. No Cox fits. No mice execution."""
 
 from __future__ import annotations
 
@@ -75,14 +75,14 @@ def test_events_per_df_are_recorded() -> None:
     assert deaths / 10 == pytest.approx(69.5)
 
 
-def test_stage5_r_scripts_do_not_fit_cox_or_run_mice() -> None:
-    stage5 = [
+def test_model_preflight_r_scripts_do_not_fit_cox_or_run_mice() -> None:
+    preflight = [
         R_DIR / "model_setup.R",
-        R_DIR / "run_stage5.R",
-        R_DIR / "tests" / "test_stage5.R",
+        R_DIR / "run_model_preflight.R",
+        R_DIR / "tests" / "test_model_preflight.R",
     ]
 
-    for path in stage5:
+    for path in preflight:
         text = path.read_text(encoding="utf-8")
         assert "coxph(" not in text, f"{path} contains coxph("
         assert "mice(" not in text, f"{path} contains mice("

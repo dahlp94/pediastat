@@ -1,10 +1,10 @@
 # Analysis
 
 R is the primary statistical-analysis language. Python is used for
-ingestion, cohort construction, and the Stage 5 model-plan export.
+ingestion, cohort construction, and the model-preflight export.
 
 Current scripts live under `analysis/R/`. See `analysis/R/README.md`.
 
-Stage 4: descriptive Table 1, missingness, overall KM, reverse KM.  
-Stage 5: inferential coding and preflight (no Cox fit, no `mice()`).  
-Stage 6: execute the frozen Cox + MI plan (`make inference`).
+Descriptive analysis: Table 1, missingness, overall KM, reverse KM.
+Model preflight: inferential coding and checks (no Cox fit, no `mice()`).
+Inference: execute the frozen Cox + MI plan (`make inference`).

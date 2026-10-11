@@ -1,4 +1,4 @@
-# Stage 6: fit and pool the frozen primary and secondary Cox models.
+# Fit and pool the frozen primary and secondary Cox models.
 
 PRIMARY_FORMULA <- stats::as.formula(
   "survival::Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + risk_group_std"

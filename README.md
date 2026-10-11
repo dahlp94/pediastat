@@ -127,7 +127,7 @@ These are prognostic associations, not causal effects.
 
 Descriptive concordance for the primary model was 0.658. That statistic was not optimized and is not evidence of a validated prediction model.
 
-Secondary-model biological results, complete-case comparisons, and diagnostics are in the [inferential report](reports/stage6_inferential_analysis.qmd).
+Secondary-model biological results, complete-case comparisons, and diagnostics are in the [inferential report](reports/inferential_analysis.qmd).
 
 
 ## Key figures
@@ -160,7 +160,7 @@ Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/
 - All 30 completed-dataset Cox fits for each model were checked for the expected 1,978 patients and 695 deaths.
 - The secondary-model FDR family was specified before results were seen.
 - Proportional-hazards remediation rules were specified before diagnostics. WBC departures in both Cox models were classified as minor; no material PH violation or remediation was recorded.
-- The one recorded SAP deviation (collapsed auxiliary race categories in the MICE model) occurred before hazard ratios were viewed and is documented in [stage6_sap_deviations.md](docs/stage6_sap_deviations.md).
+- The one recorded SAP deviation (collapsed auxiliary race categories in the MICE model) occurred before hazard ratios were viewed and is documented in [analysis_deviations.md](docs/analysis_deviations.md).
 
 
 ## Limitations

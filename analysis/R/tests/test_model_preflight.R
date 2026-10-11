@@ -1,4 +1,4 @@
-# Stage 5 validation. No Cox models or multiple-imputation runs.
+# Model-preflight validation. No Cox models or multiple-imputation runs.
 
 find_root <- function() {
   if (exists("PROJECT_ROOT", inherits = TRUE)) return(get("PROJECT_ROOT", inherits = TRUE))
@@ -81,11 +81,11 @@ test_that("MI and multiplicity decisions remain frozen in the spec", {
   ) %in% family))
 })
 
-test_that("Stage 5 remains preflight rather than inference", {
+test_that("model preflight remains preflight rather than inference", {
   scripts <- c(
     file.path(root, "analysis", "R", "model_setup.R"),
-    file.path(root, "analysis", "R", "run_stage5.R"),
-    file.path(root, "analysis", "R", "tests", "test_stage5.R")
+    file.path(root, "analysis", "R", "run_model_preflight.R"),
+    file.path(root, "analysis", "R", "tests", "test_model_preflight.R")
   )
   banned <- c("coxph\\s*\\(", "mice\\s*\\(", "survdiff\\s*\\(", "cox\\.zph\\s*\\(")
   for (script in scripts) {

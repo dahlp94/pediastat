@@ -10,14 +10,14 @@ script_dir <- (function() {
   file.path(getwd(), "analysis", "R")
 })()
 source(file.path(script_dir, "setup.R"), local = FALSE)
-load_stage4_packages()
+load_analysis_packages()
 
 root <- PROJECT_ROOT
 inf <- file.path(root, "artifacts", "inference")
 fig <- file.path(inf, "figures")
 ph <- file.path(inf, "ph")
 mi <- file.path(inf, "mi")
-out_path <- file.path(root, "reports", "stage6_inferential_analysis.html")
+out_path <- file.path(root, "reports", "inferential_analysis.html")
 
 html_escape <- function(x) {
   x <- gsub("&", "&amp;", as.character(x), fixed = TRUE)
@@ -96,7 +96,7 @@ fit <- read_inf("model_fit_summary.csv")
 meta <- jsonlite::fromJSON(file.path(inf, "model_metadata.json"))
 session <- jsonlite::fromJSON(file.path(inf, "r_session_info.json"))
 deviations <- paste(
-  readLines(file.path(root, "docs", "stage6_sap_deviations.md"), warn = FALSE),
+  readLines(file.path(root, "docs", "analysis_deviations.md"), warn = FALSE),
   collapse = "\n"
 )
 
@@ -156,7 +156,7 @@ html <- c(
   "<h2>7. Complete-case sensitivity</h2>",
   df_to_html(cmp, "MI vs complete-case adjusted HRs"),
   "<h2>8. Functional-form sensitivity</h2>",
-  df_to_html(nl, "Restricted cubic spline tests; knots frozen from Stage 4"),
+  df_to_html(nl, "Restricted cubic spline tests; knots frozen from the descriptive analysis"),
   img_tag(file.path(fig, "age_spline_relative_hazard.png"), "Age spline relative hazard"),
   img_tag(file.path(fig, "wbc_spline_relative_hazard.png"), "WBC spline relative hazard"),
   "<h2>9. Proportional-hazards diagnostics</h2>",

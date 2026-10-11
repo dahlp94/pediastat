@@ -1,4 +1,4 @@
--- Stage 3 analytics tables: identity, eligibility, primary OS cohort,
+-- Analytics tables: identity, eligibility, primary OS cohort,
 -- and source-reconciled baseline covariates.
 -- Constraints apply only to analytics-derived tables.
 

@@ -10,12 +10,12 @@ script_dir <- (function() {
   file.path(getwd(), "analysis", "R")
 })()
 source(file.path(script_dir, "setup.R"), local = FALSE)
-load_stage4_packages()
+load_analysis_packages()
 
 root <- PROJECT_ROOT
 desc <- DESCRIPTIVE_DIR
 fig <- FIGURE_DIR
-out_path <- file.path(root, "reports", "stage4_descriptive_analysis.html")
+out_path <- file.path(root, "reports", "descriptive_analysis.html")
 
 read_desc <- function(name) {
   utils::read.csv(file.path(desc, name), check.names = FALSE, stringsAsFactors = FALSE)
@@ -96,7 +96,7 @@ html <- paste0(
   "<title>PediaStat — Descriptive Analysis of the Primary Pediatric AML Cohort</title>",
   "<style>", css, "</style></head><body>",
   "<h1>PediaStat — Descriptive Analysis of the Primary Pediatric AML Cohort</h1>",
-  "<p><em>Stage 4: cohort characterization and overall survival summary. Rendered from locked aggregate artifacts because a complete Quarto CLI was not available.</em></p>",
+  "<p><em>Cohort characterization and overall survival summary. Rendered from locked aggregate artifacts because a complete Quarto CLI was not available.</em></p>",
   "<nav><a href='#obj'>1. Objective</a><a href='#pop'>2. Population</a><a href='#acct'>3. Construction</a>",
   "<a href='#t1'>4. Table 1</a><a href='#dist'>5. Distributions</a><a href='#miss'>6. Missing data</a>",
   "<a href='#src'>7. Provenance</a><a href='#os'>8. Overall survival</a><a href='#fu'>9. Follow-up</a>",
@@ -176,12 +176,12 @@ html <- paste0(
   "<li>Public TARGET-AML data are observational and incomplete relative to controlled-access files.</li>",
   "<li>Baseline AML characteristics come from overlapping supplements; residual source conflict is flagged, not overwritten.</li>",
   "<li>FAB is largely missing. Several molecular and cytogenetic fields have non-negligible Unknown or structural missingness.</li>",
-  "<li>Seven primary-cohort persons have an index_date QA flag and were retained under the locked Stage 3 rule.</li>",
+  "<li>Seven primary-cohort persons have an index_date QA flag and were retained under the locked cohort rule.</li>",
   "<li>No causal interpretation and no multivariable inference yet.</li>",
   "</ul>",
   "<h2 id='next'>12. Next Statistical Decisions</h2>",
-  "<p>Stage 5 must freeze the inferential plan before regression, including primary covariates, functional forms for age and WBC, Unknown vs missing handling, the missing-data method, redundancy of risk group with FLT3/lesion flags, unexpected risk-group tokens, whether primary cytogenetic code is used, interactions, multiplicity, and PH remediation.</p>",
-  "<p>R ", html_escape(session$r_version), " (", html_escape(session$running), "). Source narrative: <code>reports/stage4_descriptive_analysis.qmd</code>.</p>",
+  "<p>The inferential plan is locked in <code>docs/inferential_model_specification.md</code>. It specifies the primary and secondary Cox models, functional forms for age and WBC, Unknown versus missing handling, multiple imputation, separation of risk group from FLT3 and lesion flags, unresolved risk-group tokens, exclusion of the primary cytogenetic code, no interactions, the secondary FDR family, and proportional-hazards remediation. This descriptive report does not contain those models.</p>",
+  "<p>R ", html_escape(session$r_version), " (", html_escape(session$running), "). Source narrative: <code>reports/descriptive_analysis.qmd</code>.</p>",
   "</body></html>"
 )
 

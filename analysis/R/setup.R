@@ -1,4 +1,4 @@
-# Stage 4 shared setup. No modeling. No outcome-stratified tables.
+# Shared analysis setup. No modeling. No outcome-stratified tables.
 
 EXPECTED_N <- 1978L
 EXPECTED_DEATHS <- 695L
@@ -56,7 +56,7 @@ ensure_output_dirs <- function() {
   dir.create(INTERIM_DIR, recursive = TRUE, showWarnings = FALSE)
 }
 
-load_stage4_packages <- function() {
+load_analysis_packages <- function() {
   missing <- REQUIRED_PACKAGES[!vapply(
     REQUIRED_PACKAGES,
     requireNamespace,
@@ -191,7 +191,7 @@ session_info_list <- function() {
     packages = as.list(c(pkgs, attached)[REQUIRED_PACKAGES])
   )
 }
-# Load the frozen Stage 3 cohort. Stop if accounting does not match.
+# Load the frozen primary cohort. Stop if accounting does not match.
 
 apply_extract_view <- function(con) {
   lines <- readLines(SQL_VIEW_FILE, warn = FALSE)
@@ -246,7 +246,7 @@ validate_frozen_cohort <- function(cohort) {
   if (n_dup != 0L) failures <- c(failures, "duplicate analysis_person_id")
   if (length(failures)) {
     stop(
-      "Frozen Stage 3 cohort checks failed; analysis stopped.\n- ",
+      "Frozen cohort checks failed; analysis stopped.\n- ",
       paste(failures, collapse = "\n- "),
       call. = FALSE
     )
@@ -282,7 +282,7 @@ reconcile_population_accounting <- function(identity) {
   if (!(n_cases == 2492L && n_valid_cases == 2354L && n_invalid_cases == 138L &&
         n_valid_persons == 2315L && n_eligibility == 2453L &&
         n_elig_valid == 2315L && n_elig_invalid == 138L)) {
-    stop("Identity accounting does not match the frozen Stage 3 counts.", call. = FALSE)
+    stop("Identity accounting does not match the frozen cohort counts.", call. = FALSE)
   }
   list(
     original_gdc_cases = n_cases,

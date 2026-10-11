@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
-# Stage 6: execute the frozen Stage 5 Cox + multiple-imputation analysis.
+# Execute the frozen Cox + multiple-imputation analysis.
 # Does not rebuild eligibility. Does not redesign models from results.
 
-stage6_scripts <- c(
+inference_scripts <- c(
   "setup.R",
   "model_setup.R",
   "imputation.R",
@@ -20,17 +20,17 @@ locate_script_dir <- function() {
 }
 
 script_dir <- locate_script_dir()
-for (script in stage6_scripts) {
+for (script in inference_scripts) {
   source(file.path(script_dir, script), local = FALSE)
 }
 
-load_stage6_packages()
-init_stage6_paths()
+load_inference_packages()
+init_inference_paths()
 
 con <- connect_pediastat()
 on.exit(DBI::dbDisconnect(con), add = TRUE)
 
-message("Stage 6: loading frozen primary cohort and applying Stage 5 coding")
+message("Loading the frozen primary cohort and applying model-preflight coding")
 loaded <- load_primary_cohort(con)
 prepared <- prepare_inferential_cohort(loaded)
 coded <- prepared$coded
@@ -41,13 +41,13 @@ saveRDS(coded, file.path(INTERIM_STAGE6, "coded_primary_cohort.rds"))
 
 message("Unresolved risk-group tokens (10/30) set to missing: ", preflight$n_unresolved_risk_tokens)
 
-message("Stage 6: building MICE specification")
+message("Building the MICE specification")
 mi_frame <- build_mice_frame(coded)
 meth <- build_mice_methods(mi_frame, spec)
 pred <- build_mice_predictor_matrix(mi_frame, meth)
 assert_mice_spec(meth, spec)
 
-message("Stage 6: running multiple imputation (m = 30)")
+message("Running multiple imputation (m = 30)")
 mids_path <- file.path(INTERIM_STAGE6, "mice_mids.rds")
 reuse_mids <- identical(Sys.getenv("STAGE6_REUSE_MIDS"), "1") && file.exists(mids_path)
 if (reuse_mids) {
@@ -68,7 +68,7 @@ if (length(mi_diag$issues)) {
   )
 }
 
-message("Stage 6: fitting pooled primary and secondary Cox models")
+message("Fitting pooled primary and secondary Cox models")
 # Use the shared Cox fitting helper so principal MI fits retain their
 # warnings and estimability metadata (like diagnostic/sensitivity fits).
 primary_mira <- fit_cox_across_imputations(imp, coded, PRIMARY_FORMULA)
@@ -116,24 +116,24 @@ risk_global <- tryCatch(
 )
 write_inference_json(risk_global, "primary_risk_group_global_test.json")
 
-message("Stage 6: complete-case sensitivity")
+message("Complete-case sensitivity")
 primary_cc <- fit_complete_case(coded, PRIMARY_FORMULA, primary_terms(), "primary_clinical", PRIMARY_TERM_ORDER)
 secondary_cc <- fit_complete_case(coded, SECONDARY_FORMULA, secondary_terms(), "secondary_molecular", SECONDARY_TERM_ORDER)
 
-message("Stage 6: nonlinear sensitivity")
+message("Nonlinear sensitivity")
 nonlinear <- run_nonlinear_sensitivity(imp, coded, spec)
 
-message("Stage 6: PH diagnostics")
+message("PH diagnostics")
 ph <- run_ph_diagnostics(imp, coded, primary_cc, secondary_cc)
 
-message("Stage 6: influence diagnostics")
+message("Influence diagnostics")
 influence <- run_influence_diagnostics(primary_cc, secondary_cc)
 
-message("Stage 6: prespecified KM displays")
+message("Prespecified KM displays")
 km <- run_stratified_km(coded)
 
-message("Stage 6: writing aggregate outputs")
-outputs <- write_stage6_outputs(
+message("Writing aggregate outputs")
+outputs <- write_inference_outputs(
   spec, primary_mi, secondary_mi, primary_cc, secondary_cc,
   primary_conc, secondary_conc, ph, influence, km, mi_diag
 )
@@ -152,12 +152,12 @@ write_inference_json(
   "analysis_notes.json"
 )
 
-test_file <- file.path(script_dir, "tests", "test_stage6.R")
+test_file <- file.path(script_dir, "tests", "test_inference.R")
 if (file.exists(test_file)) {
   results <- as.data.frame(testthat::test_file(test_file, reporter = "progress"))
   n_failed <- sum(results$failed, na.rm = TRUE) + sum(results$error, na.rm = TRUE)
   if (n_failed > 0) {
-    stop("Stage 6 R tests failed.", call. = FALSE)
+    stop("Inference R tests failed.", call. = FALSE)
   }
 }
 
@@ -166,7 +166,7 @@ if (!nzchar(quarto_bin)) {
   conda_q <- file.path(Sys.getenv("HOME"), "miniconda3", "envs", "pediastat-r", "bin", "quarto")
   if (file.exists(conda_q)) quarto_bin <- conda_q
 }
-qmd <- file.path(PROJECT_ROOT, "reports", "stage6_inferential_analysis.qmd")
+qmd <- file.path(PROJECT_ROOT, "reports", "inferential_analysis.qmd")
 rendered <- FALSE
 if (nzchar(quarto_bin) && file.exists(quarto_bin) && file.exists(qmd)) {
   deno <- file.path(dirname(quarto_bin), "tools", "x86_64", "deno")
@@ -179,9 +179,9 @@ if (nzchar(quarto_bin) && file.exists(quarto_bin) && file.exists(qmd)) {
   }
 }
 if (!rendered) {
-  message("Quarto CLI not used; writing HTML from Stage 6 artifacts with R.")
-  source(file.path(script_dir, "render_stage6_report.R"), local = FALSE)
+  message("Quarto CLI not used; writing HTML from inference artifacts with R.")
+  source(file.path(script_dir, "render_inference_report.R"), local = FALSE)
 }
 
-message("Stage 6 complete. Aggregate artifacts: ", INFERENCE_DIR)
+message("Inference complete. Aggregate artifacts: ", INFERENCE_DIR)
 message("Person-level MI object (gitignored): ", file.path(INTERIM_STAGE6, "mice_mids.rds"))

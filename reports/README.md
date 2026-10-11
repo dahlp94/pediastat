@@ -2,25 +2,25 @@
 
 Investigator-facing Quarto reports for the completed analysis.
 
-Stage 4:
+Descriptive analysis:
 
-- Source: `reports/stage4_descriptive_analysis.qmd`
+- Source: `reports/descriptive_analysis.qmd`
 - Rendered HTML is gitignored (`reports/**/*.html`)
 
 Render after `make descriptive` has written aggregate artifacts, or as
 part of that target when Quarto is available.
 
-The Stage 4 report describes the locked primary cohort and overall
+The descriptive report describes the locked primary cohort and overall
 survival. It does not contain Cox models or predictor-stratified
 Kaplan–Meier curves. Inferential rules are in
 `docs/inferential_model_specification.md`.
 
-Stage 6:
+Inferential analysis:
 
-- Source: `reports/stage6_inferential_analysis.qmd`
+- Source: `reports/inferential_analysis.qmd`
 - Rendered HTML is gitignored (`reports/**/*.html`)
 - Aggregate model output: `artifacts/inference/`
 
 Render after `make inference`, or as part of that target when Quarto is
-available. `analysis/R/render_stage6_report.R` writes HTML from
+available. `analysis/R/render_inference_report.R` writes HTML from
 aggregate artifacts when a complete Quarto CLI is not available.

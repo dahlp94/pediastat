@@ -1,10 +1,12 @@
 # Inferential Model Specification
 
-Stage: 5 — freeze inferential models, coding, missing-data strategy, and diagnostics  
-Status: locked before any Cox fit or multiple imputation; subsequently executed without redesign  
+Scope: freeze inferential models, coding, missing-data strategy, and diagnostics
+
+Status: locked before any Cox fit or multiple imputation; subsequently executed without redesign
+
 Companion: `config/model_spec.yaml`, `docs/statistical_analysis_plan.md`, `artifacts/model_plan/`
 
-This document is the collaborator-facing lock of the inferential plan. It does not contain hazard ratios, p-values, or predictor-specific survival results. The executed analysis is in `reports/stage6_inferential_analysis.qmd`.
+This document is the collaborator-facing lock of the inferential plan. It does not contain hazard ratios, p-values, or predictor-specific survival results. The executed analysis is in `reports/inferential_analysis.qmd`.
 
 Language throughout is prognostic association, not causal effect.
 
@@ -20,7 +22,7 @@ Causal effects, treatment effects, and language such as “causes,” “reduces
 
 Principal estimands are **adjusted hazard ratios** from Cox proportional-hazards regression for all-cause death, with time origin at initial pathologic diagnosis.
 
-Time scale: `os_days`. Event: `os_event` (Dead = 1, Alive = 0), already locked in Stage 3.
+Time scale: `os_days`. Event: `os_event` (Dead = 1, Alive = 0), already locked in the primary cohort.
 
 Tied event times: Efron approximation.
 
@@ -89,7 +91,7 @@ Monosomy 7 is uncommon (38 Yes in the primary cohort) but is a CDE-defined basel
 | `cytogenetics_mll_std` | MLL (KMT2A rearrangement) | Yes / No |
 | `cytogenetics_monosomy7_std` | monosomy 7 | Yes / No |
 
-Source precedence remains the Stage 3 rules. Stage 5 does not rebuild the cohort.
+Source precedence remains the locked cohort rules. Model preflight does not rebuild the cohort.
 
 ### Risk-group tokens `10` and `30`
 
@@ -108,15 +110,15 @@ Source `YES`/`NO` tokens are treated as the same clinical meaning as `Yes`/`No`.
 Primary model:
 
 - Age: linear in `age5` (HR per 5 years). Not categorized.
-- WBC: linear in `log2_wbc` (HR per doubling). Chosen from the Stage 4 right-skewed, strictly positive distribution, **not** from association with OS.
+- WBC: linear in `log2_wbc` (HR per doubling). Chosen from the descriptive-analysis right-skewed, strictly positive distribution, **not** from association with OS.
 - Extreme WBC values are not winsorized unless a source-data error is demonstrated.
 
 Nonlinear **sensitivity** (not primary):
 
-- Restricted cubic spline of `age_at_diagnosis_years` with 3 knots at the Stage 4 observed 10th, 50th, and 90th percentiles: 1.1417, 9.4839, 16.5656 years.
-- Restricted cubic spline of `log2_wbc` with 3 knots corresponding to the Stage 4 observed WBC 10th, 50th, and 90th percentiles: 3.87, 26.7, 192.69 ×10³/mcL.
+- Restricted cubic spline of `age_at_diagnosis_years` with 3 knots at the descriptive-analysis observed 10th, 50th, and 90th percentiles: 1.1417, 9.4839, 16.5656 years.
+- Restricted cubic spline of `log2_wbc` with 3 knots corresponding to the descriptive-analysis observed WBC 10th, 50th, and 90th percentiles: 3.87, 26.7, 192.69 ×10³/mcL.
 
-Knots are frozen from Stage 4 covariate quantiles. AIC, p-values, and survival association are not used to move knots or to replace the primary linear/log2 forms.
+Knots are frozen from descriptive-analysis covariate quantiles. AIC, p-values, and survival association are not used to move knots or to replace the primary linear/log2 forms.
 
 ## 7. Reference Categories
 
@@ -139,7 +141,7 @@ For inferential modeling, the following are **missing covariate information**, n
 - unresolved tokens (`10`, `30`)
 - lesion tokens Not Done / Not Applicable
 
-Observed No/Negative remains observed. Observed WBC of 0 would remain observed (none in Stage 4). Only unobserved WBC is missing.
+Observed No/Negative remains observed. Observed WBC of 0 would remain observed (none in the descriptive cohort). Only unobserved WBC is missing.
 
 **Primary missing-data method:** multiple imputation.  
 **Sensitivity:** complete-case Cox model with the same formulas, coding, and references.
@@ -167,13 +169,13 @@ The imputation model includes survival information **without imputing the outcom
 - `os_event`
 - Nelson–Aalen cumulative hazard at each person’s observed OS time, from the nonparametric Fleming–Harrington estimator, **not** from a Cox prognostic model
 
-Rationale: imputation should preserve covariate–outcome relationships. Stage 4 missingness summaries do not prove MAR.
+Rationale: imputation should preserve covariate–outcome relationships. Descriptive missingness summaries do not prove MAR.
 
 Auxiliary candidates: age, sex, WBC, risk group, molecular flags, lesion flags, marrow blasts, peripheral blasts, CNS (Yes/No; Unknown missing), race/ethnicity where coding permits, AML1031 source indicator, `os_event`, Nelson–Aalen cumulative hazard.
 
 Forbidden auxiliaries without temporal justification: SCT in first CR, post-treatment MRD, gemtuzumab, treatment response, first-event outcomes.
 
-Stage 6 diagnostics: iteration traces, observed vs imputed distributions, categorical frequency plausibility, impossible values, between-imputation variability. Strategy is not chosen to make hazard ratios more favorable.
+Inference diagnostics: iteration traces, observed vs imputed distributions, categorical frequency plausibility, impossible values, between-imputation variability. Strategy is not chosen to make hazard ratios more favorable.
 
 Pooling: Rubin’s rules on coefficients; then exponentiate the pooled log HR. Do not average HRs across imputations.
 
@@ -189,7 +191,7 @@ See Section 6. Spline models are sensitivity checks for functional-form adequacy
 
 ## 12. Proportional-Hazards Diagnostics
 
-After Stage 6 fitting, assess PH with scaled Schoenfeld residuals, covariate-specific tests, a global test, and plots (`cox.zph` or equivalent).
+After model fitting, assess PH with scaled Schoenfeld residuals, covariate-specific tests, a global test, and plots (`cox.zph` or equivalent).
 
 A p-value alone is not proof of a material violation. Interpret test result, residual pattern, and practical importance together.
 
@@ -231,7 +233,7 @@ Primary and secondary models contain **no interaction terms**. All-pairwise inte
 
 ## 17. Predictor-Stratified KM Policy
 
-Stage 6 may produce unadjusted KM curves for **risk group** and **FLT3/ITD** only. These are descriptive. They are not used for variable selection. Log-rank tests are not required; if shown, they are unadjusted and secondary. No large battery of stratified KM plots.
+The inferential analysis may produce unadjusted KM curves for **risk group** and **FLT3/ITD** only. These are descriptive. They are not used for variable selection. Log-rank tests are not required; if shown, they are unadjusted and secondary. No large battery of stratified KM plots.
 
 ## 18. Interpretation Rules
 
@@ -242,7 +244,7 @@ Stage 6 may produce unadjusted KM curves for **risk group** and **FLT3/ITD** onl
 
 ## 19. Deviations From This Plan
 
-Stage 6 executed this specification. See `docs/stage6_sap_deviations.md`
+The inferential analysis executed this specification. See `docs/analysis_deviations.md`
 and `artifacts/inference/`. Any later change after inspecting survival
 associations must be dated, described, and justified here and in
 `docs/statistical_analysis_plan.md`.
@@ -255,7 +257,7 @@ associations must be dated, described, and justified here and in
 | Primary cytogenetic code | NEEDS REVIEW; source conflicts; redundancy with lesion flags |
 | Race, ethnicity | Not automatic biological risk factors; reserved for a separately framed analysis |
 | CNS disease, marrow blasts, peripheral blasts | Parsimony and redundancy; optional labeled expanded sensitivity later |
-| Protocol, MRD, SCT, gemtuzumab, first event | Not ordinary baseline covariates (already Stage 3) |
+| Protocol, MRD, SCT, gemtuzumab, first event | Not ordinary baseline covariates (already excluded at cohort lock) |
 
 ## 21. Events-Per-Parameter Descriptor
 

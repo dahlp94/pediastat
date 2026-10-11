@@ -40,23 +40,23 @@ ingest: ingest-gdc ingest-supplements reconcile
 
 descriptive:
 	$(PYTHON) scripts/check_environment.py
-	$(RSCRIPT) analysis/R/run_stage4.R
+	$(RSCRIPT) analysis/R/run_descriptive.R
 	@if [ -x "$(QUARTO)" ] && [ -x "$(dir $(QUARTO))tools/x86_64/deno" ]; then \
-		$(QUARTO) render reports/stage4_descriptive_analysis.qmd --to html --output-dir reports; \
+		$(QUARTO) render reports/descriptive_analysis.qmd --to html --output-dir reports; \
 	else \
-		echo "Complete Quarto CLI not available; rendering HTML from Stage 4 artifacts with R."; \
-		$(RSCRIPT) analysis/R/07_render_report.R; \
+		echo "Complete Quarto CLI not available; rendering HTML from descriptive artifacts with R."; \
+		$(RSCRIPT) analysis/R/render_descriptive_report.R; \
 	fi
 
 model-plan:
 	$(PYTHON) scripts/check_environment.py
-	$(RSCRIPT) analysis/R/run_stage5.R
+	$(RSCRIPT) analysis/R/run_model_preflight.R
 
 inference:
 	$(PYTHON) scripts/check_environment.py
-	$(RSCRIPT) analysis/R/run_stage6.R
-	@if [ -x "$(QUARTO)" ] && [ -x "$(dir $(QUARTO))tools/x86_64/deno" ] && [ -f reports/stage6_inferential_analysis.qmd ]; then \
-		if [ ! -f reports/stage6_inferential_analysis.html ]; then \
-			$(QUARTO) render reports/stage6_inferential_analysis.qmd --to html --output-dir reports; \
+	$(RSCRIPT) analysis/R/run_inference.R
+	@if [ -x "$(QUARTO)" ] && [ -x "$(dir $(QUARTO))tools/x86_64/deno" ] && [ -f reports/inferential_analysis.qmd ]; then \
+		if [ ! -f reports/inferential_analysis.html ]; then \
+			$(QUARTO) render reports/inferential_analysis.qmd --to html --output-dir reports; \
 		fi; \
 	fi

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the Stage 3 primary OS cohort from staging tables."""
+"""Build the locked primary OS cohort from reconciled source tables."""
 
 from __future__ import annotations
 

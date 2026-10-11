@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
-# Stage 4 descriptive workflow. Reads the frozen cohort. Does not fit Cox models.
+# Descriptive workflow. Reads the frozen cohort. Does not fit Cox models.
 
-stage4_scripts <- c(
+descriptive_scripts <- c(
   "setup.R",
   "descriptive.R"
 )
@@ -16,11 +16,11 @@ locate_script_dir <- function() {
 }
 
 script_dir <- locate_script_dir()
-for (script in stage4_scripts) {
+for (script in descriptive_scripts) {
   source(file.path(script_dir, script), local = FALSE)
 }
 
-load_stage4_packages()
+load_analysis_packages()
 ensure_output_dirs()
 
 con <- connect_pediastat()
@@ -40,7 +40,7 @@ missingness <- run_missingness(loaded$cohort, loaded$long_baseline)
 km_result <- run_overall_survival(loaded$cohort)
 followup <- run_followup(loaded$cohort, km_result)
 provenance <- source_provenance_table(loaded$long_baseline)
-outputs <- run_stage4_outputs(
+outputs <- write_descriptive_outputs(
   loaded,
   descriptives,
   km_result,
@@ -48,14 +48,14 @@ outputs <- run_stage4_outputs(
   provenance
 )
 
-test_file <- file.path(script_dir, "tests", "test_stage4.R")
+test_file <- file.path(script_dir, "tests", "test_descriptive.R")
 if (file.exists(test_file)) {
   results <- as.data.frame(testthat::test_file(test_file, reporter = "progress"))
   n_failed <- sum(results$failed, na.rm = TRUE) + sum(results$error, na.rm = TRUE)
   if (n_failed > 0) {
-    stop("Stage 4 R tests failed.", call. = FALSE)
+    stop("Descriptive R tests failed.", call. = FALSE)
   }
 }
 
-message("Stage 4 descriptive artifacts written to ", DESCRIPTIVE_DIR)
+message("Descriptive artifacts written to ", DESCRIPTIVE_DIR)
 message("Person-level extract (gitignored): ", extract_paths$rds)

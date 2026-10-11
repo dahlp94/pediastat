@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create schemas and Stage 2 tables in PostgreSQL."""
+"""Create database schemas and source tables in PostgreSQL."""
 
 from __future__ import annotations
 

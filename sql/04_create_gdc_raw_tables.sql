@@ -1,5 +1,5 @@
 -- Raw GDC Cases API entities.
--- Typed columns are join/QA fields observed in Stage 1. Full entity JSON is in payload.
+-- Typed columns are join/QA fields observed in the source audit. Full entity JSON is in payload.
 -- Do not collapse follow-ups or treatments.
 
 CREATE TABLE IF NOT EXISTS raw.gdc_cases (

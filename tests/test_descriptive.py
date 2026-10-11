@@ -1,4 +1,4 @@
-"""Stage 4 descriptive-analysis checks. No live database required."""
+"""Descriptive-analysis checks. No live database required."""
 
 from __future__ import annotations
 
@@ -13,24 +13,19 @@ DESC_DIR = PROJECT_ROOT / "artifacts" / "descriptive"
 GITIGNORE = PROJECT_ROOT / ".gitignore"
 
 
-def _stage4_scripts() -> list[Path]:
+def _descriptive_scripts() -> list[Path]:
     names = {
-        "00_setup.R",
-        "01_load_primary_cohort.R",
-        "02_baseline_descriptives.R",
-        "03_missingness.R",
-        "04_overall_survival.R",
-        "05_followup.R",
-        "06_generate_descriptive_outputs.R",
-        "07_render_report.R",
-        "run_stage4.R",
-        "test_stage4.R",
+        "setup.R",
+        "descriptive.R",
+        "render_descriptive_report.R",
+        "run_descriptive.R",
+        "test_descriptive.R",
     }
     return [path for path in R_DIR.rglob("*.R") if path.name in names]
 
 
-def test_stage4_scripts_do_not_fit_cox_or_logrank() -> None:
-    for path in _stage4_scripts():
+def test_descriptive_scripts_do_not_fit_cox_or_logrank() -> None:
+    for path in _descriptive_scripts():
         text = path.read_text(encoding="utf-8")
         assert "coxph(" not in text, f"{path} contains coxph("
         assert "survdiff(" not in text, f"{path} contains survdiff("
@@ -62,7 +57,7 @@ def test_no_committed_patient_level_extract_files() -> None:
     assert forbidden == []
 
 
-def test_stage4_sql_view_does_not_filter_eligibility() -> None:
+def test_cohort_extract_view_does_not_filter_eligibility() -> None:
     sql = (PROJECT_ROOT / "sql" / "08_create_stage4_extract_view.sql").read_text(
         encoding="utf-8"
     )
@@ -73,7 +68,7 @@ def test_stage4_sql_view_does_not_filter_eligibility() -> None:
 
 @pytest.mark.skipif(
     not (DESC_DIR / "endpoint_followup_description.json").exists(),
-    reason="Stage 4 artifacts have not been generated",
+    reason="Descriptive artifacts have not been generated",
 )
 def test_endpoint_artifact_matches_frozen_cohort() -> None:
     import json
@@ -88,7 +83,7 @@ def test_endpoint_artifact_matches_frozen_cohort() -> None:
 
 @pytest.mark.skipif(
     not (DESC_DIR / "table1_primary_cohort.csv").exists(),
-    reason="Stage 4 artifacts have not been generated",
+    reason="Descriptive artifacts have not been generated",
 )
 def test_table1_has_no_pvalue_column() -> None:
     import csv
@@ -103,7 +98,7 @@ def test_table1_has_no_pvalue_column() -> None:
 
 @pytest.mark.skipif(
     not (DESC_DIR / "figures").is_dir(),
-    reason="Stage 4 figures have not been generated",
+    reason="Descriptive figures have not been generated",
 )
 def test_only_overall_km_figure_exists() -> None:
     figures = [path.name for path in (DESC_DIR / "figures").glob("*.png")]
@@ -129,7 +124,7 @@ def test_only_overall_km_figure_exists() -> None:
 
 @pytest.mark.skipif(
     not (DESC_DIR / "overall_survival_estimates.csv").exists(),
-    reason="Stage 4 artifacts have not been generated",
+    reason="Descriptive artifacts have not been generated",
 )
 def test_km_estimates_are_probabilities() -> None:
     import csv

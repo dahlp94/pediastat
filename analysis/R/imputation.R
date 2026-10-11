@@ -1,4 +1,4 @@
-# Stage 6 MICE specification. Methods, predictor matrix, and auxiliaries
+# MICE specification. Methods, predictor matrix, and auxiliaries
 # follow config/model_spec.yaml. No Cox fitting here.
 
 MI_ANALYSIS_VARS <- c(
@@ -122,7 +122,7 @@ mice_missingness_summary <- function(dat) {
   })
   dplyr::bind_rows(rows)
 }
-# Stage 6 multiple imputation and convergence diagnostics.
+# Multiple imputation and convergence diagnostics.
 
 MICE_MAXIT <- 20L
 
@@ -153,7 +153,7 @@ mice_cache_settings <- function(meth, pred, spec, coded) {
 }
 
 assert_saved_mids_compatible <- function(imp, mi_frame, meth, pred, spec, coded) {
-  rerun <- "Regenerate by running Stage 6 without STAGE6_REUSE_MIDS=1."
+  rerun <- "Regenerate by running inference without STAGE6_REUSE_MIDS=1."
   if (!inherits(imp, "mids")) {
     stop("Saved MICE object is not a mids object. ", rerun, call. = FALSE)
   }
@@ -413,7 +413,7 @@ write_mi_diagnostics <- function(imp, mi_frame, spec) {
   plot_mice_traces(trace)
   n_issues <- length(issues)
   md <- c(
-    "# Stage 6 multiple-imputation diagnostics",
+    "# Multiple-imputation diagnostics",
     "",
     sprintf("- Software: mice %s", as.character(utils::packageVersion("mice"))),
     sprintf("- m = %s", imp$m),

@@ -3,35 +3,35 @@
 R is the primary language for descriptive and inferential analysis after
 the Python/PostgreSQL cohort is frozen.
 
-## Stage 4 scripts
+## Descriptive scripts
 
 ```text
 setup.R
 descriptive.R
-run_stage4.R
-tests/test_stage4.R
+run_descriptive.R
+tests/test_descriptive.R
 ```
 
 `setup.R` provides the shared analysis setup, frozen-cohort validation,
 database connection, and cohort-loading functions. `descriptive.R` contains
-the Stage 4 baseline summaries, missingness analysis, overall Kaplan-Meier
+the baseline summaries, missingness analysis, overall Kaplan-Meier
 analysis, reverse-Kaplan-Meier follow-up, provenance, and descriptive output
 generation.
 
-Stage 4 reads `analytics.stage4_primary_cohort_extract`. It does not
+Descriptive analysis reads `analytics.stage4_primary_cohort_extract`. It does not
 reimplement identity, age eligibility, event, or censoring rules, fit Cox
 models, or compare predictors with survival.
 
-`07_render_report.R` writes `reports/stage4_descriptive_analysis.html` from
+`render_descriptive_report.R` writes `reports/descriptive_analysis.html` from
 aggregate artifacts when a complete Quarto CLI is not available. The
-investigator narrative source remains `reports/stage4_descriptive_analysis.qmd`.
+investigator narrative source remains `reports/descriptive_analysis.qmd`.
 
-## Stage 5 scripts
+## Model-preflight scripts
 
 ```text
 model_setup.R
-run_stage5.R
-tests/test_stage5.R
+run_model_preflight.R
+tests/test_model_preflight.R
 ```
 
 These scripts construct planned analysis variables (`age5`, `log2_wbc`,
@@ -42,23 +42,23 @@ planning artifacts. They do not call `coxph()` or `mice()`.
 make model-plan
 ```
 
-## Stage 6 scripts
+## Inference scripts
 
 ```text
 model_setup.R
 imputation.R
 models.R
 diagnostics.R
-render_stage6_report.R
-run_stage6.R
-tests/test_stage6.R
+render_inference_report.R
+run_inference.R
+tests/test_inference.R
 ```
 
-These scripts reuse Stage 5 coding and preflight. They do not rebuild
+These scripts reuse model-preflight coding and checks. They do not rebuild
 cohort eligibility. Complete-case sensitivity uses the same formulas as
 the multiply imputed fits (`models.R`). `diagnostics.R` contains the
 prespecified nonlinear sensitivity, PH diagnostics and remediation,
-influence diagnostics, stratified Kaplan-Meier displays, and Stage 6
+influence diagnostics, stratified Kaplan-Meier displays, and inference
 aggregate-output generation.
 
 ```bash
@@ -80,7 +80,7 @@ make descriptive
 or
 
 ```bash
-conda run -n pediastat-r Rscript analysis/R/run_stage4.R
+conda run -n pediastat-r Rscript analysis/R/run_descriptive.R
 ```
 
 ## Environment
@@ -95,5 +95,5 @@ conda activate pediastat-r
 Packages: DBI, RPostgres, dplyr, tidyr, ggplot2, survival, gtsummary, gt,
 broom, here, scales, yaml, jsonlite, testthat, renv, mice, nnet.
 
-`mice` is used in Stage 6 multiple imputation. It is not called in
-Stage 4 or Stage 5.
+`mice` is used in inferential multiple imputation. It is not called in
+the descriptive analysis or model preflight.

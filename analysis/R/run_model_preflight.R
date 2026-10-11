@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
-# Stage 5 model-plan preflight. Reads the frozen cohort; fits no Cox model or MI.
+# Model-plan preflight. Reads the frozen cohort; fits no Cox model or MI.
 
-stage5_scripts <- c(
+model_preflight_scripts <- c(
   "setup.R",
   "model_setup.R"
 )
@@ -16,9 +16,9 @@ locate_script_dir <- function() {
 }
 
 script_dir <- locate_script_dir()
-for (script in stage5_scripts) source(file.path(script_dir, script), local = FALSE)
+for (script in model_preflight_scripts) source(file.path(script_dir, script), local = FALSE)
 
-load_stage4_packages()
+load_analysis_packages()
 ensure_output_dirs()
 MODEL_PLAN_DIR <- file.path(PROJECT_ROOT, "artifacts", "model_plan")
 INTERIM_STAGE5 <- file.path(PROJECT_ROOT, "data", "interim", "stage5")
@@ -33,7 +33,7 @@ spec <- load_model_spec_yaml()
 coded <- code_inferential_cohort(loaded$cohort, spec)
 preflight <- preflight_coded_cohort(coded, spec)
 
-# Retained for Stage 6 compatibility. This is an MI auxiliary, not a model fit.
+# Retained for inference. This is an MI auxiliary, not a model fit.
 coded$nelson_aalen <- nelson_aalen_cumulative_hazard(coded$os_days, coded$os_event)
 if (any(!is.finite(coded$nelson_aalen))) {
   stop("Nelson-Aalen auxiliary has non-finite values.", call. = FALSE)
@@ -54,12 +54,12 @@ write_lesion_verification(preflight)
 coded_path <- file.path(INTERIM_STAGE5, "coded_primary_cohort.rds")
 saveRDS(coded, coded_path)
 
-test_file <- file.path(script_dir, "tests", "test_stage5.R")
+test_file <- file.path(script_dir, "tests", "test_model_preflight.R")
 if (file.exists(test_file)) {
   results <- as.data.frame(testthat::test_file(test_file, reporter = "progress"))
   n_failed <- sum(results$failed, na.rm = TRUE) + sum(results$error, na.rm = TRUE)
-  if (n_failed > 0) stop("Stage 5 R tests failed.", call. = FALSE)
+  if (n_failed > 0) stop("Model preflight R tests failed.", call. = FALSE)
 }
 
-message("Stage 5 model-plan preflight written to ", MODEL_PLAN_DIR)
+message("Model-plan preflight written to ", MODEL_PLAN_DIR)
 message("Person-level coded extract (gitignored): ", coded_path)

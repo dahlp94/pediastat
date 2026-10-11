@@ -608,7 +608,7 @@ MODEL_PLANNING_ARTIFACTS <- c(
   "missingness_patterns_top15.csv"
 )
 
-remove_stale_stage4_artifacts <- function() {
+remove_model_planning_files_from_descriptive <- function() {
   paths <- file.path(DESCRIPTIVE_DIR, MODEL_PLANNING_ARTIFACTS)
   existing <- paths[file.exists(paths)]
   if (length(existing)) {
@@ -683,14 +683,14 @@ endpoint_description <- function(cohort, km_result, followup) {
   )
 }
 
-run_stage4_outputs <- function(
+write_descriptive_outputs <- function(
   loaded,
   descriptives,
   km_result,
   followup,
   provenance
 ) {
-  remove_stale_stage4_artifacts()
+  remove_model_planning_files_from_descriptive()
 
   write_json_artifact(
     loaded$accounting,

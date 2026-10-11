@@ -75,7 +75,7 @@ notes <- fromJSON(file.path(inf, "analysis_notes.json"))
 session <- fromJSON(file.path(inf, "r_session_info.json"))
 followup <- fromJSON(file.path(root, "artifacts", "descriptive", "followup_summary.json"))
 km_os <- fromJSON(file.path(root, "artifacts", "descriptive", "overall_survival_summary.json"))
-deviations <- paste(readLines(file.path(root, "docs", "stage6_sap_deviations.md"), warn = FALSE), collapse = "\n")
+deviations <- paste(readLines(file.path(root, "docs", "analysis_deviations.md"), warn = FALSE), collapse = "\n")
 row_of <- function(tbl, term) tbl[tbl$term == term, ][1, ]
 fitv <- function(item) fit$value[fit$item == item]
 ```

@@ -1,6 +1,6 @@
-# Stage 6 SAP deviations
+# Analysis deviations
 
-Status: recorded during Stage 6 execution of the frozen Stage 5 inferential specification.
+Status: recorded during inferential execution of the frozen model specification.
 
 Companion: `docs/inferential_model_specification.md`, `config/model_spec.yaml`, `docs/statistical_analysis_plan.md`.
 
@@ -20,7 +20,7 @@ Companion: `docs/inferential_model_specification.md`, `config/model_spec.yaml`, 
 
 ## Model-specification deviations
 
-No deviations from the frozen Stage 5 principal models, missing-data methods (`m = 30`, seed `20260814`, PMM / polyreg / logreg), FDR family, reference categories, or cohort rules occurred.
+No deviations from the frozen principal models, missing-data methods (`m = 30`, seed `20260814`, PMM / polyreg / logreg), FDR family, reference categories, or cohort rules occurred.
 
 In particular:
 
@@ -40,4 +40,4 @@ In particular:
 
 Across the 15 primary- and secondary-model Cox coefficients, the maximum absolute relative hazard-ratio change was 2.38%. No coefficient changed direction, no 95% confidence interval changed its inclusion/exclusion of HR = 1, and none of the seven prespecified secondary BH decisions changed at 0.05. These findings support numerical stability with additional iterations but do not establish convergence at iteration 20 or 100, nor do they validate the Missing At Random assumption.
 
-This post-analysis sensitivity is reported separately in the [inferential report](../reports/stage6_inferential_analysis.qmd); it is **not** a change to the frozen analysis specification.
+This post-analysis sensitivity is reported separately in the [inferential report](../reports/inferential_analysis.qmd); it is **not** a change to the frozen analysis specification.

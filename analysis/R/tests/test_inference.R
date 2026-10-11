@@ -1,4 +1,4 @@
-# Stage 6 validation of the frozen inferential execution.
+# Validation of the frozen inferential execution.
 
 find_root <- function() {
   if (exists("PROJECT_ROOT", inherits = TRUE)) {
@@ -391,7 +391,7 @@ test_that("KM policy remains limited to risk group and FLT3", {
 
 skip_if_no_artifacts <- function() {
   if (!file.exists(file.path(inf_dir, "primary_cox_mi.csv"))) {
-    skip("Stage 6 artifacts have not been generated")
+    skip("Inference artifacts have not been generated")
   }
 }
 

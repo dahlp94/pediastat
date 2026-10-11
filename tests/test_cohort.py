@@ -1,4 +1,4 @@
-"""Stage 3 cohort, identity, and OS endpoint tests. No live database."""
+"""Primary cohort, identity, and OS endpoint tests. No live database."""
 
 from __future__ import annotations
 
