@@ -48,19 +48,18 @@ make model-plan
 model_setup.R
 imputation.R
 models.R
-25_nonlinear_sensitivity.R
-26_ph_diagnostics.R
-27_influence_diagnostics.R
-28_stratified_km.R
-29_generate_model_outputs.R
-30_render_stage6_report.R
+diagnostics.R
+render_stage6_report.R
 run_stage6.R
 tests/test_stage6.R
 ```
 
 These scripts reuse Stage 5 coding and preflight. They do not rebuild
 cohort eligibility. Complete-case sensitivity uses the same formulas as
-the multiply imputed fits (`models.R`).
+the multiply imputed fits (`models.R`). `diagnostics.R` contains the
+prespecified nonlinear sensitivity, PH diagnostics and remediation,
+influence diagnostics, stratified Kaplan-Meier displays, and Stage 6
+aggregate-output generation.
 
 ```bash
 make inference

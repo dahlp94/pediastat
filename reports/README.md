@@ -22,5 +22,5 @@ Stage 6:
 - Aggregate model output: `artifacts/inference/`
 
 Render after `make inference`, or as part of that target when Quarto is
-available. `analysis/R/30_render_stage6_report.R` writes HTML from
+available. `analysis/R/render_stage6_report.R` writes HTML from
 aggregate artifacts when a complete Quarto CLI is not available.

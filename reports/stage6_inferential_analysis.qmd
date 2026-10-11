@@ -90,7 +90,8 @@ The **primary clinical model** estimates adjusted associations of age, sex, WBC,
 - **Primary prognostic variables.** Protocol risk group and log2 white-blood-cell count (WBC), with age and sex as adjustment variables.
 - **Strongest / most precisely estimated primary associations.** Both Standard and High risk had substantially higher adjusted hazards than Low risk. High vs Low: `r hr_line(row_of(primary, "risk_group_stdHigh"))`. Standard vs Low: `r hr_line(row_of(primary, "risk_group_stdStandard"))`. WBC per doubling: `r hr_line(row_of(primary, "log2_wbc"))`.
 - **Complete-case robustness.** The same formulas were fit on complete cases (primary N = `r primary_cc$n[1]`; secondary N = `r secondary_cc$n[1]`). Direction and magnitude are compared below; complete case is sensitivity, not the primary analysis.
-- **Proportional hazards.** Diagnostics used scaled Schoenfeld residuals (`cox.zph`). Remediation, if triggered, followed the prespecified hierarchy and did not replace the primary model (remediation performed: `r isTRUE(meta$ph_remediation_performed)`).
+- **MI convergence sensitivity.** Several categorical chain means were still drifting at the prespecified 20 iterations. In a separate diagnostic continuation to 100 iterations, the largest absolute change in a pooled Cox hazard ratio was 2.38%; coefficient directions, confidence-interval null status, and secondary BH decisions at 0.05 were unchanged. The 20-iteration results remain primary.
+- **Proportional hazards.** Complete-case Schoenfeld tests indicated time variation for WBC in both models (primary p = 0.0108; secondary p = 0.0091). Both were classified as minor departures under the prespecified criteria; no material violation or remediation was recorded. The WBC hazard ratios should not be assumed identical at every follow-up time.
 - **Limitations investigators should keep in mind.** This is observational public TARGET data. Missing covariates were handled under a MAR working assumption. Residual confounding remains possible. The 10-year risk set is small. There is no external validation. Language throughout is **prognostic association**, not causal effect.
 
 # 1. Scientific Objective
@@ -144,9 +145,13 @@ Imputation methods followed the freeze: predictive mean matching for `log2_wbc`;
 
 Unresolved risk-group tokens `10` and `30` (n = 3) remained missing for inference. They were not mapped to Low/Standard/High.
 
-![MICE chain-mean traces](`r file.path(midir, "mi_trace_plots.png")`)
+![MICE chain-mean traces](../artifacts/inference/mi/mi_trace_plots.png)
 
 Diagnostics are in `artifacts/inference/mi/`. Completed person-level imputations are gitignored.
+
+**Additional convergence sensitivity (not part of the prespecified primary run).** The 20-iteration MICE traces showed systematic early movement in risk group and several molecular/cytogenetic indicators despite no logged events or impossible imputed values. The same 30 chains were continued from iteration 20 to iteration 100 in a separate diagnostic exercise, without changing the cohort, methods, predictors, or Cox formulas. Their late categorical chain means were substantially more stable, and neither run recorded `mice` logged events.
+
+Using the same pooled Cox analyses on the 20- and 100-iteration completed datasets, the maximum absolute change in hazard ratio across all 15 coefficients was **2.38%**. No coefficient changed direction, no 95% confidence interval changed whether it included HR = 1, and none of the seven prespecified BH decisions changed at q = 0.05. This supports the **numerical robustness of the substantive associations to additional iterations**, but it does **not** demonstrate that the original chains converged at iteration 20, establish formal convergence at iteration 100, or verify the missing-at-random assumption. The prespecified 20-iteration results remain the reported primary analysis; the 100-iteration comparison was conducted separately and did not replace or overwrite them.
 
 # 5. Primary Clinical Model
 
@@ -162,7 +167,7 @@ knitr::kable(
 )
 ```
 
-![Primary clinical model forest plot](`r file.path(fig, "forest_primary_clinical.png")`)
+![Primary clinical model forest plot](../artifacts/inference/figures/forest_primary_clinical.png)
 
 `r interpret(row_of(primary, "age5"), "age, sex, WBC, and risk group")`
 
@@ -194,7 +199,7 @@ knitr::kable(
 )
 ```
 
-![Secondary molecular model forest plot](`r file.path(fig, "forest_secondary_molecular.png")`)
+![Secondary molecular model forest plot](../artifacts/inference/figures/forest_secondary_molecular.png)
 
 ```{r}
 #| label: secondary-interp
@@ -244,11 +249,11 @@ knitr::kable(
 )
 ```
 
-Relative-hazard curves use the cohort median as the reference (age `r fmt(nl$reference[1])`; WBC median 26.7 ×10³/mcL). Those references were taken from the descriptive analysis, not chosen after seeing which reference made the figure look strongest.
+Relative-hazard curves use the cohort median as the reference (age `r nl$reference[1]`; WBC median 26.7 ×10³/mcL). Those references were taken from the descriptive analysis, not chosen after seeing which reference made the figure look strongest.
 
-![Age spline relative hazard](`r file.path(fig, "age_spline_relative_hazard.png")`)
+![Age spline relative hazard](../artifacts/inference/figures/age_spline_relative_hazard.png)
 
-![WBC spline relative hazard](`r file.path(fig, "wbc_spline_relative_hazard.png")`)
+![WBC spline relative hazard](../artifacts/inference/figures/wbc_spline_relative_hazard.png)
 
 # 9. Proportional-Hazards Diagnostics
 
@@ -263,27 +268,29 @@ knitr::kable(
 )
 ```
 
-![Primary model Schoenfeld plots](`r file.path(phdir, "primary_cox_zph_complete_case.png")`)
+![Primary model Schoenfeld plots](../artifacts/inference/ph/primary_cox_zph_complete_case.png)
 
-![Secondary model Schoenfeld plots](`r file.path(phdir, "secondary_cox_zph_complete_case.png")`)
+![Secondary model Schoenfeld plots](../artifacts/inference/ph/secondary_cox_zph_complete_case.png)
 
-Remediation performed: **`r isTRUE(meta$ph_remediation_performed)`**. The original Cox specifications remain the primary results.
+**WBC proportional-hazards finding.** In the complete-case models, the Schoenfeld test for `log2_wbc` was p = **0.0108** (primary clinical) and p = **0.0091** (secondary molecular). Both were classified as **minor departures** under the project's prespecified rules, not material violations. The smoothed residual curves suggested some temporal variation, with a generally declining association during earlier follow-up and greater uncertainty at the boundaries. The plots are descriptive complete-case diagnostics, not multiply-imputed estimates of time-specific WBC hazard ratios. Consequently, the pooled WBC HRs summarize the fitted constant-coefficient Cox models and should not be interpreted as necessarily identical throughout follow-up.
+
+Remediation performed: **`r isTRUE(meta$ph_remediation_performed)`**. No material PH violation was classified in this run, so no remediation model was triggered. The original Cox specifications remain the primary results.
 
 # 10. Influence Diagnostics
 
 Deviance residuals, martingale residuals, and dfbeta were examined on complete-case fits. Patient-level lists are gitignored. **No valid participant was deleted because they were influential.**
 
-![Primary deviance residuals](`r file.path(fig, "primary_deviance_residuals.png")`)
+![Primary deviance residuals](../artifacts/inference/figures/primary_deviance_residuals.png)
 
-![Secondary deviance residuals](`r file.path(fig, "secondary_deviance_residuals.png")`)
+![Secondary deviance residuals](../artifacts/inference/figures/secondary_deviance_residuals.png)
 
 # 11. Descriptive Kaplan–Meier Figures
 
 Unadjusted curves were prespecified only for **risk group** and **FLT3/ITD**. Missing values are excluded from each figure. These plots are descriptive and were **not** used for variable selection. Log-rank tests were **not** computed.
 
-![Unadjusted KM by risk group](`r file.path(fig, "km_risk_group.png")`)
+![Unadjusted KM by risk group](../artifacts/inference/figures/km_risk_group.png)
 
-![Unadjusted KM by FLT3/ITD](`r file.path(fig, "km_flt3_itd.png")`)
+![Unadjusted KM by FLT3/ITD](../artifacts/inference/figures/km_flt3_itd.png)
 
 # 12. Interpretation
 
@@ -307,7 +314,7 @@ Nominal p-values and BH q-values should be read together. q-values are not a ran
 
 ## Robustness
 
-Complete-case and multiply imputed estimates were compared for direction and magnitude. Nonlinear spline sensitivities assess whether linear `age5` and log2-linear WBC are materially inadequate; they do not automatically replace the primary forms. PH diagnostics assess whether reported hazard ratios should be read as average relative hazards over follow-up.
+Complete-case and multiply imputed estimates were compared for direction and magnitude. The separately conducted 100-iteration MICE continuation produced only small changes in pooled estimates, although the initial 20-iteration categorical chain drift remains a methodological limitation. Nonlinear spline sensitivities assess whether linear `age5` and log2-linear WBC are materially inadequate; they do not automatically replace the primary forms. PH diagnostics found a minor WBC departure in both models, so the WBC hazard ratios are best read as constant-coefficient summaries rather than necessarily time-invariant associations.
 
 # 13. Limitations
 
@@ -315,8 +322,9 @@ Complete-case and multiply imputed estimates were compared for direction and mag
 - Prognostic associations, not causal effects.
 - Multiple integrated open clinical-supplement sources with documented provenance and some source conflicts.
 - Missing baseline covariates; multiple imputation relies on a MAR working assumption that the descriptive analysis did not prove. MNAR remains possible.
+- Some categorical MICE chains exhibited systematic drift at the prespecified 20 iterations. A separate 100-iteration continuation showed substantially more stable late traces and a maximum 2.38% absolute HR change, but does not prove convergence of the original analysis.
 - Potential residual confounding, including unmeasured disease biology and care access.
-- Cox proportional-hazards assumptions; material departures, if classified, were handled as sensitivity analyses rather than silent model replacement.
+- The WBC proportional-hazards tests indicated minor departures in both models. No material PH violation was classified; WBC hazard ratios need not be constant throughout follow-up.
 - Sparse categories exist (for example monosomy 7).
 - The 10-year Kaplan–Meier risk set is small (16 persons).
 - No external validation and no train/test prediction split. Concordance is descriptive only.
@@ -331,7 +339,7 @@ cat(deviations)
 
 # 15. Conclusions
 
-The analysis executed the prespecified plan on the locked primary cohort. Adjusted associations are reported with hazard ratios and 95% confidence intervals and, for the secondary biological family, BH *q*-values. The primary clinical model remains the primary result. Sensitivity analyses (complete case, splines, and PH remediation if triggered) inform robustness and do not rewrite the prespecified specification.
+The analysis executed the prespecified plan on the locked primary cohort. Adjusted associations are reported with hazard ratios and 95% confidence intervals and, for the secondary biological family, BH *q*-values. The primary clinical model remains the primary result. Complete-case and spline sensitivities, along with a separately conducted 100-iteration MICE convergence sensitivity, inform robustness without rewriting the frozen analysis. The minor WBC proportional-hazards departures warrant caution in interpreting its hazard ratio as constant over follow-up.
 
 # 16. Out of scope
 

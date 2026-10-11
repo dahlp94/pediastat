@@ -96,9 +96,9 @@ Age is reported per 5-year increase. WBC is reported per doubling. Sex reference
 
 **Secondary model.** Cox regression with molecular and cytogenetic indicators (FLT3/ITD, NPM, CEBPA, t(8;21), inv(16), MLL/KMT2A, monosomy 7), adjusted for age, sex, and WBC. Protocol risk group is omitted because it already incorporates some of the same biological information.
 
-**Missing data.** Thirty-fold multiple imputation with MICE. The imputation model included the event indicator and a Nelson–Aalen cumulative hazard. The survival outcome itself was not imputed.
+**Missing data.** Multiple imputation by chained equations (MICE; 30 imputations, 20 iterations, seed 20260814). The imputation model included the event indicator and a Nelson–Aalen cumulative hazard. Survival time and event status were not imputed.
 
-**Sensitivity and diagnostics.** Complete-case models; nonlinear age and WBC spline checks; proportional-hazards diagnostics using Schoenfeld residuals; influence diagnostics. No stepwise selection and no interactions.
+**Sensitivity and diagnostics.** Complete-case models; nonlinear age and WBC spline checks; proportional-hazards diagnostics using Schoenfeld residuals; influence diagnostics. An additional 100-iteration MICE continuation evaluated the stability of the original 20-iteration results; it was not part of the primary analysis. No stepwise selection or Cox-model interactions were used.
 
 Ingestion, identifier validation, and cohort construction are implemented in Python with PostgreSQL (`raw` / `staging` / `analytics`). Descriptive and inferential analysis are implemented in R using `survival` and `mice`. Reports are written as Quarto documents.
 
@@ -123,7 +123,7 @@ These are prognostic associations, not causal effects.
 | Standard vs Low risk | 3.85 | 3.10–4.78 |
 | High vs Low risk | 3.50 | 2.71–4.53 |
 
-> Hazard ratios represent adjusted prognostic associations and should not be interpreted causally.
+> Hazard ratios represent adjusted prognostic associations and should not be interpreted causally. WBC showed minor proportional-hazards departures in both models, so its fitted hazard ratio should not be assumed constant throughout follow-up.
 
 Descriptive concordance for the primary model was 0.658. That statistic was not optimized and is not evidence of a validated prediction model.
 
@@ -156,9 +156,10 @@ Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/
 - The cohort and overall-survival endpoint were frozen before any predictor–survival analysis.
 - Primary and secondary model specifications were frozen before Cox fitting.
 - No stepwise selection was performed. No variable was added or removed because of a *p*-value.
-- Multiple imputation was the prespecified primary missing-data method; complete-case analysis was a sensitivity analysis.
+- Multiple imputation was the prespecified primary missing-data method; complete-case analysis was a sensitivity analysis. The 100-iteration MICE continuation was a separate, post-analysis diagnostic and did not replace the frozen 20-iteration results.
+- All 30 completed-dataset Cox fits for each model were checked for the expected 1,978 patients and 695 deaths.
 - The secondary-model FDR family was specified before results were seen.
-- Proportional-hazards remediation rules were specified before diagnostics. A minor WBC departure did not trigger remediation.
+- Proportional-hazards remediation rules were specified before diagnostics. WBC departures in both Cox models were classified as minor; no material PH violation or remediation was recorded.
 - The one recorded SAP deviation (collapsed auxiliary race categories in the MICE model) occurred before hazard ratios were viewed and is documented in [stage6_sap_deviations.md](docs/stage6_sap_deviations.md).
 
 
@@ -168,6 +169,8 @@ Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/
 - The public TARGET-AML population may not generalize to all pediatric AML populations.
 - Baseline clinical information came from multiple overlapping public supplements.
 - Some candidate covariates were missing. Multiple imputation uses a Missing At Random working assumption that was not proven.
+- Several categorical MICE chains were still drifting at the original 20 iterations. In a separate continuation to 100 iterations, the largest absolute change in a pooled hazard ratio was 2.38%, without changes in coefficient directions, confidence-interval null status, or secondary FDR decisions. This sensitivity is reassuring but does not establish convergence at iteration 20.
+- Schoenfeld tests indicated time variation for WBC in both Cox models (primary *p* = 0.0108; secondary *p* = 0.0091). Both were classified as minor departures; the WBC hazard ratio need not be constant over time.
 - Residual confounding is possible, including unmeasured disease biology and care access.
 - Molecular and cytogenetic analyses are secondary. Some categories are sparse (for example, 38 monosomy 7 cases).
 - No external validation was performed.
@@ -185,7 +188,7 @@ make descriptive  # Table 1, overall KM, reverse KM, descriptive report
 make inference    # MICE, Cox models, diagnostics, inferential report
 ```
 
-`make check` confirms the Python package, tests, and configuration. `make descriptive` reads the locked cohort and writes aggregate descriptive artifacts. `make inference` runs the frozen MICE specification (*m* = 30), pools the primary and secondary Cox models, writes aggregate inferential artifacts, and renders the inferential report.
+`make check` confirms the Python package, tests, and configuration. `make descriptive` reads the locked cohort and writes aggregate descriptive artifacts. `make inference` runs the frozen MICE specification (*m* = 30, 20 iterations), pools the primary and secondary Cox models, writes aggregate inferential artifacts, and renders the inferential report. The separate 100-iteration convergence sensitivity is not part of `make inference`.
 
 Stack: Python, PostgreSQL (`raw` / `staging` / `analytics`), R, `survival`, `mice`.
 

@@ -126,6 +126,58 @@ mice_missingness_summary <- function(dat) {
 
 MICE_MAXIT <- 20L
 
+# Record the original requested MICE settings. mice may adjust its internal
+# method/predictor matrix after detecting collinearity, so compare the inputs
+# supplied before fitting rather than its potentially modified internals.
+mice_identity_fingerprint <- function(coded) {
+  ids <- as.character(coded$analysis_person_id)
+  if (length(ids) != nrow(coded) || anyNA(ids) || anyDuplicated(ids)) {
+    stop("Cannot validate MICE cache: patient identities are missing or duplicated.",
+         call. = FALSE)
+  }
+  path <- tempfile(fileext = ".rds")
+  on.exit(unlink(path), add = TRUE)
+  saveRDS(ids, path, version = 2, compress = FALSE)
+  unname(tools::md5sum(path))
+}
+
+mice_cache_settings <- function(meth, pred, spec, coded) {
+  list(
+    m = as.integer(spec$missing_data$m),
+    maxit = as.integer(MICE_MAXIT),
+    seed = as.integer(spec$missing_data$seed),
+    method = meth,
+    predictor_matrix = pred,
+    person_id_fingerprint = mice_identity_fingerprint(coded)
+  )
+}
+
+assert_saved_mids_compatible <- function(imp, mi_frame, meth, pred, spec, coded) {
+  rerun <- "Regenerate by running Stage 6 without STAGE6_REUSE_MIDS=1."
+  if (!inherits(imp, "mids")) {
+    stop("Saved MICE object is not a mids object. ", rerun, call. = FALSE)
+  }
+  # Exact equality also protects row order, factor levels, and observed
+  # outcomes. The separate ID fingerprint detects changes to patient identity
+  # without adding identifiers to the imputation predictor data.
+  if (!identical(imp$data, mi_frame)) {
+    stop("Saved MICE data differ from the current imputation frame. ", rerun,
+         call. = FALSE)
+  }
+  expected <- mice_cache_settings(meth, pred, spec, coded)
+  if (!identical(attr(imp, "pediastat_cache_settings", exact = TRUE), expected)) {
+    stop("Saved MICE settings or patient identities differ from this run. ",
+         rerun, call. = FALSE)
+  }
+  if (!identical(as.integer(imp$m), expected$m) ||
+      !identical(as.integer(imp$iteration), expected$maxit) ||
+      !identical(as.integer(imp$seed), expected$seed)) {
+    stop("Saved MICE execution settings do not match the frozen run. ",
+         rerun, call. = FALSE)
+  }
+  invisible(TRUE)
+}
+
 run_multiple_imputation <- function(mi_frame, meth, pred, spec) {
   m <- as.integer(spec$missing_data$m)
   seed <- as.integer(spec$missing_data$seed)

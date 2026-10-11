@@ -7,11 +7,7 @@ stage6_scripts <- c(
   "model_setup.R",
   "imputation.R",
   "models.R",
-  "25_nonlinear_sensitivity.R",
-  "26_ph_diagnostics.R",
-  "27_influence_diagnostics.R",
-  "28_stratified_km.R",
-  "29_generate_model_outputs.R"
+  "diagnostics.R"
 )
 
 locate_script_dir <- function() {
@@ -57,11 +53,10 @@ reuse_mids <- identical(Sys.getenv("STAGE6_REUSE_MIDS"), "1") && file.exists(mid
 if (reuse_mids) {
   message("Reusing saved mids object from ", mids_path)
   imp <- readRDS(mids_path)
-  if (!identical(imp$m, 30L) && !identical(as.integer(imp$m), 30L)) {
-    stop("Saved mids object does not have m = 30.", call. = FALSE)
-  }
+  assert_saved_mids_compatible(imp, mi_frame, meth, pred, spec, coded)
 } else {
   imp <- run_multiple_imputation(mi_frame, meth, pred, spec)
+  attr(imp, "pediastat_cache_settings") <- mice_cache_settings(meth, pred, spec, coded)
   saveRDS(imp, mids_path)
 }
 mi_diag <- write_mi_diagnostics(imp, mi_frame, spec)
@@ -74,29 +69,10 @@ if (length(mi_diag$issues)) {
 }
 
 message("Stage 6: fitting pooled primary and secondary Cox models")
-primary_mira <- with(
-  imp,
-  survival::coxph(
-    survival::Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc + risk_group_std,
-    ties = "efron",
-    model = TRUE,
-    x = TRUE,
-    y = TRUE
-  )
-)
-secondary_mira <- with(
-  imp,
-  survival::coxph(
-    survival::Surv(os_days, os_event) ~ age5 + sex_std + log2_wbc +
-      flt3_itd_std + npm_std + cebpa_std +
-      cytogenetics_t821_std + cytogenetics_inv16_std +
-      cytogenetics_mll_std + cytogenetics_monosomy7_std,
-    ties = "efron",
-    model = TRUE,
-    x = TRUE,
-    y = TRUE
-  )
-)
+# Use the shared Cox fitting helper so principal MI fits retain their
+# warnings and estimability metadata (like diagnostic/sensitivity fits).
+primary_mira <- fit_cox_across_imputations(imp, coded, PRIMARY_FORMULA)
+secondary_mira <- fit_cox_across_imputations(imp, coded, SECONDARY_FORMULA)
 if ("risk_group_std" %in% names(coef(secondary_mira$analyses[[1]]))) {
   stop("Risk group leaked into the secondary molecular model.", call. = FALSE)
 }
@@ -105,17 +81,25 @@ if (isTRUE(lesion_in_primary)) {
   stop("Molecular/lesion terms leaked into the primary clinical model.", call. = FALSE)
 }
 
+# Write warning diagnostics before validating or pooling; a failed run
+# retains the evidence needed to investigate the affected imputation.
+primary_warn <- cox_warning_summary(primary_mira, "primary_clinical")
+secondary_warn <- cox_warning_summary(secondary_mira, "secondary_molecular")
+cox_warnings <- dplyr::bind_rows(primary_warn, secondary_warn)
+write_inference_csv(cox_warnings, "cox_fit_warnings.csv")
+
+# Complete counts are necessary but insufficient: also require finite,
+# estimable, warning-free coefficients and covariance matrices.
+assert_mi_cox_counts(primary_mira, "primary_clinical")
+assert_mi_cox_counts(secondary_mira, "secondary_molecular")
+assert_mi_cox_estimable(primary_mira, "primary_clinical", PRIMARY_TERM_ORDER)
+assert_mi_cox_estimable(secondary_mira, "secondary_molecular", SECONDARY_TERM_ORDER)
+
 primary_mi <- pool_cox_mira(primary_mira, "primary_clinical", PRIMARY_TERM_ORDER)
 secondary_mi <- pool_cox_mira(secondary_mira, "secondary_molecular", SECONDARY_TERM_ORDER)
 secondary_mi <- apply_bh_qvalues(secondary_mi, spec)
 primary_conc <- concordance_from_mira(primary_mira)
 secondary_conc <- concordance_from_mira(secondary_mira)
-primary_warn <- cox_warning_summary(primary_mira, "primary_clinical")
-secondary_warn <- cox_warning_summary(secondary_mira, "secondary_molecular")
-cox_warnings <- dplyr::bind_rows(primary_warn, secondary_warn)
-if (nrow(cox_warnings)) {
-  write_inference_csv(cox_warnings, "cox_fit_warnings.csv")
-}
 
 risk_global <- tryCatch(
   global_risk_group_test(imp, coded),
@@ -196,7 +180,7 @@ if (nzchar(quarto_bin) && file.exists(quarto_bin) && file.exists(qmd)) {
 }
 if (!rendered) {
   message("Quarto CLI not used; writing HTML from Stage 6 artifacts with R.")
-  source(file.path(script_dir, "30_render_stage6_report.R"), local = FALSE)
+  source(file.path(script_dir, "render_stage6_report.R"), local = FALSE)
 }
 
 message("Stage 6 complete. Aggregate artifacts: ", INFERENCE_DIR)

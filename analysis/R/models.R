@@ -124,6 +124,75 @@ assert_no_interactions <- function(fit) {
   invisible(TRUE)
 }
 
+# Every principal-model fit must retain the frozen cohort before MI pooling.
+# Checking fit$n and fit$nevent catches silently omitted predictor-missing rows.
+assert_mi_cox_counts <- function(mira_obj, model_name,
+                                 expected_n = EXPECTED_N,
+                                 expected_deaths = EXPECTED_DEATHS,
+                                 expected_m = 30L) {
+  fits <- mira_obj$analyses
+  if (length(fits) != expected_m) {
+    stop(sprintf("%s: expected %d imputed Cox fits; found %d.",
+                 model_name, expected_m, length(fits)), call. = FALSE)
+  }
+  for (i in seq_along(fits)) {
+    fit <- fits[[i]]
+    if (!inherits(fit, "coxph")) {
+      stop(sprintf("%s imputation %d: expected a Cox fit.", model_name, i),
+           call. = FALSE)
+    }
+    n_fit <- fit$n
+    deaths_fit <- fit$nevent
+    valid <- length(n_fit) == 1L && length(deaths_fit) == 1L &&
+      is.finite(n_fit) && is.finite(deaths_fit) &&
+      n_fit == expected_n && deaths_fit == expected_deaths
+    if (!isTRUE(valid)) {
+      shown <- function(x) if (length(x) == 1L) as.character(x) else "unavailable"
+      stop(sprintf(
+        "%s imputation %d: fitted n=%s, deaths=%s; expected n=%d, deaths=%d. Pooling stopped.",
+        model_name, i, shown(n_fit), shown(deaths_fit),
+        expected_n, expected_deaths
+      ), call. = FALSE)
+    }
+  }
+  invisible(TRUE)
+}
+
+# A complete fitted cohort does not guarantee an estimable Cox coefficient.
+# Every principal MI fit must have the intended terms, finite estimates and
+# variances, and no unresolved coxph fitting warnings before Rubin pooling.
+assert_mi_cox_estimable <- function(mira_obj, model_name, expected_terms) {
+  for (i in seq_along(mira_obj$analyses)) {
+    fit <- mira_obj$analyses[[i]]
+    label <- sprintf("%s imputation %d", model_name, i)
+    if (!inherits(fit, "coxph")) {
+      stop(label, ": expected a Cox fit.", call. = FALSE)
+    }
+    b <- stats::coef(fit)
+    if (!identical(names(b), expected_terms)) {
+      stop(label, ": unexpected coefficient terms; pooling stopped.", call. = FALSE)
+    }
+    if (any(!is.finite(b))) {
+      stop(label, ": non-finite Cox coefficient; pooling stopped.", call. = FALSE)
+    }
+    if (!isTRUE(attr(fit, "estimable", exact = TRUE))) {
+      stop(label, ": Cox fit not marked estimable; pooling stopped.", call. = FALSE)
+    }
+    v <- tryCatch(stats::vcov(fit), error = function(e) NULL)
+    if (is.null(v) || !is.matrix(v) ||
+        !identical(dim(v), c(length(b), length(b))) ||
+        any(!is.finite(v)) || any(diag(v) <= 0)) {
+      stop(label, ": invalid Cox coefficient covariance; pooling stopped.", call. = FALSE)
+    }
+    notes <- attr(fit, "warnings", exact = TRUE)
+    if (length(notes)) {
+      stop(label, ": Cox fitting warning (see cox_fit_warnings.csv): ",
+           paste(unique(notes), collapse = " | "), call. = FALSE)
+    }
+  }
+  invisible(TRUE)
+}
+
 pool_cox_mira <- function(mira_obj, model_name, term_order) {
   lapply(mira_obj$analyses, assert_cox_ties_efron)
   lapply(mira_obj$analyses, assert_no_interactions)
@@ -197,6 +266,10 @@ cox_warning_summary <- function(mira_obj, model_name) {
       stringsAsFactors = FALSE
     )
   })
+  if (all(vapply(notes, is.null, logical(1)))) {
+    return(data.frame(model = character(), imputation = integer(),
+                      warning = character(), stringsAsFactors = FALSE))
+  }
   dplyr::bind_rows(notes)
 }
 
