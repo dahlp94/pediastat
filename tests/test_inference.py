@@ -56,7 +56,7 @@ def test_fdr_family_unchanged() -> None:
 
 def test_gitignore_excludes_inference_patient_level_files() -> None:
     text = GITIGNORE.read_text(encoding="utf-8")
-    assert "data/interim/stage6/" in text
+    assert "data/interim/inference/" in text
     assert "artifacts/inference/**/*.rds" in text
 
 
@@ -66,7 +66,7 @@ def test_inference_directory_exists() -> None:
 
 def test_no_committed_patient_level_inference_files() -> None:
     result = subprocess.run(
-        ["git", "ls-files", "data/interim/stage6", "artifacts/inference"],
+        ["git", "ls-files", "data/interim/inference", "artifacts/inference"],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,

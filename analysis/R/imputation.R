@@ -153,7 +153,7 @@ mice_cache_settings <- function(meth, pred, spec, coded) {
 }
 
 assert_saved_mids_compatible <- function(imp, mi_frame, meth, pred, spec, coded) {
-  rerun <- "Regenerate by running inference without STAGE6_REUSE_MIDS=1."
+  rerun <- "Regenerate by running inference without INFERENCE_REUSE_MIDS=1."
   if (!inherits(imp, "mids")) {
     stop("Saved MICE object is not a mids object. ", rerun, call. = FALSE)
   }

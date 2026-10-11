@@ -117,7 +117,7 @@ Primary cohort eligibility is not conditional on complete candidate covariates. 
 
 ## Sensitivity Populations
 
-Prespecified, not analyzed in Stage 3:
+Prespecified, not analyzed during cohort construction:
 
 - Age at diagnosis ≤ 21 years, otherwise the same OS and identity rules.
 - No age restriction, otherwise the same identity, diagnosis, and OS rules.

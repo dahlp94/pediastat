@@ -1,5 +1,5 @@
 {
-  "note": "Column-completeness counts from open-access TARGET-AML clinical supplements downloaded during the Stage 1 audit. These are not analysis results. Overlapping TARGET USIs exist across files; files are not a single mutually exclusive cohort table.",
+  "note": "Column-completeness counts from open-access TARGET-AML clinical supplements downloaded during the source audit. These are not analysis results. Overlapping TARGET USIs exist across files; files are not a single mutually exclusive cohort table.",
   "audit_timestamp_utc": "2026-08-14T01:24:42+00:00",
   "unique_target_usi_union_clinical_data_files": 2144,
   "files": [

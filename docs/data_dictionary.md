@@ -1,10 +1,10 @@
 # Data Dictionary
 
-This dictionary records fields verified in the Stage 1 TARGET-AML source
-audit, ingested in Stage 2, and used to lock the Stage 3 analysis
+This dictionary records fields verified in the TARGET-AML source
+audit, ingested from the open clinical sources, and used to lock the analysis
 population and OS endpoint.
 
-Stage 3 source-precedence rules are in
+Source-precedence rules are in
 `docs/baseline_covariate_source_rules.md`. The locked cohort is
 `analytics.primary_os_cohort`.
 
@@ -22,8 +22,8 @@ interest / adjustment covariate / descriptive only / excluded / uncertain.
 
 ## A. GDC Cases API fields
 
-Ingested to `raw.gdc_*` / `staging.gdc_*`. Missingness below is the Stage 1
-case-level audit (denominator 2492) unless noted. Stage 2 load counts:
+Ingested to `raw.gdc_*` / `staging.gdc_*`. Missingness below is the source
+audit (denominator 2492) unless noted. Ingestion load counts:
 2492 cases, 2189 demographics, 2189 diagnoses, 61746 follow-ups, 9477
 treatments.
 
@@ -78,7 +78,7 @@ Observed in open TARGET-AML Clinical Supplement XLSX files and loaded to
 are from `TARGET_AML_CDE_20230524.xlsx` where available. Files overlap
 (union 2144 USIs). Precedence is recommended, not applied.
 
-Missingness percents below are Stage 2 observed (not-observed includes
+Missingness percents below are ingestion-observed (not-observed includes
 Unknown/N/A/blank) for the named workbook.
 
 | Analytical concept | Exact source field | Source workbook/entity | Original type | Units / coding | Missingness | Proposed future role | Source-precedence status | Notes |
@@ -108,8 +108,8 @@ Unknown/N/A/blank) for the named workbook.
 | MRD course 1 | `MRD at end of course 1` | Clinical Data / Sheet1 | categorical | Yes; No | file-dependent | Excluded | n/a | Post-baseline |
 | SCT in 1st CR | `SCT in 1st CR` | Clinical Data / Sheet1 | categorical | Yes; No; Unknown | mostly populated | Excluded | n/a | Post-baseline / immortal time |
 
-GDC Cases API fields in section A keep their Stage 1 audit missingness
-(2492-case denominator). After Stage 2 load: 2492 cases, 2189
+GDC Cases API fields in section A keep their source-audit missingness
+(2492-case denominator). After ingestion: 2492 cases, 2189
 demographics, 2189 diagnoses, 61746 follow-ups, 9477 treatments.
 Recommended GDC fields for later analytics (not created): **PROPOSED**
 `vital_status` ← `demographic.vital_status`; **PROPOSED**
@@ -119,7 +119,7 @@ canonical name because the source is unresolved.
 
 ---
 
-## C. Stage 3 analytics fields (locked population and endpoint)
+## C. Analytics fields (locked population and endpoint)
 
 Implemented in `analytics.primary_os_cohort` and related tables. Definitions
 below supersede the unresolved OS-time note in section A for the primary
@@ -155,7 +155,7 @@ from `primary_os_cohort`.
 2453 rows: 2315 valid analysis persons plus 138 ineligible identity
 records retained for audit. Do not describe every row as a patient.
 
-Descriptive analysis reads `analytics.stage4_primary_cohort_extract`,
+Descriptive analysis reads `analytics.primary_cohort_extract`,
 a view over the frozen primary OS cohort. It does not redefine eligibility.
 
 Model-preflight analysis variables (`age5`, `log2_wbc`, `sex_std`, `risk_group_std`,

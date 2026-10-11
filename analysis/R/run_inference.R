@@ -36,8 +36,8 @@ prepared <- prepare_inferential_cohort(loaded)
 coded <- prepared$coded
 spec <- prepared$spec
 preflight <- prepared$preflight
-write_inference_json(preflight, "stage6_preflight.json")
-saveRDS(coded, file.path(INTERIM_STAGE6, "coded_primary_cohort.rds"))
+write_inference_json(preflight, "coded_cohort_preflight.json")
+saveRDS(coded, file.path(INTERIM_INFERENCE, "coded_primary_cohort.rds"))
 
 message("Unresolved risk-group tokens (10/30) set to missing: ", preflight$n_unresolved_risk_tokens)
 
@@ -47,14 +47,32 @@ meth <- build_mice_methods(mi_frame, spec)
 pred <- build_mice_predictor_matrix(mi_frame, meth)
 assert_mice_spec(meth, spec)
 
-message("Running multiple imputation (m = 30)")
-mids_path <- file.path(INTERIM_STAGE6, "mice_mids.rds")
-reuse_mids <- identical(Sys.getenv("STAGE6_REUSE_MIDS"), "1") && file.exists(mids_path)
-if (reuse_mids) {
+mids_path <- file.path(INTERIM_INFERENCE, "mice_mids.rds")
+legacy_reuse <- Sys.getenv("STAGE6_REUSE_MIDS", unset = "")
+reuse_flag <- Sys.getenv("INFERENCE_REUSE_MIDS", unset = "")
+if (nzchar(legacy_reuse) && !nzchar(reuse_flag)) {
+  stop(
+    "STAGE6_REUSE_MIDS is set, but INFERENCE_REUSE_MIDS is not. ",
+    "Refusing to start mice(). Set INFERENCE_REUSE_MIDS=1 to reuse ",
+    mids_path,
+    ", or unset STAGE6_REUSE_MIDS before a new imputation.",
+    call. = FALSE
+  )
+}
+if (identical(reuse_flag, "1")) {
+  if (!file.exists(mids_path)) {
+    stop(
+      "INFERENCE_REUSE_MIDS=1 but the saved mids object is missing: ",
+      mids_path,
+      ". Refusing to start a new imputation.",
+      call. = FALSE
+    )
+  }
   message("Reusing saved mids object from ", mids_path)
   imp <- readRDS(mids_path)
   assert_saved_mids_compatible(imp, mi_frame, meth, pred, spec, coded)
 } else {
+  message("Running multiple imputation (m = 30)")
   imp <- run_multiple_imputation(mi_frame, meth, pred, spec)
   attr(imp, "pediastat_cache_settings") <- mice_cache_settings(meth, pred, spec, coded)
   saveRDS(imp, mids_path)
@@ -184,4 +202,4 @@ if (!rendered) {
 }
 
 message("Inference complete. Aggregate artifacts: ", INFERENCE_DIR)
-message("Person-level MI object (gitignored): ", file.path(INTERIM_STAGE6, "mice_mids.rds"))
+message("Person-level MI object (gitignored): ", file.path(INTERIM_INFERENCE, "mice_mids.rds"))

@@ -332,12 +332,12 @@ init_inference_paths <- function() {
   INFERENCE_MI_DIR <<- file.path(INFERENCE_DIR, "mi")
   INFERENCE_PH_DIR <<- file.path(INFERENCE_DIR, "ph")
   INFERENCE_FIG_DIR <<- file.path(INFERENCE_DIR, "figures")
-  INTERIM_STAGE6 <<- file.path(PROJECT_ROOT, "data", "interim", "stage6")
+  INTERIM_INFERENCE <<- file.path(PROJECT_ROOT, "data", "interim", "inference")
   dir.create(INFERENCE_DIR, recursive = TRUE, showWarnings = FALSE)
   dir.create(INFERENCE_MI_DIR, recursive = TRUE, showWarnings = FALSE)
   dir.create(INFERENCE_PH_DIR, recursive = TRUE, showWarnings = FALSE)
   dir.create(INFERENCE_FIG_DIR, recursive = TRUE, showWarnings = FALSE)
-  dir.create(INTERIM_STAGE6, recursive = TRUE, showWarnings = FALSE)
+  dir.create(INTERIM_INFERENCE, recursive = TRUE, showWarnings = FALSE)
   invisible(INFERENCE_DIR)
 }
 

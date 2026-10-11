@@ -35,14 +35,14 @@ def test_descriptive_scripts_do_not_fit_cox_or_logrank() -> None:
 def test_gitignore_excludes_patient_level_extracts() -> None:
     text = GITIGNORE.read_text(encoding="utf-8")
     assert "data/interim/*" in text
-    assert "data/interim/stage4/" in text or "data/interim/*" in text
+    assert "data/interim/descriptive/" in text
 
 
 def test_no_committed_patient_level_extract_files() -> None:
     import subprocess
 
     result = subprocess.run(
-        ["git", "ls-files", "data/interim/stage4", "artifacts/descriptive"],
+        ["git", "ls-files", "data/interim/descriptive", "artifacts/descriptive"],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -58,9 +58,10 @@ def test_no_committed_patient_level_extract_files() -> None:
 
 
 def test_cohort_extract_view_does_not_filter_eligibility() -> None:
-    sql = (PROJECT_ROOT / "sql" / "08_create_stage4_extract_view.sql").read_text(
-        encoding="utf-8"
-    )
+    sql_path = PROJECT_ROOT / "sql" / "08_create_primary_cohort_extract_view.sql"
+    sql = sql_path.read_text(encoding="utf-8")
+    assert "analytics.primary_cohort_extract" in sql
+    assert "stage4_primary_cohort_extract" not in sql
     assert "analytics.primary_os_cohort" in sql
     assert "age_at_diagnosis_years < 18" not in sql
     assert "os_event =" not in sql

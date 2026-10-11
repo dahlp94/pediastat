@@ -1,8 +1,7 @@
 # Baseline variable definitions
 
 Verified against `docs/baseline_covariate_source_rules.md`,
-`docs/data_dictionary.md`, `artifacts/ingestion_audit/clinical_concept_source_map.csv`,
-and GDC/CDE wording. The descriptive analysis does not change these definitions.
+`docs/data_dictionary.md`, and GDC/CDE wording. The descriptive analysis does not change these definitions.
 
 Unknown and structurally missing remain distinguishable. Values are never
 averaged across sources.

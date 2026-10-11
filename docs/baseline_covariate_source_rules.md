@@ -1,9 +1,10 @@
 # Baseline Covariate Source Rules
 
-Stage: 3  
+Scope: baseline covariate source rules
+
 Status: locked for future covariate construction; not used to define the primary OS cohort.
 
-These rules specify how AML baseline concepts will be taken from overlapping open clinical supplements. They were chosen from Stage 2 source quality, CDE definitions, and coding coherence. They were **not** chosen by inspecting associations with survival.
+These rules specify how AML baseline concepts will be taken from overlapping open clinical supplements. They were chosen from source-reconciliation quality, CDE definitions, and coding coherence. They were **not** chosen by inspecting associations with survival.
 
 Primary cohort membership does not require any of these covariates to be observed.
 
@@ -51,7 +52,7 @@ The CDE workbook and the tumor-content/RIN workbook are not covariate sources.
 - Precedence: GDC only for analysis and eligibility
 - Units: days; years = days / 365.25
 - Harmonization: none; GDC unit is already days
-- Conflict handling: Stage 2 overlap was 100% exact; supplement age is QA only
+- Conflict handling: source-reconciliation overlap was 100% exact; supplement age is QA only
 - Missingness: missing age excludes a person from the primary OS cohort because age is an eligibility variable, not because it is a model covariate
 - Rationale: official GDC definition is age at diagnosis in days since birth; concordance with supplements is complete where both are observed
 
@@ -91,7 +92,7 @@ The CDE workbook and the tumor-content/RIN workbook are not covariate sources.
 - Units: x10^3/mcL (CDE)
 - Coding harmonization: numeric; do not round across sources
 - Conflict handling: precedence winner; `conflict_flag` if observed values differ
-- Missingness: not required for cohort entry; do not impute in Stage 3
+- Missingness: not required for cohort entry; do not impute during cohort construction
 - Rationale: not on the Cases API; 100% overlap agreement; AML1031 is the most complete high-quality file. Completeness is supporting evidence, not the sole reason.
 
 ## Risk group
@@ -101,7 +102,7 @@ The CDE workbook and the tumor-content/RIN workbook are not covariate sources.
 - Eligible files: same five clinical-data files
 - Precedence: AML1031 > Discovery > Validation > LowDepth > additional
 - Coding: High Risk / Low Risk / Standard Risk (CDE)
-- Conflict handling: precedence winner; flag disagreements (known LowDepth disagreements in Stage 2)
+- Conflict handling: precedence winner; flag disagreements (known LowDepth disagreements in the source reconciliation)
 - Missingness: does not exclude from the primary cohort
 - Rationale: cytogenetics- and biomarker-defined AML risk; AML1031 nearly complete; Discovery/Validation preferred over LowDepth when they conflict
 
@@ -179,7 +180,7 @@ Concepts: `cytogenetics_t821` (`t(8;21)`), `cytogenetics_inv16` (`inv(16)`), `cy
 - Source field: `Primary Cytogenetic Code`
 - Precedence: Discovery > Validation > AML1031 > LowDepth > additional
 - Conflict handling: precedence winner; flag disagreements
-- Rationale: Stage 2 found pairwise code disagreements, especially involving LowDepth. The summary code is not assumed equivalent to lesion flags. Classified **NEEDS REVIEW** before any primary model uses it.
+- Rationale: source reconciliation found pairwise code disagreements, especially involving LowDepth. The summary code is not assumed equivalent to lesion flags. Classified **NEEDS REVIEW** before any primary model uses it.
 
 ## Explicitly not baseline covariates
 

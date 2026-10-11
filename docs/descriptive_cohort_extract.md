@@ -5,9 +5,9 @@ reimplement patient identity, age eligibility, OS event, or OS time.
 
 ## Database view
 
-`sql/08_create_stage4_extract_view.sql` creates:
+`sql/08_create_primary_cohort_extract_view.sql` creates:
 
-`analytics.stage4_primary_cohort_extract`
+`analytics.primary_cohort_extract`
 
 The view is a wide join of:
 
@@ -22,7 +22,7 @@ R loads the view after applying the SQL file:
 
 ```sql
 SELECT *
-FROM analytics.stage4_primary_cohort_extract
+FROM analytics.primary_cohort_extract
 ORDER BY analysis_person_id;
 ```
 
@@ -49,7 +49,7 @@ SELECT * FROM analytics.cohort_eligibility;
 
 A person-level copy may be written to:
 
-`data/interim/stage4/primary_cohort_extract.rds`
+`data/interim/descriptive/primary_cohort_extract.rds`
 
 That path is gitignored. Do not commit patient-level rows.
 

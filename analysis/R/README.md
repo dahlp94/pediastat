@@ -18,7 +18,7 @@ the baseline summaries, missingness analysis, overall Kaplan-Meier
 analysis, reverse-Kaplan-Meier follow-up, provenance, and descriptive output
 generation.
 
-Descriptive analysis reads `analytics.stage4_primary_cohort_extract`. It does not
+Descriptive analysis reads `analytics.primary_cohort_extract`. It does not
 reimplement identity, age eligibility, event, or censoring rules, fit Cox
 models, or compare predictors with survival.
 
@@ -66,7 +66,7 @@ make inference
 ```
 
 Person-level imputations, residuals, and dfbeta files under
-`data/interim/stage6/` are gitignored. Aggregate tables and figures are
+`data/interim/inference/` are gitignored. Aggregate tables and figures are
 written to `artifacts/inference/`.
 
 ## Environment

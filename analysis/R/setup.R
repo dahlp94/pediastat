@@ -47,8 +47,8 @@ find_project_root <- function() {
 PROJECT_ROOT <- find_project_root()
 DESCRIPTIVE_DIR <- file.path(PROJECT_ROOT, "artifacts", "descriptive")
 FIGURE_DIR <- file.path(DESCRIPTIVE_DIR, "figures")
-INTERIM_DIR <- file.path(PROJECT_ROOT, "data", "interim", "stage4")
-SQL_VIEW_FILE <- file.path(PROJECT_ROOT, "sql", "08_create_stage4_extract_view.sql")
+INTERIM_DIR <- file.path(PROJECT_ROOT, "data", "interim", "descriptive")
+SQL_VIEW_FILE <- file.path(PROJECT_ROOT, "sql", "08_create_primary_cohort_extract_view.sql")
 
 ensure_output_dirs <- function() {
   dir.create(DESCRIPTIVE_DIR, recursive = TRUE, showWarnings = FALSE)
@@ -341,7 +341,7 @@ load_primary_cohort <- function(con) {
   apply_extract_view(con)
   cohort <- DBI::dbGetQuery(
     con,
-    "SELECT * FROM analytics.stage4_primary_cohort_extract ORDER BY analysis_person_id"
+    "SELECT * FROM analytics.primary_cohort_extract ORDER BY analysis_person_id"
   )
   checks <- validate_frozen_cohort(cohort)
   identity <- load_identity_accounting(con)

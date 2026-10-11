@@ -2,7 +2,7 @@
 -- Joins the frozen primary OS cohort to reconciled baseline covariates.
 -- Does not reimplement identity, age eligibility, event, or censoring rules.
 
-CREATE OR REPLACE VIEW analytics.stage4_primary_cohort_extract AS
+CREATE OR REPLACE VIEW analytics.primary_cohort_extract AS
 SELECT
     c.analysis_person_id,
     c.gdc_case_id,

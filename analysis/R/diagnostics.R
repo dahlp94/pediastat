@@ -599,7 +599,7 @@ run_ph_remediation <- function(imp, coded, primary_cc, decisions) {
 
 
 # Influence diagnostics on complete-case principal models.
-# Patient-level files stay under data/interim/stage6 (gitignored).
+# Patient-level files stay under data/interim/inference (gitignored).
 # Valid observations are not deleted for influence alone.
 
 influence_summary_from_fit <- function(fit, data, model_name) {
@@ -668,8 +668,8 @@ run_influence_diagnostics <- function(primary_cc, secondary_cc) {
   secondary <- influence_summary_from_fit(secondary_cc$fit, secondary_cc$data, "secondary_molecular")
   summary_tbl <- dplyr::bind_rows(primary$summary, secondary$summary)
   write_inference_csv(summary_tbl, "influence_summary.csv")
-  saveRDS(primary$person, file.path(INTERIM_STAGE6, "primary_influence_person.rds"))
-  saveRDS(secondary$person, file.path(INTERIM_STAGE6, "secondary_influence_person.rds"))
+  saveRDS(primary$person, file.path(INTERIM_INFERENCE, "primary_influence_person.rds"))
+  saveRDS(secondary$person, file.path(INTERIM_INFERENCE, "secondary_influence_person.rds"))
   plot_influence(primary$person, "primary clinical model", "primary_deviance_residuals.png")
   plot_influence(secondary$person, "secondary molecular model", "secondary_deviance_residuals.png")
   list(

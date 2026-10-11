@@ -271,4 +271,4 @@ Model preflight froze the inferential plan before regression. The locked specifi
 
 # Appendix
 
-R `r session$r_version` (`r session$running`). Analysis scripts live under `analysis/R/` and read `analytics.stage4_primary_cohort_extract`. Person-level extracts are gitignored.
+R `r session$r_version` (`r session$running`). Analysis scripts live under `analysis/R/` and read `analytics.primary_cohort_extract`. Person-level extracts are gitignored.

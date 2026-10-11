@@ -184,7 +184,7 @@ Shared or source-specific concepts actually found:
 - CNS disease, marrow/peripheral blasts (supplement)
 - cytogenetic lesion flags and `Primary Cytogenetic Code` (supplement)
 
-Full map with missingness: `artifacts/ingestion_audit/clinical_concept_source_map.csv`.
+Supplement missingness is summarized in the table below. Source-precedence rules are documented in `docs/baseline_covariate_source_rules.md`.
 
 ## 10. Baseline Covariate Availability
 

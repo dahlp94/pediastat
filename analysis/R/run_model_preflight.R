@@ -21,9 +21,9 @@ for (script in model_preflight_scripts) source(file.path(script_dir, script), lo
 load_analysis_packages()
 ensure_output_dirs()
 MODEL_PLAN_DIR <- file.path(PROJECT_ROOT, "artifacts", "model_plan")
-INTERIM_STAGE5 <- file.path(PROJECT_ROOT, "data", "interim", "stage5")
+INTERIM_MODEL_PREFLIGHT <- file.path(PROJECT_ROOT, "data", "interim", "model_preflight")
 dir.create(MODEL_PLAN_DIR, recursive = TRUE, showWarnings = FALSE)
-dir.create(INTERIM_STAGE5, recursive = TRUE, showWarnings = FALSE)
+dir.create(INTERIM_MODEL_PREFLIGHT, recursive = TRUE, showWarnings = FALSE)
 
 con <- connect_pediastat()
 on.exit(DBI::dbDisconnect(con), add = TRUE)
@@ -51,7 +51,7 @@ write_preflight_artifact(preflight)
 write_risk_token_resolution(coded)
 write_lesion_verification(preflight)
 
-coded_path <- file.path(INTERIM_STAGE5, "coded_primary_cohort.rds")
+coded_path <- file.path(INTERIM_MODEL_PREFLIGHT, "coded_primary_cohort.rds")
 saveRDS(coded, coded_path)
 
 test_file <- file.path(script_dir, "tests", "test_model_preflight.R")
