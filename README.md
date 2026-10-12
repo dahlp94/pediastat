@@ -180,19 +180,104 @@ Diagnostic plots, spline sensitivities, and additional tables are in `artifacts/
 
 ## Reproducibility
 
-The committed artifacts and reports are sufficient to read the finished analysis. Re-running the pipeline is optional and requires local Python, PostgreSQL, and the `pediastat-r` conda environment.
+Aggregate tables and figures under [`artifacts/`](artifacts/) are committed. Patient-level raw files and extracts are not. Two tasks are separate: rendering those committed results, and reproducing the analysis from public TARGET-AML sources.
+
+### Render the committed results
+
+The Quarto sources [`reports/descriptive_analysis.qmd`](reports/descriptive_analysis.qmd) and [`reports/inferential_analysis.qmd`](reports/inferential_analysis.qmd) read the committed aggregate files. Rendering uses those files only. Run the commands from the repository root with the `pediastat-r` environment from step 2 active.
 
 ```bash
-make check        # lint, pytest, and environment check (no database required)
-make descriptive  # Table 1, overall KM, reverse KM, descriptive report
-make inference    # MICE, Cox models, diagnostics, inferential report
+quarto render reports/descriptive_analysis.qmd --to html --output-dir reports
+quarto render reports/inferential_analysis.qmd --to html --output-dir reports
 ```
 
-`make check` confirms the Python package, tests, and configuration. `make descriptive` reads the locked cohort and writes aggregate descriptive artifacts. `make inference` runs the frozen MICE specification (*m* = 30, 20 iterations), pools the primary and secondary Cox models, writes aggregate inferential artifacts, and renders the inferential report. The separate 100-iteration convergence sensitivity is not part of `make inference`.
+Set `QUARTO_R` to the `R` executable in that same environment. On Intel macOS 13, the official Quarto installation may also need a compatible Sass executable in `QUARTO_DART_SASS`. That variable is optional on other systems.
+
+If Quarto is missing or rendering fails, the R scripts write an abbreviated HTML substitute from those artifacts. That HTML is not the complete Quarto scientific report:
+
+```bash
+Rscript analysis/R/render_descriptive_report.R
+Rscript analysis/R/render_inference_report.R
+```
+
+Rendered HTML is gitignored.
+
+### Reproduce the analysis
+
+Reproduction needs Python 3.12 or newer, PostgreSQL server binaries (`initdb`, `pg_ctl`, `createdb`, and `psql` on `PATH`, or `POSTGRES_BIN` set to that directory), Conda, and network access to the public GDC API. Run every command from the repository root.
+
+1. Create a virtual environment named `.venv`. `make` uses `.venv/bin/python` when that interpreter exists.
+
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   python -m pip install -e ".[dev]"
+   ```
+
+2. Create the R environment named `pediastat-r` from [`analysis/R/environment.yml`](analysis/R/environment.yml):
+
+   ```bash
+   conda env create -f analysis/R/environment.yml
+   conda activate pediastat-r
+   ```
+
+   `make` uses `$HOME/miniconda3/envs/pediastat-r/bin/Rscript` when that file exists, and the Quarto binary beside it when `quarto --version` prints a version. Otherwise it uses `Rscript` and the first `quarto` on `PATH` that prints a version. It sets `QUARTO_R` to the `R` executable next to the selected `Rscript`. Activate `pediastat-r`, or pass `RSCRIPT` and `QUARTO`, when the environment lives somewhere else. If `QUARTO_DART_SASS` is set, `make` passes it through to Quarto. Details are in [analysis/R/README.md](analysis/R/README.md).
+
+3. Prepare environment variables. Copy [`.env.example`](.env.example) to `.env`. The project-local cluster uses host `localhost`, port **5433**, database `pediastat`, user `pediastat`, and an empty password (trust authentication on localhost). Python reads `.env` automatically. R reads `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` from the process environment. When `POSTGRES_PORT` is unset, the R connection tries port 5433 and then 5432.
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   To use an existing PostgreSQL server instead of the project-local cluster, set `POSTGRES_PORT` and `POSTGRES_PASSWORD` in `.env` and call `scripts/bootstrap_database.py`, `scripts/ingest_gdc_cases.py`, `scripts/ingest_target_aml_supplements.py`, `scripts/run_source_reconciliation.py`, and `scripts/build_primary_cohort.py` without `--local-cluster`. The `make` database targets always pass `--local-cluster`.
+
+4. Initialize the project-local cluster. This creates `.pgdata`, listens on port 5433, and applies `sql/01_create_schemas.sql` through `sql/08_create_primary_cohort_extract_view.sql`.
+
+   ```bash
+   make db-bootstrap
+   ```
+
+5. Download the public clinical sources. This queries the GDC API, writes aggregate audit artifacts under `artifacts/source_audit/`, and saves the open clinical-supplement workbooks under `data/raw/gdc_open_clinical_supplements/` (gitignored).
+
+   ```bash
+   make audit
+   ```
+
+6. Ingest the clinical records. `make ingest` loads GDC Cases API entities, ingests each downloaded workbook, and runs source reconciliation. Each step passes `--local-cluster`, which reuses the cluster on port 5433.
+
+   ```bash
+   make ingest
+   ```
+
+7. Construct the validated primary cohort:
+
+   ```bash
+   make cohort
+   ```
+
+8. Run the descriptive analysis. This reads `analytics.primary_cohort_extract`, writes aggregate descriptive artifacts, and renders [`reports/descriptive_analysis.qmd`](reports/descriptive_analysis.qmd).
+
+   ```bash
+   make descriptive
+   ```
+
+9. Run the inferential analysis. This executes the frozen MICE specification (*m* = 30, 20 iterations), pools the primary and secondary Cox models, writes aggregate inferential artifacts, and renders [`reports/inferential_analysis.qmd`](reports/inferential_analysis.qmd). The separate 100-iteration convergence sensitivity is not part of `make inference`.
+
+   ```bash
+   make inference
+   ```
+
+When Quarto is unavailable or Quarto rendering fails, `make descriptive` and `make inference` write abbreviated HTML with `analysis/R/render_descriptive_report.R` and `analysis/R/render_inference_report.R`. Those files state that they are abbreviated substitutes, not the complete Quarto reports. A failure in the statistical scripts is not replaced by this fallback. If both Quarto and the fallback fail, `make` exits with an error.
+
+### Environment check
+
+```bash
+make check
+```
+
+`make check` runs Ruff, pytest, and `scripts/check_environment.py`. It confirms the Python package, tests, and configuration. It does not connect to PostgreSQL, so an inactive database is not a failure.
 
 Stack: Python, PostgreSQL (`raw` / `staging` / `analytics`), R, `survival`, `mice`.
-
-Source data are not in the repository. Downloaded clinical files belong under `data/raw/` and are gitignored. See [analysis/R/README.md](analysis/R/README.md) for the R environment.
 
 
 ## Repository map

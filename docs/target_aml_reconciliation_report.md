@@ -50,7 +50,7 @@ Raw supplement design: one workbook, one sheet, one spreadsheet row. Original co
 
 Every raw row has `source_id`. Reloads replace rows for that source inside a transaction (`DELETE` then `INSERT`). A second GDC load returned the same entity counts (2492 / 2189 / 2189 / 61746 / 9477) and did not double the tables.
 
-Bootstrap: `python scripts/bootstrap_database.py --local-cluster` creates a project-local cluster under `.pgdata` (port 5433) and applies `sql/01`–`sql/06`.
+Bootstrap: `python scripts/bootstrap_database.py --local-cluster` creates a project-local cluster under `.pgdata` (port 5433) and applies `sql/01_create_schemas.sql` through `sql/08_create_primary_cohort_extract_view.sql`.
 
 ## 4. GDC Entity Counts
 

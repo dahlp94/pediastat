@@ -647,7 +647,22 @@ def main(argv: list[str] | None = None) -> int:
         f"{result['survival']['n_cases_with_possible_gdc_style_survival_time']}"
     )
     print(f"Artifacts: {result['output_dir']}")
-    print("No patient-level dataset was written.")
+    n_downloaded = sum(
+        1 for item in result["supplement_inspections"] if item.get("downloaded")
+    )
+    if args.skip_download:
+        print("Clinical supplement download was skipped (--skip-download).")
+    elif n_downloaded:
+        print(
+            f"Downloaded {n_downloaded} open clinical supplement file(s) "
+            f"to {args.download_dir}."
+        )
+    else:
+        print("No open clinical supplement files were downloaded.")
+    print(
+        "Audit artifacts are aggregate summaries, "
+        "not a patient-level analysis dataset."
+    )
     return 0
 
 

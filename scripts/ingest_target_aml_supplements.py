@@ -72,13 +72,18 @@ def _main() -> int:
     if not download_dir.is_dir():
         raise FileNotFoundError(
             f"Supplement directory not found: {download_dir}. "
-            "Run scripts/audit_target_aml_source.py first."
+            "Download open clinical supplements with `make audit` "
+            "or `python -m pediastat.gdc`."
         )
     file_meta = _meta_from_audit_csv()
     file_meta.update(_meta_from_api())
     paths = sorted(download_dir.glob("*.xlsx"))
     if not paths:
-        raise FileNotFoundError(f"No XLSX files in {download_dir}")
+        raise FileNotFoundError(
+            f"No XLSX files in {download_dir}. "
+            "Download open clinical supplements with `make audit` "
+            "or `python -m pediastat.gdc`."
+        )
     profiles: list[dict[str, object]] = []
     for path in paths:
         logging.info("Reading %s", path.name)

@@ -284,8 +284,9 @@ download.
 
 Source URL pattern: `https://api.gdc.cancer.gov/data/{file_id}`. Checksums
 matched the Files API `md5sum`. Downloads are stored under
-`data/raw/gdc_open_clinical_supplements/` and are gitignored. They are
-**not** the production ingestion source yet.
+`data/raw/gdc_open_clinical_supplements/` and are gitignored.
+`scripts/ingest_target_aml_supplements.py` reads those workbooks as the
+open-supplement ingestion source.
 
 These supplements contain fields **not** exposed as populated Cases API
 properties, including:

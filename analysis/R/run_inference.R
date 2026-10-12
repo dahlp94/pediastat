@@ -179,26 +179,51 @@ if (file.exists(test_file)) {
   }
 }
 
-quarto_bin <- Sys.getenv("QUARTO", unset = "")
-if (!nzchar(quarto_bin)) {
-  conda_q <- file.path(Sys.getenv("HOME"), "miniconda3", "envs", "pediastat-r", "bin", "quarto")
-  if (file.exists(conda_q)) quarto_bin <- conda_q
-}
-qmd <- file.path(PROJECT_ROOT, "reports", "inferential_analysis.qmd")
-rendered <- FALSE
-if (nzchar(quarto_bin) && file.exists(quarto_bin) && file.exists(qmd)) {
-  deno <- file.path(dirname(quarto_bin), "tools", "x86_64", "deno")
-  if (file.exists(deno) || nzchar(Sys.which("deno"))) {
-    status <- system2(
-      quarto_bin,
-      c("render", qmd, "--to", "html", "--output-dir", file.path(PROJECT_ROOT, "reports"))
-    )
-    rendered <- identical(as.integer(status), 0L)
+# make inference sets this so Quarto runs once, in the Makefile, after this script.
+if (identical(Sys.getenv("INFERENCE_DEFER_REPORT_RENDER", unset = ""), "1")) {
+  message(
+    "Skipping Quarto in run_inference.R (INFERENCE_DEFER_REPORT_RENDER=1) ",
+    "so the caller can render the inferential report once."
+  )
+} else {
+  if (!nzchar(Sys.getenv("QUARTO_R", unset = ""))) {
+    r_bin <- file.path(R.home("bin"), "R")
+    if (file.exists(r_bin)) {
+      Sys.setenv(QUARTO_R = r_bin)
+    }
   }
-}
-if (!rendered) {
-  message("Quarto CLI not used; writing HTML from inference artifacts with R.")
-  source(file.path(script_dir, "render_inference_report.R"), local = FALSE)
+  if (!nzchar(Sys.getenv("QUARTO", unset = ""))) {
+    found_quarto <- Sys.which("quarto")
+    if (nzchar(found_quarto)) {
+      Sys.setenv(QUARTO = found_quarto)
+    }
+  }
+  if (!nzchar(Sys.getenv("RSCRIPT", unset = ""))) {
+    rscript_bin <- file.path(R.home("bin"), "Rscript")
+    if (file.exists(rscript_bin)) {
+      Sys.setenv(RSCRIPT = rscript_bin)
+    }
+  }
+  qmd <- file.path(PROJECT_ROOT, "reports", "inferential_analysis.qmd")
+  html <- file.path(PROJECT_ROOT, "reports", "inferential_analysis.html")
+  status <- system2(
+    "sh",
+    c(
+      file.path(script_dir, "render_quarto_or_fallback.sh"),
+      qmd,
+      file.path(script_dir, "render_inference_report.R"),
+      "inferential analysis",
+      html
+    )
+  )
+  if (!identical(as.integer(status), 0L)) {
+    stop(
+      "Inferential report rendering failed. Quarto and the abbreviated R fallback did not produce ",
+      html,
+      ".",
+      call. = FALSE
+    )
+  }
 }
 
 message("Inference complete. Aggregate artifacts: ", INFERENCE_DIR)

@@ -20,4 +20,6 @@ dependencies:
   - r-renv
   - r-mice
   - r-nnet
+  - r-knitr
+  - r-rmarkdown
   - quarto

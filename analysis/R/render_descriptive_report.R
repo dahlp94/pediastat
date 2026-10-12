@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
-# Fallback HTML report renderer when the Quarto CLI is unavailable.
+# Abbreviated HTML substitute when Quarto is unavailable or rendering fails.
+# This is not the complete Quarto scientific report.
 
 script_dir <- (function() {
   args <- commandArgs(trailingOnly = FALSE)
@@ -68,9 +69,7 @@ n_risk <- round_df(read_desc("number_at_risk.csv"))
 cont <- round_df(read_desc("continuous_distribution_summary.csv"), 2)
 miss <- round_df(read_desc("missingness_by_variable.csv"), 2)
 prov <- read_desc("baseline_source_provenance.csv")
-readiness <- read_desc("core_candidate_readiness.csv")
-redundancy <- read_desc("redundancy_findings.csv")
-patterns <- round_df(read_desc("missingness_patterns_top15.csv"), 2)
+patterns <- round_df(utils::head(read_desc("missingness_patterns.csv"), 15L), 2)
 tbl1 <- read_desc("table1_primary_cohort.csv")
 cont_show <- cont[cont$variable %in% c(
   "age_at_diagnosis_years", "wbc_at_diagnosis", "marrow_blasts", "peripheral_blasts"
@@ -84,6 +83,7 @@ css <- paste(
   "th,td{border:1px solid #d0d7de;padding:0.4rem 0.55rem;text-align:left;vertical-align:top;}",
   "th{background:#eef3f7;}",
   "caption{text-align:left;font-weight:bold;margin-bottom:0.4rem;}",
+  ".notice{background:#fff6e8;border:1px solid #e0c080;padding:0.8rem 1rem;margin:1rem 0;}",
   "figure{margin:1.5rem 0;}",
   "img{max-width:100%;height:auto;border:1px solid #d0d7de;}",
   "figcaption{font-size:0.9rem;color:#444;margin-top:0.4rem;}",
@@ -93,14 +93,14 @@ css <- paste(
 
 html <- paste0(
   "<!DOCTYPE html><html lang='en'><head><meta charset='utf-8'>",
-  "<title>PediaStat — Descriptive Analysis of the Primary Pediatric AML Cohort</title>",
+  "<title>PediaStat — Descriptive Analysis of the Primary Pediatric AML Cohort (abbreviated substitute)</title>",
   "<style>", css, "</style></head><body>",
   "<h1>PediaStat — Descriptive Analysis of the Primary Pediatric AML Cohort</h1>",
-  "<p><em>Cohort characterization and overall survival summary. Rendered from locked aggregate artifacts because a complete Quarto CLI was not available.</em></p>",
+  "<p class='notice'><strong>Abbreviated HTML substitute.</strong> This file is not the complete Quarto scientific report. It is rendered from locked aggregate artifacts. Full source: <a href='descriptive_analysis.qmd'>reports/descriptive_analysis.qmd</a>.</p>",
   "<nav><a href='#obj'>1. Objective</a><a href='#pop'>2. Population</a><a href='#acct'>3. Construction</a>",
   "<a href='#t1'>4. Table 1</a><a href='#dist'>5. Distributions</a><a href='#miss'>6. Missing data</a>",
   "<a href='#src'>7. Provenance</a><a href='#os'>8. Overall survival</a><a href='#fu'>9. Follow-up</a>",
-  "<a href='#ready'>10. Readiness</a><a href='#lim'>11. Limitations</a><a href='#next'>12. Next decisions</a></nav>",
+  "<a href='#scope'>10. Scope</a><a href='#lim'>11. Limitations</a><a href='#inf'>12. Inference</a></nav>",
   "<h2 id='obj'>1. Scientific Objective</h2>",
   "<p>This report describes the prespecified primary pediatric AML cohort in public TARGET-AML data and estimates the <strong>overall</strong> survival distribution. It does not compare survival across baseline subgroups, does not fit Cox models, and does not use p-values to screen covariates.</p>",
   "<h2 id='pop'>2. Prespecified Study Population</h2>",
@@ -146,7 +146,7 @@ html <- paste0(
   img_tag("marrow_blasts_histogram.png", "Bone marrow leukemic blast percentage"),
   img_tag("peripheral_blasts_histogram.png", "Peripheral blast percentage"),
   "<h2 id='miss'>6. Missing Data</h2>",
-  "<p>These summaries do not establish MCAR, MAR, or MNAR and were not tested against survival. No imputation was performed.</p>",
+  "<p>These summaries do not establish MCAR, MAR, or MNAR and were not tested against survival. No multiple imputation was performed.</p>",
   df_to_html(miss[, c("concept", "observed_n", "missing_n", "missing_percent", "unknown_n", "not_reported_n", "structurally_missing_n", "conflict_n")], "Missingness by baseline concept"),
   df_to_html(patterns, "Most common missingness patterns"),
   img_tag("missingness_heatmap.png", "Missingness heatmap (identifiers omitted)"),
@@ -167,20 +167,18 @@ html <- paste0(
   "<p>Observed OS range: ", endpoint$observed_os_days_min, "–", endpoint$observed_os_days_max,
   " days. Crude event percentage (", endpoint$crude_event_percent,
   "%) is deaths/N, not a cumulative mortality risk.</p>",
-  "<h2 id='ready'>10. Analysis-Readiness Assessment</h2>",
-  "<p>CORE CANDIDATE review uses definition, coding, missingness, sparsity, and source quality. Survival association was not used.</p>",
-  df_to_html(readiness, "CORE CANDIDATE analysis-readiness"),
-  df_to_html(redundancy, "Potential redundancy to review before model specification"),
+  "<h2 id='scope'>10. Scope of this report</h2>",
+  "<p>This report is descriptive. It characterizes the frozen cohort, summarizes baseline data and missingness, estimates overall Kaplan–Meier survival, and estimates potential follow-up with reverse Kaplan–Meier. Predictor coding and model specification are not decided from this descriptive workflow.</p>",
   "<h2 id='lim'>11. Limitations</h2>",
   "<ul>",
   "<li>Public TARGET-AML data are observational and incomplete relative to controlled-access files.</li>",
   "<li>Baseline AML characteristics come from overlapping supplements; residual source conflict is flagged, not overwritten.</li>",
   "<li>FAB is largely missing. Several molecular and cytogenetic fields have non-negligible Unknown or structural missingness.</li>",
   "<li>Seven primary-cohort persons have an index_date QA flag and were retained under the locked cohort rule.</li>",
-  "<li>No causal interpretation and no multivariable inference yet.</li>",
+  "<li>No causal interpretation is offered. Multivariable inference is reported in <code>reports/inferential_analysis.qmd</code> and is outside this descriptive report.</li>",
   "</ul>",
-  "<h2 id='next'>12. Next Statistical Decisions</h2>",
-  "<p>The inferential plan is locked in <code>docs/inferential_model_specification.md</code>. It specifies the primary and secondary Cox models, functional forms for age and WBC, Unknown versus missing handling, multiple imputation, separation of risk group from FLT3 and lesion flags, unresolved risk-group tokens, exclusion of the primary cytogenetic code, no interactions, the secondary FDR family, and proportional-hazards remediation. This descriptive report does not contain those models.</p>",
+  "<h2 id='inf'>12. Inferential analysis</h2>",
+  "<p>Model preflight froze the inferential plan before regression. The locked specification is <code>docs/inferential_model_specification.md</code>. The completed analysis is in <code>reports/inferential_analysis.qmd</code>. This descriptive report does not contain those models.</p>",
   "<p>R ", html_escape(session$r_version), " (", html_escape(session$running), "). Source narrative: <code>reports/descriptive_analysis.qmd</code>.</p>",
   "</body></html>"
 )

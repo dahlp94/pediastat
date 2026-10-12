@@ -7,7 +7,52 @@ RUFF ?= $(if $(wildcard .venv/bin/ruff),.venv/bin/ruff,ruff)
 CONDA_RSCRIPT := $(HOME)/miniconda3/envs/pediastat-r/bin/Rscript
 CONDA_QUARTO := $(HOME)/miniconda3/envs/pediastat-r/bin/quarto
 RSCRIPT ?= $(if $(wildcard $(CONDA_RSCRIPT)),$(CONDA_RSCRIPT),Rscript)
-QUARTO ?= $(if $(wildcard $(CONDA_QUARTO)),$(CONDA_QUARTO),quarto)
+# Use the conda Quarto binary only when --version prints a version.
+# A present shim that exits 0 without a version must not hide a working quarto.
+QUARTO ?= $(shell \
+candidate='$(CONDA_QUARTO)'; \
+version=""; \
+if [ -x "$$candidate" ]; then \
+version=$$("$$candidate" --version 2>/dev/null | head -n 1); \
+fi; \
+if [ -n "$$version" ]; then \
+printf '%s\n' "$$candidate"; \
+else \
+found=""; \
+if command -v quarto >/dev/null 2>&1; then \
+found=$$(command -v quarto); \
+fi; \
+found_version=""; \
+if [ -n "$$found" ]; then \
+found_version=$$("$$found" --version 2>/dev/null | head -n 1); \
+fi; \
+if [ -n "$$found_version" ]; then \
+printf '%s\n' "$$found"; \
+elif [ -x "$$candidate" ]; then \
+printf '%s\n' "$$candidate"; \
+else \
+printf '%s\n' quarto; \
+fi; \
+fi)
+# R executable in the same environment as RSCRIPT. QUARTO_DART_SASS is not
+# assigned here: when the caller exports it, Quarto inherits that value.
+QUARTO_R ?= $(shell rscript='$(RSCRIPT)'; \
+if command -v "$$rscript" >/dev/null 2>&1; then \
+resolved=$$(command -v "$$rscript"); \
+else \
+resolved="$$rscript"; \
+fi; \
+rdir=$$(dirname "$$resolved"); \
+if [ -x "$$rdir/R" ]; then \
+printf '%s\n' "$$rdir/R"; \
+elif command -v R >/dev/null 2>&1; then \
+command -v R; \
+else \
+printf '%s\n' R; \
+fi)
+
+export QUARTO
+export QUARTO_R
 
 test:
 	$(PYTEST)
@@ -41,12 +86,7 @@ ingest: ingest-gdc ingest-supplements reconcile
 descriptive:
 	$(PYTHON) scripts/check_environment.py
 	$(RSCRIPT) analysis/R/run_descriptive.R
-	@if [ -x "$(QUARTO)" ] && [ -x "$(dir $(QUARTO))tools/x86_64/deno" ]; then \
-		$(QUARTO) render reports/descriptive_analysis.qmd --to html --output-dir reports; \
-	else \
-		echo "Complete Quarto CLI not available; rendering HTML from descriptive artifacts with R."; \
-		$(RSCRIPT) analysis/R/render_descriptive_report.R; \
-	fi
+	@QUARTO='$(QUARTO)' QUARTO_R='$(QUARTO_R)' RSCRIPT='$(RSCRIPT)' sh analysis/R/render_quarto_or_fallback.sh reports/descriptive_analysis.qmd analysis/R/render_descriptive_report.R 'descriptive analysis' reports/descriptive_analysis.html
 
 model-plan:
 	$(PYTHON) scripts/check_environment.py
@@ -54,9 +94,5 @@ model-plan:
 
 inference:
 	$(PYTHON) scripts/check_environment.py
-	$(RSCRIPT) analysis/R/run_inference.R
-	@if [ -x "$(QUARTO)" ] && [ -x "$(dir $(QUARTO))tools/x86_64/deno" ] && [ -f reports/inferential_analysis.qmd ]; then \
-		if [ ! -f reports/inferential_analysis.html ]; then \
-			$(QUARTO) render reports/inferential_analysis.qmd --to html --output-dir reports; \
-		fi; \
-	fi
+	INFERENCE_DEFER_REPORT_RENDER=1 $(RSCRIPT) analysis/R/run_inference.R
+	@QUARTO='$(QUARTO)' QUARTO_R='$(QUARTO_R)' RSCRIPT='$(RSCRIPT)' sh analysis/R/render_quarto_or_fallback.sh reports/inferential_analysis.qmd analysis/R/render_inference_report.R 'inferential analysis' reports/inferential_analysis.html

@@ -41,3 +41,25 @@ In particular:
 Across the 15 primary- and secondary-model Cox coefficients, the maximum absolute relative hazard-ratio change was 2.38%. No coefficient changed direction, no 95% confidence interval changed its inclusion/exclusion of HR = 1, and none of the seven prespecified secondary BH decisions changed at 0.05. These findings support numerical stability with additional iterations but do not establish convergence at iteration 20 or 100, nor do they validate the Missing At Random assumption.
 
 This post-analysis sensitivity is reported separately in the [inferential report](../reports/inferential_analysis.qmd); it is **not** a change to the frozen analysis specification.
+
+The 20-iteration analysis remains primary. The 100-iteration continuation is a post-analysis sensitivity and is not part of `make inference`. Reproducing it writes `artifacts/inference/mi_20_vs_100_cox_comparison.csv`, an aggregate table of pooled Cox estimates. That table does not contain patient identifiers, survival times, imputations, or residuals.
+
+From the repository root, with the `pediastat-r` environment and the saved objects below:
+
+- `data/interim/inference/mice_mids.rds` (30 imputations, 20 iterations, seed 20260814)
+- `data/interim/inference/mice_mids_100iter_diagnostic.rds`
+- `data/interim/inference/coded_primary_cohort.rds`
+
+```bash
+Rscript analysis/R/run_mice_iteration_sensitivity.R
+```
+
+The default command loads those objects, refits the frozen primary and secondary Cox models, and does not call `mice()` or `mice::mice.mids()`. It does not replace `mice_mids.rds` or the primary Cox tables.
+
+Create the extended object only when `mice_mids_100iter_diagnostic.rds` is absent:
+
+```bash
+Rscript analysis/R/run_mice_iteration_sensitivity.R --continue-missing
+```
+
+That continues the validated 20-iteration object with `mice::mice.mids(imp20, maxit = 80)` and writes only the extended file. Replacing an extended object that already exists requires `--overwrite-extended`.

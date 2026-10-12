@@ -258,11 +258,11 @@ are not decided from this descriptive workflow.
 - Seven primary-cohort persons have an `index_date` QA flag; they were retained under the locked cohort rule.
 - Crude death percentage (`r endpoint$crude_event_percent`%) is not a cumulative mortality risk because follow-up differs across persons.
 - No causal interpretation is offered.
-- No multivariable inference, missing-data method, or sensitivity survival analysis has been performed.
+- Multivariable inference, multiple imputation, and sensitivity survival analysis are reported in `reports/inferential_analysis.qmd`. They are outside this descriptive report.
 
-# 12. Subsequent Inferential Plan
+# 12. Inferential analysis
 
-Model preflight froze the inferential plan before regression. The locked specification is `docs/inferential_model_specification.md`. In brief:
+Model preflight froze the inferential plan before regression. The locked specification is `docs/inferential_model_specification.md`. The completed analysis is in `reports/inferential_analysis.qmd`. In brief:
 
 - Primary clinical Cox model: age5 + sex + log2(WBC) + risk group
 - Secondary molecular/cytogenetic Cox model without risk group

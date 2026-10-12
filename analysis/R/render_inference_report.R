@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
-# Fallback HTML renderer when the Quarto CLI is unavailable.
+# Abbreviated HTML substitute when Quarto is unavailable or rendering fails.
+# Not equivalent to the complete Quarto report in reports/inferential_analysis.qmd.
 
 script_dir <- (function() {
   args <- commandArgs(trailingOnly = FALSE)
@@ -111,6 +112,7 @@ sec_cols <- intersect(sec_cols, names(secondary))
 css <- paste(
   "body{font-family:Georgia,serif;max-width:980px;margin:2rem auto;padding:0 1rem;line-height:1.5;color:#222}",
   "h1,h2,h3{font-family:Helvetica,Arial,sans-serif}",
+  ".notice{background:#fff6e8;border:1px solid #e0c080;padding:0.8rem 1rem;margin:1rem 0}",
   "table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:0.92rem}",
   "th,td{border:1px solid #ccc;padding:0.4rem 0.5rem;text-align:left}",
   "th{background:#f4f6f8}",
@@ -120,9 +122,10 @@ css <- paste(
 
 html <- c(
   "<!DOCTYPE html><html><head><meta charset='utf-8'>",
-  "<title>PediaStat — Inferential Survival Analysis</title>",
+  "<title>PediaStat — Inferential Survival Analysis (abbreviated substitute)</title>",
   paste0("<style>", css, "</style></head><body>"),
   "<h1>PediaStat — Inferential Survival Analysis</h1>",
+  "<p class='notice'><strong>Abbreviated HTML substitute.</strong> This file is not equivalent to the complete Quarto scientific report. Full source: <a href='inferential_analysis.qmd'>reports/inferential_analysis.qmd</a>.</p>",
   "<p>Prespecified Cox models, multiple imputation, and sensitivity analyses. Language is prognostic association, not causal effect. The primary clinical model is distinct from the secondary molecular/cytogenetic model.</p>",
   "<h2>Executive summary</h2>",
   "<ul>",
@@ -171,7 +174,7 @@ html <- c(
   img_tag(file.path(fig, "km_flt3_itd.png"), "Unadjusted KM by FLT3/ITD"),
   "<p>These figures are descriptive and were not used for variable selection. No log-rank tests were computed.</p>",
   "<h2>Interpretation, limitations, and conclusions</h2>",
-  "<p>Both Standard and High protocol risk groups had substantially higher adjusted hazards than Low risk; the point estimates should not be described as a monotonic Standard then High progression. Concordance is descriptive model information, not a prediction-model validation. See the Quarto source for the full investigator narrative, limitations, and SAP deviations.</p>",
+  "<p>Both Standard and High protocol risk groups had substantially higher adjusted hazards than Low risk; the point estimates should not be described as a monotonic Standard then High progression. Concordance is descriptive model information, not a prediction-model validation. The full investigator narrative, limitations, and SAP deviations are in <a href='inferential_analysis.qmd'>reports/inferential_analysis.qmd</a>. This substitute does not reproduce that narrative.</p>",
   "<h2>SAP deviations</h2>",
   paste0("<pre>", html_escape(deviations), "</pre>"),
   "<h2>Software</h2>",
