@@ -2,9 +2,9 @@
 
 Scope: baseline covariate source rules
 
-Status: locked for future covariate construction; not used to define the primary OS cohort.
+Status: implemented in `src/pediastat/cohort.py` for `analytics.baseline_covariates_reconciled`. These rules do not decide primary-cohort membership.
 
-These rules specify how AML baseline concepts will be taken from overlapping open clinical supplements. They were chosen from source-reconciliation quality, CDE definitions, and coding coherence. They were **not** chosen by inspecting associations with survival.
+These rules specify how AML baseline concepts are taken from overlapping open clinical supplements. They were chosen from source-reconciliation quality, CDE definitions, and coding coherence. They were **not** chosen by inspecting associations with survival.
 
 Primary cohort membership does not require any of these covariates to be observed.
 

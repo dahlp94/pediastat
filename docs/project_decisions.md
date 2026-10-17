@@ -142,7 +142,7 @@ files will not be downloaded.
 ## Decision 11 — Censoring rule remains unlocked
 
 Date: 2026-08-14
-Status: provisional
+Status: provisional (superseded by Decisions 25 and 26)
 
 A candidate OS rule is: event if Dead, censored if Alive; time from
 `demographic.days_to_death` or `diagnoses.days_to_last_follow_up`; time
@@ -240,7 +240,7 @@ four. AML1031 is largely disjoint from Discovery/Validation/LowDepth.
 ## Decision 20 — OS discordance delays endpoint lock
 
 Date: 2026-08-14
-Status: accepted
+Status: accepted (discordance finding retained; the earlier "no canonical OS source" status was superseded by Decision 26)
 
 Vital status agrees closely across GDC and supplements. OS time does not:
 Validation vs GDC candidate 68.89% exact; LowDepth vs Validation 47.38%
@@ -250,7 +250,7 @@ canonical.
 ## Decision 21 — Tentative source-precedence recommendations
 
 Date: 2026-08-14
-Status: provisional (not implemented)
+Status: provisional (not implemented; superseded by Decision 30; the resulting rule is implemented in `src/pediastat/cohort.py`)
 
 Recommended later: GDC for vital status, age, sex at birth; AML1031 for
 WBC/risk/FLT3/NPM/CEBPA where present; Discovery/Validation/LowDepth for
@@ -259,7 +259,7 @@ FAB; OS time unresolved. See the Stage 2 reconciliation report.
 ## Decision 22 — Age eligibility remains unresolved
 
 Date: 2026-08-14
-Status: provisional
+Status: provisional (superseded by Decision 24)
 
 Among 2158 diagnoses with age: 2012 are <18 years, 2117 are ≤21, 33 are
 22–29. No cutoff was chosen to maximize N.
@@ -267,7 +267,7 @@ Among 2158 diagnoses with age: 2012 are <18 years, 2117 are ≤21, 33 are
 ## Decision 23 — Delay analytics cohort construction
 
 Date: 2026-08-14
-Status: accepted
+Status: accepted (the delay ended with Decision 31, when cohort construction was completed)
 
 Stage 2 stops after raw/staging ingestion and reconciliation. No
 `analytics.patient_cohort`, survival dataset, Table 1, Kaplan–Meier, Cox

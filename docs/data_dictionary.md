@@ -12,8 +12,6 @@ Missingness classes in staging: structurally_missing, not_reported,
 unknown, not_applicable, sentinel, observed. Unknown/Not Reported vital
 status is not censoring.
 
-Proposed future analytics names, if shown, are labeled **PROPOSED**.
-
 Analysis roles: primary endpoint / secondary endpoint / covariate of
 interest / adjustment covariate / descriptive only / excluded / uncertain.
 
@@ -23,9 +21,13 @@ interest / adjustment covariate / descriptive only / excluded / uncertain.
 ## A. GDC Cases API fields
 
 Ingested to `raw.gdc_*` / `staging.gdc_*`. Missingness below is the source
-audit (denominator 2492) unless noted. Ingestion load counts:
-2492 cases, 2189 demographics, 2189 diagnoses, 61746 follow-ups, 9477
-treatments.
+audit (denominator 2492) unless noted. Recorded ingestion counts: 2492
+cases and 2189 demographic records. The Stage 2 report also recorded 2189
+diagnosis entities (at most one per case). That diagnosis-entity total is
+historical: current source-audit artifacts do not include entity
+cardinality, and `clinical_field_availability.csv` reports field
+availability (2158 cases for age at diagnosis and last follow-up), which
+is not an entity total.
 
 | Variable | Source Field | Source Entity | Type | Definition | Units / Levels | Missingness | Analysis Role |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -44,7 +46,7 @@ treatments.
 | Ethnicity | `demographic.ethnicity` | demographic | keyword | Hispanic or Latino self-described grouping. | not hispanic or latino; hispanic or latino; Unknown; not reported | 303 null; 111 Unknown/not reported among non-null | Possible; missingness must remain explicit |
 | Age at diagnosis | `diagnoses.age_at_diagnosis` | diagnosis | long | Age at diagnosis in days since birth. | days; 3 to 10898 | 334 / 2492 (13.40%) | Covariate of interest |
 | Days to diagnosis | `diagnoses.days_to_diagnosis` | diagnosis | long | Days between index date and diagnosis. | days; all 0 when present | 311 / 2492 (12.48%) | QA / time-origin check |
-| Days to last follow-up | `diagnoses.days_to_last_follow_up` | diagnosis | double | Interval from last follow-up to initial pathologic diagnosis, as days. | days; 1 to 4134 | 334 / 2492 (13.40%) | Primary endpoint (candidate censoring time) |
+| Days to last follow-up | `diagnoses.days_to_last_follow_up` | diagnosis | double | Interval from last follow-up to initial pathologic diagnosis, as days. | days; 1 to 4134 | 334 / 2492 (13.40%) | Primary endpoint (censoring time if Alive) |
 | Primary diagnosis | `diagnoses.primary_diagnosis` | diagnosis | keyword | WHO ICD-O histologic diagnosis. | Acute myeloid leukemia, NOS only | 303 / 2492 (12.16%) | Descriptive only (no variation) |
 | Morphology | `diagnoses.morphology` | diagnosis | keyword | ICD-O morphology code. | 9861/3 only | 303 / 2492 (12.16%) | Descriptive only (no variation) |
 | Tissue or organ of origin | `diagnoses.tissue_or_organ_of_origin` | diagnosis | keyword | Anatomic site of origin. | Bone marrow only | 303 / 2492 (12.16%) | Descriptive only |
@@ -76,54 +78,49 @@ this audit (not listed as analysis variables): `demographic.gender`,
 Observed in open TARGET-AML Clinical Supplement XLSX files and loaded to
 `raw.supplement_rows` / `staging.supplement_clinical_rows`. Definitions
 are from `TARGET_AML_CDE_20230524.xlsx` where available. Files overlap
-(union 2144 USIs). Precedence is recommended, not applied.
+(union 2144 USIs). Workbook precedence is applied in `src/pediastat/cohort.py` when `analytics.baseline_covariates_reconciled` is built. Supplement rows remain stored separately.
 
 Missingness percents below are ingestion-observed (not-observed includes
 Unknown/N/A/blank) for the named workbook.
 
-| Analytical concept | Exact source field | Source workbook/entity | Original type | Units / coding | Missingness | Proposed future role | Source-precedence status | Notes |
+| Analytical concept | Exact source field | Source workbook/entity | Original type | Units / coding | Missingness | Analysis role | Source-precedence status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | TARGET USI | `TARGET USI` | Clinical Data / Sheet1 | string | TARGET-20-… | 1 null row in Discovery; 1 in Validation | Identifier | Join on canonical USI; keep original | 17 additional-file IDs are `…-Unsorted` |
-| Vital status | `Vital Status` | Clinical Data / Sheet1 | categorical | Alive; Dead; Unknown; Unspecified | 0–4% by file | Primary endpoint (event) | Recommended confirmation of GDC; not merged | 99.78–100% agreement with GDC where both observed |
-| OS time | `Overall Survival Time in Days` | Clinical Data / Sheet1 | numeric | days | 0–4% by file | **PROPOSED** `os_time_days` — uncertain | Unresolved vs GDC and across files | Validation vs GDC 68.89% exact; LowDepth vs Validation 47.38% |
-| Age at diagnosis | `Age at Diagnosis in Days` | Clinical Data / Sheet1 | numeric | days | 0–4% by file | Covariate of interest | GDC preferred; 100% overlap agreement | Same unit as GDC |
+| Vital status | `Vital Status` | Clinical Data / Sheet1 | categorical | Alive; Dead; Unknown; Unspecified | 0–4% by file | QA only | QA only. Primary event and time come from GDC. | 99.78–100% agreement with GDC where both observed |
+| OS time | `Overall Survival Time in Days` | Clinical Data / Sheet1 | numeric | days | 0–4% by file | QA only | QA only. Primary event and time come from GDC. | Validation vs GDC 68.89% exact; LowDepth vs Validation 47.38% |
+| Age at diagnosis | `Age at Diagnosis in Days` | Clinical Data / Sheet1 | numeric | days | 0–4% by file | Covariate of interest | GDC value is the one stored. | Same unit as GDC |
 | Gender | `Gender` | Clinical Data / Sheet1 | categorical | Female; Male; Unknown | 0–4% by file | Uncertain vs sex at birth | Not declared equivalent to `sex_at_birth` despite 100% case-folded match | CDE definition is gender |
-| Race | `Race` | Clinical Data / Sheet1 | categorical | | 6.7–14.6% | Possible | GDC demographic preferred | Coding may differ |
-| Ethnicity | `Ethnicity` | Clinical Data / Sheet1 | categorical | | 2.9–7.5% | Possible | GDC demographic preferred | |
-| WBC | `WBC at Diagnosis` | Clinical Data / Sheet1 | numeric | x10^3/mcL | 0–4% | Covariate of interest | AML1031 where present | 100% overlap agreement; absent from Cases API |
-| Risk group | `Risk group` | Clinical Data / Sheet1 | categorical | High / Low / Standard Risk | 0.84% AML1031; 84% additional | Covariate of interest | AML1031 where present | Small LowDepth disagreements |
-| FLT3/ITD | `FLT3/ITD positive?` | Clinical Data / Sheet1 | categorical | Yes; No; Unknown | 0% AML1031; 80% additional | Covariate of interest | AML1031 where present | Overlaps agree |
-| NPM | `NPM mutation` | Clinical Data / Sheet1 | categorical | | 0% AML1031; 80% additional | Covariate of interest | AML1031 where present | Few LowDepth disagreements |
-| CEBPA | `CEBPA mutation` | Clinical Data / Sheet1 | categorical | | 0% AML1031; 80% additional | Covariate of interest | AML1031 where present | |
-| FAB | `FAB Category` | Clinical Data / Sheet1 | categorical | M0–M7 | 99.35% AML1031; 12–19% other files | Possible | Discovery/Validation/LowDepth; not AML1031 | File-dependent completeness |
-| t(8;21) | `t(8;21)` | Clinical Data / Sheet1 | categorical | Yes; No; Unknown | file-dependent | Possible | Lesion flag; do not auto-compose | |
-| inv(16) | `inv(16)` | Clinical Data / Sheet1 | categorical | Yes; No; Unknown | file-dependent | Possible | Lesion flag | |
-| MLL | `MLL` | Clinical Data / Sheet1 | categorical | | file-dependent | Possible | Lesion flag | |
-| Monosomy 7 | `monosomy 7` | Clinical Data / Sheet1 | categorical | | file-dependent | Possible | Lesion flag | |
-| Primary cytogenetic code | `Primary Cytogenetic Code` | Clinical Data / Sheet1 | categorical | | file-dependent | Possible | Unresolved vs lesion flags | Pairwise disagreements exist |
-| CNS disease | `CNS disease` | Clinical Data / Sheet1 | categorical | | 0–4% most files; 62% additional | Possible | AML1031/Validation/LowDepth | |
-| Marrow blasts | `Bone marrow leukemic blast percentage (%)` | Clinical Data / Sheet1 | numeric | percent | file-dependent | Possible | Unresolved | |
-| Peripheral blasts | `Peripheral blasts (%)` | Clinical Data / Sheet1 | numeric | percent | file-dependent | Possible | Unresolved | |
+| Race | `Race` | Clinical Data / Sheet1 | categorical | | 6.7–14.6% | Possible | GDC value is the one stored. | Coding may differ |
+| Ethnicity | `Ethnicity` | Clinical Data / Sheet1 | categorical | | 2.9–7.5% | Possible | GDC value is the one stored. | |
+| WBC | `WBC at Diagnosis` | Clinical Data / Sheet1 | numeric | x10^3/mcL | 0–4% | Covariate of interest | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | 100% overlap agreement; absent from Cases API |
+| Risk group | `Risk group` | Clinical Data / Sheet1 | categorical | High / Low / Standard Risk | 0.84% AML1031; 84% additional | Covariate of interest | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | Small LowDepth disagreements |
+| FLT3/ITD | `FLT3/ITD positive?` | Clinical Data / Sheet1 | categorical | Yes; No; Unknown | 0% AML1031; 80% additional | Covariate of interest | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | Overlaps agree |
+| NPM | `NPM mutation` | Clinical Data / Sheet1 | categorical | | 0% AML1031; 80% additional | Covariate of interest | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | Few LowDepth disagreements |
+| CEBPA | `CEBPA mutation` | Clinical Data / Sheet1 | categorical | | 0% AML1031; 80% additional | Covariate of interest | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | |
+| FAB | `FAB Category` | Clinical Data / Sheet1 | categorical | M0–M7 | 99.35% AML1031; 12–19% other files | Possible | Applied: Discovery, Validation, LowDepth, additional, then AML1031. | File-dependent completeness |
+| t(8;21) | `t(8;21)` | Clinical Data / Sheet1 | categorical | Yes; No; Unknown | file-dependent | Possible | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | |
+| inv(16) | `inv(16)` | Clinical Data / Sheet1 | categorical | Yes; No; Unknown | file-dependent | Possible | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | |
+| MLL | `MLL` | Clinical Data / Sheet1 | categorical | | file-dependent | Possible | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | |
+| Monosomy 7 | `monosomy 7` | Clinical Data / Sheet1 | categorical | | file-dependent | Possible | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | |
+| Primary cytogenetic code | `Primary Cytogenetic Code` | Clinical Data / Sheet1 | categorical | | file-dependent | Possible | Applied: Discovery, Validation, AML1031, LowDepth, additional. The concept remains NEEDS REVIEW and is not a primary-model covariate. | Pairwise disagreements exist |
+| CNS disease | `CNS disease` | Clinical Data / Sheet1 | categorical | | 0–4% most files; 62% additional | Possible | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | |
+| Marrow blasts | `Bone marrow leukemic blast percentage (%)` | Clinical Data / Sheet1 | numeric | percent | file-dependent | Possible | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | |
+| Peripheral blasts | `Peripheral blasts (%)` | Clinical Data / Sheet1 | numeric | percent | file-dependent | Possible | Applied: AML1031, then Discovery, Validation, LowDepth, additional. | |
 | First event | `First Event` | Clinical Data / Sheet1 | categorical | Censored; Death; Relapse; … | mostly populated | Secondary / EFS | Not baseline | |
 | MRD course 1 | `MRD at end of course 1` | Clinical Data / Sheet1 | categorical | Yes; No | file-dependent | Excluded | n/a | Post-baseline |
 | SCT in 1st CR | `SCT in 1st CR` | Clinical Data / Sheet1 | categorical | Yes; No; Unknown | mostly populated | Excluded | n/a | Post-baseline / immortal time |
 
-GDC Cases API fields in section A keep their source-audit missingness
-(2492-case denominator). After ingestion: 2492 cases, 2189
-demographics, 2189 diagnoses, 61746 follow-ups, 9477 treatments.
-Recommended GDC fields for later analytics (not created): **PROPOSED**
-`vital_status` ← `demographic.vital_status`; **PROPOSED**
-`age_at_diagnosis_days` ← `diagnoses.age_at_diagnosis`; **PROPOSED**
-`sex_at_birth` ← `demographic.sex_at_birth`. OS time has no proposed
-canonical name because the source is unresolved.
+Implemented rules for the locked population, the GDC overall-survival
+event and time, and workbook precedence are in Section C. They are applied
+in `src/pediastat/cohort.py`. Supplement vital status and supplement OS
+time remain QA only.
 
 ---
 
 ## C. Analytics fields (locked population and endpoint)
 
-Implemented in `analytics.primary_os_cohort` and related tables. Definitions
-below supersede the unresolved OS-time note in section A for the primary
-endpoint only. Supplement OS remains QA.
+Implemented in `analytics.primary_os_cohort` and related tables. Primary
+event and time come from GDC. Supplement OS remains QA.
 
 Time origin: initial pathologic diagnosis, verified from GDC/caDSR
 definitions (CDE 3008273, 6154724, 3225640) and extract metadata

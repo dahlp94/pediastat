@@ -1148,7 +1148,7 @@ def _source_decisions() -> dict[str, Any]:
             ),
             "precedence_note": (
                 "Per-variable workbook precedence is locked in "
-                "cohort/baseline.py and is not outcome-driven."
+                "src/pediastat/cohort.py and is not outcome-driven."
             ),
         },
     }

@@ -4,7 +4,7 @@
     "source": "GDC diagnoses.age_at_diagnosis"
   },
   "aml_specific_baselines": {
-    "precedence_note": "Per-variable workbook precedence is locked in cohort/baseline.py and is not outcome-driven.",
+    "precedence_note": "Per-variable workbook precedence is locked in src/pediastat/cohort.py and is not outcome-driven.",
     "reason": "WBC, protocol risk, molecular markers, morphology, and cytogenetic fields are primarily available in supplements.",
     "source": "TARGET clinical supplements"
   },

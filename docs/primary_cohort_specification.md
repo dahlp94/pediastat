@@ -137,5 +137,4 @@ See `artifacts/cohort_definition/cohort_attrition.csv`. Counts are produced by t
 - Validation supplement OS times remain discordant with GDC; that discordance is documented, not “fixed” by switching endpoints.
 - Race and ethnicity have substantial Unknown / not reported codes.
 - FAB is nearly empty in AML1031 and must use other files.
-- The multivariable model is not locked. Missing-data methods for covariates are not locked.
-- No survival model, Table 1, or outcome-stratified covariate screening was performed at this stage.
+- At the close of Stage 3, the multivariable model and missing-data method were not yet locked, and Table 1 had not been produced. Decisions 37–46 locked them. The executed results are in `artifacts/inference/` and `artifacts/descriptive/`.

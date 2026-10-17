@@ -5,6 +5,8 @@ Ingestion date: 2026-08-14
 Stage 1 audit timestamp (source catalog): 2026-08-14T01:24:42Z  
 This report does not define an analysis cohort, a final OS endpoint, or a locked age cutoff.
 
+Sections 15–18 record recommendations as of this stage. Decisions 24–30 later locked age, the GDC endpoint, and workbook precedence. Those rules are implemented in `src/pediastat/cohort.py`.
+
 ## 1. Objective
 
 Build a reproducible ingestion layer for the verified TARGET-AML sources and quantify how the GDC Cases API and open clinical supplements agree, disagree, overlap, and differ.
@@ -48,7 +50,7 @@ Raw GDC design: selected typed join/QA columns plus the original entity JSON in 
 
 Raw supplement design: one workbook, one sheet, one spreadsheet row. Original column names and cell values are stored in `cells` JSONB. Identifier columns are copied, not overwritten.
 
-Every raw row has `source_id`. Reloads replace rows for that source inside a transaction (`DELETE` then `INSERT`). A second GDC load returned the same entity counts (2492 / 2189 / 2189 / 61746 / 9477) and did not double the tables.
+Every raw row has `source_id`. Reloads replace rows for that source inside a transaction (`DELETE` then `INSERT`). The current `run_reconciliation` returns an empty `entity_counts` and deletes `entity_counts.json`. It does not reproduce entity totals from a second load.
 
 Bootstrap: `python scripts/bootstrap_database.py --local-cluster` creates a project-local cluster under `.pgdata` (port 5433) and applies `sql/01_create_schemas.sql` through `sql/08_create_primary_cohort_extract_view.sql`.
 
@@ -56,11 +58,9 @@ Bootstrap: `python scripts/bootstrap_database.py --local-cluster` creates a proj
 
 | Entity | Raw rows | Notes |
 | --- | --- | --- |
-| cases | 2492 | One GDC case UUID per row |
-| demographics | 2189 | 303 cases have no demographic entity |
-| diagnoses | 2189 | Never more than one diagnosis per case in this extract |
-| follow_ups | 61746 | Max 33 per case; 2151 cases have multiple follow-ups |
-| treatments | 9477 | Max 5 per case; nested under diagnosis |
+| cases | 2492 | One GDC case UUID per row. Supported by `artifacts/source_audit/project_metadata.json`. |
+| demographics | 2189 | 303 cases have no demographic entity. Supported by `clinical_field_availability.csv` (`demographic.vital_status` and `demographic.sex_at_birth` available for 2189 cases) and `survival_field_audit.json` (303 missing vital status). |
+| diagnoses | 2189 | Historical Stage 2 count: never more than one diagnosis per case in this extract. Not re-verified by current source-audit artifacts. `clinical_field_availability.csv` reports 2158 cases with age at diagnosis and last follow-up; that is field availability, not an entity total. The current audit deletes `entity_cardinality.json` and does not rewrite it. |
 
 `submitter_id` is unique across 2492 cases. `join_barcode` (leading `TARGET-NN-TOKEN`) is unique for 2412 values. The difference is identifier-shape, not a load error; see section 6.
 
@@ -130,7 +130,7 @@ Join key: `join_barcode`.
 
 Every open clinical-data USI is present in the Cases API. The 268 GDC-only barcodes include cases without an open clinical-data row and the experimental identifier shapes above.
 
-Committed unmatched artifact: counts only (`unmatched_identifier_summary.csv`). Individual unmatched barcodes are in gitignored `data/interim/ingestion_audit/`.
+Committed overlap counts are in `artifacts/ingestion_audit/source_identifier_overlap.json` (268 GDC-only join barcodes, 0 supplement-only). Individual unmatched barcodes are in gitignored `data/interim/ingestion_audit/`.
 
 ## 8. Supplement-to-Supplement Overlap
 
@@ -241,9 +241,9 @@ GDC candidate time used for QA only (not a locked endpoint): `days_to_death` if 
 | Discovery | 465 | 99.78% (446/447 observed; 1 Dead vs Alive; 18 both missing) | 90.83% (406/447) | 100% | 0 / 0 |
 | Validation | 626 | 100% of 614 observed (12 both missing) | 68.89% (423/614) | 100% | 0 / 0 |
 
-GDC Last Contact follow-up days matched supplement OS time at the same rates as the GDC candidate time. Units are days in both sources. Time origin is not locked.
+GDC Last Contact follow-up days matched supplement OS time at the same rates as the GDC candidate time. Units are days in both sources. Time origin was not locked at this stage; Decision 27 later locked it to initial pathologic diagnosis.
 
-Validation OS times are not interchangeable with the GDC candidate. LowDepth OS times match GDC and therefore disagree with Validation. Stage 3 must keep these as competing candidate times, not silently pick the series that maximizes N.
+Validation OS times are not interchangeable with the GDC candidate. LowDepth OS times match GDC and therefore disagree with Validation. At this stage these remained competing candidate times. Decision 26 later locked primary OS time to GDC.
 
 Detailed patient-level OS mismatches are gitignored under `data/interim/ingestion_audit/`.
 
@@ -262,7 +262,7 @@ Staging classes (raw values retained):
 
 `NA` / `N/A` are classified as **unknown**, not not-applicable, because spreadsheet N/A is ambiguous. Unknown vital status is not censoring.
 
-Observed encodings in supplements include blank, `Unknown`, `N/A`, and structurally empty cytogenetic free-text. Inventory: `missing_value_token_inventory.csv` (tokens with n<5 omitted).
+Observed encodings in supplements include blank, `Unknown`, `N/A`, and structurally empty cytogenetic free-text. These classes agree with `classify_missing`.
 
 ## 14. Important Data-Quality Problems
 
@@ -279,13 +279,13 @@ Observed encodings in supplements include blank, `Unknown`, `N/A`, and structura
 
 ## 15. Recommended Source Precedence
 
-Recommendations only. Not implemented as a canonical patient table.
+These were the Stage 2 recommendations. Decision 30 locked them, and cohort construction now applies them.
 
 | Concept | Candidate sources | Recommended source | Reason | Confidence |
 | --- | --- | --- | --- | --- |
 | Patient identifier | GDC `submitter_id`; supplement `TARGET USI` | GDC `case_id` internally; canonical USI for joins | UUID is unique; USI is the crosswalk. Do not join on short `D#` tokens | high |
 | Vital status | GDC `demographic.vital_status`; supplement `Vital Status` | GDC `demographic.vital_status` | Direct GDC field; near-complete agreement with supplements; keep Unknown/Not Reported separate | high |
-| OS time | GDC death / last follow-up / Last Contact; supplement OS days | **unresolved** | Validation vs GDC 68.89% exact; LowDepth vs Validation 47.38% exact | n/a |
+| OS time | GDC death / last follow-up / Last Contact; supplement OS days | Later locked to GDC `days_to_death` for deaths and `diagnoses.days_to_last_follow_up` for survivors. Supplement OS time remains QA. | Validation vs GDC 68.89% exact; LowDepth vs Validation 47.38% exact | n/a |
 | Age at diagnosis | GDC `diagnoses.age_at_diagnosis`; supplement days | GDC `diagnoses.age_at_diagnosis` | 100% exact agreement in overlap; GDC unit is days | high |
 | Sex | GDC `sex_at_birth`; supplement `Gender` | GDC `sex_at_birth` | Values matched after case-fold, but CDE defines Gender, not sex at birth | moderate |
 | Race / ethnicity | GDC demographic; supplement | GDC demographic | GDC coding is the Cases API standard; unknown remains explicit | moderate |
@@ -299,7 +299,9 @@ Recommendations only. Not implemented as a canonical patient table.
 
 ## 16. Implications for the Statistical Analysis Plan
 
-- The study can proceed to cohort definition, but OS time and age eligibility remain unlocked.
+These implications were written before Decisions 24–30. Unlocked age, OS, and source-precedence questions in this section were historical and were subsequently resolved by those decisions.
+
+- The study could proceed to cohort definition, but OS time and age eligibility were still unlocked at this stage. Decisions 24 and 26 later locked them.
 - AML-specific covariates must come from supplements, with file-aware precedence rather than concatenation.
 - Unknown/Not Reported vital status stays a distinct exclusion or missingness class, not censoring.
 - Treatment, MRD, and SCT remain ineligible as baseline covariates.
@@ -309,22 +311,26 @@ Recommendations only. Not implemented as a canonical patient table.
 
 **YES, WITH CONDITIONS**
 
-Conditions:
+This was the Stage 2 conclusion. The age, OS, and source-precedence conditions below were historical questions, subsequently resolved by Decisions 24–30. Cohort construction is implemented in `src/pediastat/cohort.py`.
 
-1. Stage 3 must lock an OS time rule using the discordance evidence, not by maximizing N.
-2. Stage 3 must lock an age-eligibility rule with a scientific rationale for “children and adolescents.”
-3. Stage 3 must specify supplement de-duplication / precedence per concept.
+Conditions recorded at this stage:
+
+1. Stage 3 must lock an OS time rule using the discordance evidence, not by maximizing N. Later resolved by Decision 26.
+2. Stage 3 must lock an age-eligibility rule with a scientific rationale for “children and adolescents.” Later resolved by Decision 24.
+3. Stage 3 must specify supplement de-duplication / precedence per concept. Later resolved by Decision 30.
 4. Stage 3 must define handling of the 303 GDC cases without demographic/diagnosis entities and the 268 GDC-only barcodes.
 5. No analytics cohort is created in Stage 2.
 
 ## 18. Required Decisions Before Stage 3
 
-1. Age cutoff: `<18`, `≤18`, `≤21`, or include 22–29 with stratified reporting?
-2. OS event indicator: GDC vital status vs supplement Vital Status vs require both?
-3. OS time precedence among GDC death time, GDC last follow-up, GDC Last Contact, and each supplement OS column.
+These questions were open at the end of Stage 2. Age, the OS endpoint, and workbook precedence were later locked by Decisions 24–30 and implemented in `src/pediastat/cohort.py`. The list is retained as the historical record.
+
+1. Age cutoff: `<18`, `≤18`, `≤21`, or include 22–29 with stratified reporting? Later resolved by Decision 24.
+2. OS event indicator: GDC vital status vs supplement Vital Status vs require both? Later resolved by Decision 25.
+3. OS time precedence among GDC death time, GDC last follow-up, GDC Last Contact, and each supplement OS column. Later resolved by Decision 26.
 4. Whether cases with Unknown/Not Reported vital status are excluded or retained as a missingness class (they must not be censored).
-5. Time origin: diagnosis vs other index date.
-6. Which supplement file wins for WBC, risk, FLT3, NPM, CEBPA, FAB, cytogenetics, CNS when patients appear in more than one file.
+5. Time origin: diagnosis vs other index date. Later resolved by Decision 27.
+6. Which supplement file wins for WBC, risk, FLT3, NPM, CEBPA, FAB, cytogenetics, CNS when patients appear in more than one file. Later resolved by Decision 30.
 7. Whether `-Unsorted` and other suffix barcodes are the same analysis person as the canonical USI.
 8. Whether experimental `TARGET-20-D#-*` GDC cases are eligible.
 9. Whether the 303 API cases without nested clinical entities are ineligible.

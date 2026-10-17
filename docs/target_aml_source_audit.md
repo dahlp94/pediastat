@@ -10,14 +10,17 @@ Machine-readable companions:
 - `artifacts/source_audit/project_metadata.json`
 - `artifacts/source_audit/clinical_field_availability.csv` (identifier example lists omitted from the committed file)
 - `artifacts/source_audit/survival_field_audit.json`
-- `artifacts/source_audit/entity_cardinality.json`
 - `artifacts/source_audit/open_clinical_files.csv`
 - `artifacts/source_audit/open_clinical_supplement_columns.json`
-- `artifacts/source_audit/open_clinical_supplement_key_fields.json`
+- `artifacts/source_audit/open_clinical_supplement_key_fields.json` (retained Stage 1 snapshot; current `make audit` does not rewrite this file)
 
 ## 1. Audit Date
 
-- Audit timestamp (UTC): **2026-08-14T01:24:42+00:00**
+- Current source-audit timestamp (UTC): **2026-09-27T06:39:59Z**
+  (`artifacts/source_audit/project_metadata.json`)
+- Historical key-fields snapshot: **2026-08-14T01:24:42Z**
+  (`open_clinical_supplement_key_fields.json`; retained Stage 1 snapshot;
+  current `make audit` does not rewrite this file)
 - API base URL: `https://api.gdc.cancer.gov`
 - GDC contents can change across data releases. Counts below are not
   permanent.
@@ -72,12 +75,20 @@ The audit retrieved 2492 case records.
 This count must be re-queried before any later ingestion. It is not a
 locked sample size.
 
-Of 2492 cases:
+Of 2492 cases, the Stage 1 record was:
 
 - 2189 have a demographic entity and a diagnosis entity
 - 303 have neither demographic nor diagnosis clinical entities in the
   returned Cases API payload
 - 2151 have follow-up and treatment entities
+
+The 2492 case total is in `project_metadata.json`. Demographic availability
+of 2189 is in `clinical_field_availability.csv` and `survival_field_audit.json`.
+The paired diagnosis-entity count of 2189, and the follow-up and treatment
+cardinalities in Section 9, are that Stage 1 record. The current audit
+deletes `entity_cardinality.json` and does not rewrite it. Availability of
+2158 for `diagnoses.age_at_diagnosis` and `diagnoses.days_to_last_follow_up`
+is field availability, not a diagnosis-entity count.
 
 ## 5. GDC Clinical Data Structure
 
@@ -430,7 +441,7 @@ Only variables actually found are listed.
 
 ## 16. Proposed Analysis Cohort
 
-Conceptual future cohort, not created:
+Conceptual future cohort, not created at Stage 1. The primary cohort was later built; see `docs/primary_cohort_specification.md`.
 
 - Project TARGET-AML
 - Acute myeloid leukemia at the case/diagnosis level
